@@ -72,23 +72,25 @@ test_that("All scenario combinations are valid", {
   error_happened <- FALSE
   for (i in 1:nrow(scenario_geography_x_ald_sector)) {
     row_params <- scenario_geography_x_ald_sector[i, ]
-    tryCatch({
-      suppressWarnings(suppressMessages(capture.output(
-        run_trisk(
-          input_path = in_agnostic,
-          output_path = tempdir(),
-          baseline_scenario = row_params$baseline_scenario,
-          shock_scenario = row_params$shock_scenario,
-          scenario_geography = row_params$scenario_geography
-        )
-      )))
+    tryCatch(
+      {
+        suppressWarnings(suppressMessages(capture.output(
+          run_trisk(
+            input_path = in_agnostic,
+            output_path = tempdir(),
+            baseline_scenario = row_params$baseline_scenario,
+            shock_scenario = row_params$shock_scenario,
+            scenario_geography = row_params$scenario_geography
+          )
+        )))
 
-      cat(paste("Pass", row_params, '\n'))
-    },
-    error = function(e) {
-      cat(paste("Failed", row_params, '\n'))
-      error_happened <- TRUE
-    })
+        cat(paste("Pass", row_params, "\n"))
+      },
+      error = function(e) {
+        cat(paste("Failed", row_params, "\n"))
+        error_happened <- TRUE
+      }
+    )
   }
 
   expect_false(error_happened)

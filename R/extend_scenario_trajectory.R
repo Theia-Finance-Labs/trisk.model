@@ -24,7 +24,6 @@
 #'   years for which forward looking production data is considered.
 #' @param target_scenario Character. A vector of length 1 indicating target
 #'   scenario
-
 #' @noRd
 extend_scenario_trajectory <- function(data,
                                        scenario_data,
@@ -32,24 +31,6 @@ extend_scenario_trajectory <- function(data,
                                        end_analysis,
                                        time_frame,
                                        target_scenario) {
-
-  validate_data_has_expected_cols(
-    data = data,
-    expected_columns = c(
-      "company_id", "company_name", "year", "ald_sector", "ald_business_unit",
-      "scenario_geography", "plan_tech_prod", "plan_emission_factor",
-      "plan_sec_prod"
-    )
-  )
-
-  validate_data_has_expected_cols(
-    data = scenario_data,
-    expected_columns = c(
-      "ald_business_unit", "scenario_geography", "ald_sector", "units",
-      "scenario", "year", "direction", "fair_share_perc"
-    )
-  )
-
   data <- data %>%
     summarise_production_technology_forecasts(
       start_analysis = start_analysis,
@@ -66,13 +47,6 @@ extend_scenario_trajectory <- function(data,
       scenario_data,
       by = c("ald_sector", "ald_business_unit", "scenario_geography", "year")
     )
-  # %>%
-  # report_all_duplicate_kinds(
-  #   composite_unique_cols = c(
-  #     "year", "company_id", "company_name", "ald_sector", "ald_business_unit", "scenario",
-  #     "scenario_geography", "units"
-  #   )
-  # )
 
   data <- data %>%
     summarise_production_sector_forecasts()

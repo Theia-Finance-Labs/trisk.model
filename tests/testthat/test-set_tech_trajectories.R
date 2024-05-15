@@ -133,7 +133,7 @@ test_that("input remains unchanged if no negative late_and_sudden levels are
     some_col = rep("sth", 4)
   )
 
-  filtered_data <- filter_negative_late_and_sudden(input_data, log_path = NULL)
+  filtered_data <- filter_negative_late_and_sudden(input_data)
 
   expect_equal(input_data, filtered_data)
 })
@@ -147,7 +147,7 @@ test_that("ald_business_unit x company_name combinations that hold at least 1 ne
     some_col = rep("sth", 5)
   )
 
-  filtered_data <- filter_negative_late_and_sudden(input_data, log_path = NULL)
+  filtered_data <- filter_negative_late_and_sudden(input_data)
 
   expect_equal(input_data %>% dplyr::filter(!(company_name == "firm" & ald_business_unit == "some")), filtered_data)
 })
@@ -160,7 +160,7 @@ test_that("removal works if several company_name x ald_business_unit combination
     some_col = rep("sth", 5)
   )
 
-  filtered_data <- filter_negative_late_and_sudden(input_data, log_path = NULL)
+  filtered_data <- filter_negative_late_and_sudden(input_data)
 
   expect_equal(input_data %>% dplyr::filter(company_name == "biz" & ald_business_unit == "other"), filtered_data)
 })
@@ -173,5 +173,5 @@ test_that("error is thrown if no rows remain", {
     some_col = rep("sth", 5)
   )
 
-  expect_error(testthat::expect_warning(filtered_data <- filter_negative_late_and_sudden(input_data, log_path = NULL), "Removed"), "No rows remain")
+  expect_error(testthat::expect_warning(filtered_data <- filter_negative_late_and_sudden(input_data), "Removed"), "No rows remain")
 })

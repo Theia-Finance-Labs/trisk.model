@@ -59,17 +59,6 @@ new_capacity_factors <- tibble::tibble(
 new_test_data <- read_test_data("convert_power_cap_to_generation.csv") %>%
   dplyr::filter(.data$year %in% c(2021, 2022))
 
-test_that("error is thrown if baseline scenario is missing from input data", {
-  testthat::expect_error(
-    convert_power_cap_to_generation(
-      data = new_test_data,
-      capacity_factors_power = new_capacity_factors,
-      baseline_scenario = "NOT_A_SCENARIO",
-      target_scenario = "SDS"
-    ),
-    "Missing columns: NOT_A_SCENARIO"
-  )
-})
 
 test_that("plan_tech_prod and production under scenario targets are equal
           (assuming equals values before funcion is applied) if capacity factors

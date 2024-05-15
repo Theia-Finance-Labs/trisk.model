@@ -1,65 +1,4 @@
-#' Process input ST data
-#'
-#' @description
-#' Preprocess the input data before applying the ST model
-#'
-#' @param data trisk loaded data
-#' @param scenario_geography scenario_geography
-#' @param baseline_scenario baseline_scenario
-#' @param shock_scenario shock_scenario
-#' @param start_year start_year
-#' @param carbon_price_model carbon_price_model
-#' @param log_path log_path
-#'
-#' @return processed input trisk data
-#'
-st_process_agnostic <-
-  function(data,
-           scenario_geography,
-           baseline_scenario,
-           shock_scenario,
-           start_year,
-           carbon_price_model,
-           log_path) {
 
-    processed <- data %>%
-      st_process(
-        scenario_geography = scenario_geography,
-        baseline_scenario = baseline_scenario,
-        shock_scenario = shock_scenario,
-        start_year = start_year,
-        carbon_price_model = carbon_price_model,
-        log_path = log_path
-      )
-
-    input_data_list <- list(
-      capacity_factors_power = processed$capacity_factors_power,
-      scenario_data = processed$scenario_data,
-      df_price = processed$df_price,
-      financial_data = processed$financial_data,
-      production_data = processed$production_data,
-      carbon_data = processed$carbon_data
-    )
-
-    # TODO: this requires company company_id to work for all companies, i.e. using 2021Q4 PAMS data
-    report_company_drops(
-      data_list = input_data_list,
-      log_path = log_path
-    )
-
-    return(input_data_list)
-  }
-
-
-is_scenario_geography_in_pacta_results <- function(data, scenario_geography_filter) {
-  if (!scenario_geography_filter %in% unique(data$scenario_geography)) {
-    stop(paste0(
-      "Did not find PACTA results for scenario_geography level ", scenario_geography_filter,
-      ". Please check PACTA results or pick another scenario_geography."
-    ))
-  }
-  invisible(data)
-}
 
 #' Remove rows from PACTA results that belong to company-sector combinations
 #' for which there is no positive production value in the relevant year of
@@ -69,15 +8,13 @@ is_scenario_geography_in_pacta_results <- function(data, scenario_geography_filt
 #' may arise e.g. because of unclear separation of the LDV and HDV sectors.
 #'
 #' @inheritParams calculate_annual_profits
-#' @inheritParams report_company_drops
 #' @param data tibble containing filtered PACTA results
 #'
 #' @return A tibble of data without rows with no exposure info
 #' @noRd
 remove_sectors_with_missing_production_end_of_forecast <- function(data,
                                                                    start_year,
-                                                                   time_horizon,
-                                                                   log_path) {
+                                                                   time_horizon) {
   n_companies_pre <- length(unique(data$company_name))
 
   companies_missing_sector_production <- data %>%
@@ -132,7 +69,6 @@ remove_sectors_with_missing_production_end_of_forecast <- function(data,
 #' calculate positive targets.
 #'
 #' @inheritParams calculate_annual_profits
-#' @inheritParams report_company_drops
 #' @param data tibble containing filtered PACTA results
 #'
 #' @return A tibble of data without rows with no exposure info
@@ -265,20 +201,7 @@ process_capacity_factors_power <- function(data,
     dplyr::filter(.data$scenario_geography %in% .env$scenario_geography_filter) %>%
     dplyr::filter(.data$ald_business_unit %in% .env$technologies) %>%
     dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
-    stop_if_empty(data_name = "Capacity Factors") %>%
-    check_level_availability(
-      data_name = "Capacity Factors",
-      expected_levels_list =
-        list(
-          year = start_year:end_year,
-          scenario = scenarios_filter,
-          scenario_geography = scenario_geography_filter,
-          ald_business_unit = technologies[grep("Cap", technologies)] # when checking for expected levels of ald_business_unit variable only expecte power sector levels
-        )
-    ) %>%
-    report_missing_col_combinations(col_names = c("scenario", "scenario_geography", "ald_business_unit", "year")) %>%
-    report_all_duplicate_kinds(composite_unique_cols = cuc_capacity_factors_power) %>%
-    report_missings(name_data = "capacity factors", throw_error = TRUE)
+    stop_if_empty(data_name = "Capacity Factors")
 
   return(data_processed)
 }
@@ -286,12 +209,12 @@ process_capacity_factors_power <- function(data,
 harmonise_cap_fac_geo_names <- function(data) {
   data <- data %>%
     # hardcoded adjustments are needed here for compatibility with P4I
-    dplyr::mutate(scenario_geography = gsub(" ", "", scenario_geography, fixed = TRUE)) %>%
+    dplyr::mutate(scenario_geography = gsub(" ", "", .data$scenario_geography, fixed = TRUE)) %>%
     dplyr::mutate(scenario_geography = dplyr::case_when(
-      scenario_geography == "EuropeanUnion" ~ "EU",
-      scenario_geography == "Non-OECD" ~ "NonOECD",
-      scenario_geography == "UnitedStates" ~ "US",
-      TRUE ~ scenario_geography
+      .data$scenario_geography == "EuropeanUnion" ~ "EU",
+      .data$scenario_geography == "Non-OECD" ~ "NonOECD",
+      .data$scenario_geography == "UnitedStates" ~ "US",
+      TRUE ~ .data$scenario_geography
     ))
   return(data)
 }
@@ -305,26 +228,12 @@ harmonise_cap_fac_geo_names <- function(data) {
 #' @noRd
 process_price_data <- function(data, technologies, sectors, start_year, end_year,
                                scenarios_filter) {
-
   data_processed <- data %>%
     dplyr::filter(.data$ald_sector %in% .env$sectors) %>%
     dplyr::filter(.data$ald_business_unit %in% .env$technologies) %>%
     dplyr::filter(.data$scenario %in% .env$scenarios_filter) %>%
     dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
     stop_if_empty(data_name = "Price Data") %>%
-    check_level_availability(
-      data_name = "Price Data",
-      expected_levels_list =
-        list(
-          year = start_year:end_year,
-          ald_sector = sectors,
-          ald_business_unit = technologies,
-          scenario = scenarios_filter
-        )
-    ) %>%
-    report_missing_col_combinations(col_names = c("scenario", "ald_business_unit", "year")) %>%
-    report_all_duplicate_kinds(composite_unique_cols = cuc_price_data) %>%
-    report_missings(name_data = "price data", throw_error = TRUE) %>%
     tidyr::pivot_wider(names_from = "scenario", values_from = "price", names_prefix = "price_")
 
   return(data_processed)
@@ -338,7 +247,6 @@ process_price_data <- function(data, technologies, sectors, start_year, end_year
 #' @noRd
 process_scenario_data <- function(data, start_year, end_year, sectors, technologies,
                                   scenario_geography_filter, scenarios_filter) {
-
   data_processed <- data %>%
     dplyr::filter(.data$scenario %in% .env$scenarios_filter) %>%
     dplyr::filter(.data$scenario_geography %in% .env$scenario_geography_filter) %>%
@@ -346,22 +254,7 @@ process_scenario_data <- function(data, start_year, end_year, sectors, technolog
     stop_if_empty(data_name = "Scenario Data") %>%
     dplyr::filter(.data$ald_business_unit %in% .env$technologies) %>%
     dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
-    stop_if_empty(data_name = "Scenario Data") %>%
-    check_level_availability(
-      data_name = "Scenario Data",
-      expected_levels_list =
-        list(
-          year = start_year:end_year,
-          ald_sector = sectors,
-          scenario = scenarios_filter,
-          scenario_geography = scenario_geography_filter,
-          ald_business_unit = technologies
-        )
-    ) %>%
-    report_missing_col_combinations(col_names = c("scenario", "scenario_geography", "ald_business_unit", "year")) %>%
-    report_all_duplicate_kinds(composite_unique_cols = cuc_scenario_data) %>%
-    report_missings(name_data = "scenario data", throw_error = TRUE)
-
+    stop_if_empty(data_name = "Scenario Data")
   return(data_processed)
 }
 
@@ -397,10 +290,7 @@ process_carbon_data <- function(data, start_year, end_year, carbon_price_model) 
 #' @noRd
 process_financial_data <- function(data) {
   data_processed <- data %>%
-    stop_if_empty(data_name = "Financial Data") %>%
-    check_financial_data() %>%
-    report_all_duplicate_kinds(composite_unique_cols = cuc_financial_data) %>%
-    report_missings(name_data = "financial data", throw_error = TRUE)
+    stop_if_empty(data_name = "Financial Data") 
 
   return(data_processed)
 }
@@ -408,15 +298,14 @@ process_financial_data <- function(data) {
 st_process <- function(data, scenario_geography, baseline_scenario,
                        shock_scenario, start_year, carbon_price_model,
                        log_path) {
-
   scenarios_filter <- c(baseline_scenario, shock_scenario)
 
   end_year <- get_end_year(data, scenarios_filter)
 
   sectors_and_technologies_list <- infer_sectors_and_technologies(
-    price_data=data$df_price,
-    scenario_data=data$scenario_data,
-    production_data=data$production_data,
+    price_data = data$df_price,
+    scenario_data = data$scenario_data,
+    production_data = data$production_data,
     baseline_scenario = baseline_scenario,
     shock_scenario = shock_scenario,
     scenario_geography = scenario_geography
@@ -510,8 +399,6 @@ st_process <- function(data, scenario_geography, baseline_scenario,
 
 #' Process data of type indicated by function name
 #'
-#' @inheritParams run_trisk
-#' @inheritParams report_company_drops
 #' @param data A tibble of data of type indicated by function name.
 #' @param start_year Numeric, holding start year of analysis.
 #' @param end_year Numeric, holding end year of analysis.
@@ -544,26 +431,7 @@ process_production_data <- function(data, start_year, end_year, time_horizon,
       time_horizon = time_horizon,
       log_path = log_path
     ) %>%
-    stop_if_empty(data_name = "Production Data") %>%
-    check_level_availability(
-      data_name = "Production Data",
-      expected_levels_list =
-        list(
-          year = start_year:(start_year + time_horizon),
-          scenario_geography = scenario_geography_filter,
-          ald_sector = sectors,
-          ald_business_unit = technologies
-        ),
-      throw_error = FALSE
-    ) %>%
-    report_missing_col_combinations(col_names = c("scenario_geography", "ald_business_unit", "year"))
-
-  # Commented for speed  improvement
-  # %>% report_all_duplicate_kinds(composite_unique_cols = cuc_production_data)
-
-  # checks that no missing values exist in the data
-  # Commented for speed improvement
-  # data_processed %>% report_missings(name_data = "production data", throw_error = TRUE)
+    stop_if_empty(data_name = "Production Data")
 
   return(data_processed)
 }
@@ -575,29 +443,27 @@ process_production_data <- function(data, start_year, end_year, time_horizon,
 #' @param scenarios_filter scenarios to use
 #'
 #' @return the end year
-get_end_year <- function(data, scenarios_filter){
-
+get_end_year <- function(data, scenarios_filter) {
   available_min_of_max_years <- dplyr::bind_rows(
     data$df_price %>%
       dplyr::distinct(.data$year, .data$scenario) %>%
       dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year=max(.data$year)),
+      dplyr::summarise(year = max(.data$year)),
     data$capacity_factors_power %>%
       dplyr::distinct(.data$year, .data$scenario) %>%
       dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year=max(.data$year)),
+      dplyr::summarise(year = max(.data$year)),
     data$scenario_data %>%
       dplyr::distinct(.data$year, .data$scenario) %>%
       dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year=max(.data$year))
+      dplyr::summarise(year = max(.data$year))
   ) %>%
     dplyr::group_by(.data$scenario) %>%
-    dplyr::summarise(year=min(.data$year)) %>%
+    dplyr::summarise(year = min(.data$year)) %>%
     dplyr::filter(.data$scenario %in% scenarios_filter) %>%
     dplyr::pull(.data$year)
 
   end_year <- min(MAX_POSSIBLE_YEAR, min(available_min_of_max_years))
 
   return(end_year)
-
 }
