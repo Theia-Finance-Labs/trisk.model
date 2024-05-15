@@ -4,24 +4,7 @@
 \alias{run_trisk}
 \title{Run stress testing for provided asset type.}
 \usage{
-run_trisk(
-  input_path,
-  output_path,
-  baseline_scenario = "WEO2021_STEPS",
-  shock_scenario = "WEO2021_SDS",
-  lgd = 0.45,
-  risk_free_rate = 0.02,
-  discount_rate = 0.07,
-  growth_rate = 0.03,
-  div_netprofit_prop_coef = 1,
-  shock_year = 2030,
-  scenario_geography = "Global",
-  start_year = 2022,
-  carbon_price_model = "no_carbon_tax",
-  market_passthrough = 0,
-  financial_stimulus = 1,
-  return_results = FALSE
-)
+run_trisk(input_path, output_path, return_results = FALSE, ...)
 }
 \arguments{
 \item{input_path}{String holding path to project agnostic data.}
@@ -30,48 +13,6 @@ run_trisk(
 NOTE: Results and logs per run are saved to a subdirectory of output_path
 that will be generated automatically. The name of the subdirectory is the
 timestamp of the run of the analysis.}
-
-\item{baseline_scenario}{Holds the name of the baseline scenario to be used
-in the stress test, for accepted value range check \code{stress_test_arguments}.}
-
-\item{shock_scenario}{Holds the name of the shock scenario to be used in the
-stress test, for accepted value range check \code{stress_test_arguments}.}
-
-\item{lgd}{Numeric, holding the loss given default for accepted value range
-check \code{stress_test_arguments}.}
-
-\item{risk_free_rate}{Numeric that indicates the risk free rate of interest.
-For accepted range compare \code{stress_test_arguments}.}
-
-\item{discount_rate}{Numeric, that holds the discount rate of dividends per
-year in the DCF. For accepted range compare \code{stress_test_arguments}.}
-
-\item{growth_rate}{Numeric, that holds the terminal growth rate of profits
-beyond the final year in the DCF. For accepted range compare
-\code{stress_test_arguments}.}
-
-\item{div_netprofit_prop_coef}{Numeric. A coefficient that determines how
-strongly the future dividends propagate to the company value. For accepted
-range compare \code{stress_test_arguments}.}
-
-\item{shock_year}{Numeric, holding year the shock is applied. For accepted
-range compare \code{stress_test_arguments}.}
-
-\item{scenario_geography}{Character vector, indicating which geographical
-region(s) (concerning asset location) results shall be calculated for. For
-accepted values compare \code{stress_test_arguments}.}
-
-\item{start_year}{Numeric, first year in the analysis used as the starting
-point from which production forecasts are compared against scenario targets.
-Must be available in the production data and indicates the first year of
-the scenario data.}
-
-\item{carbon_price_model}{Character vector, indicating which NGFS model is used in regards to
-carbon prices. Default is no carbon tax.}
-
-\item{market_passthrough}{Firm's ability to pass carbon tax onto the consumer}
-
-\item{financial_stimulus}{Additional support for low carbon companies.}
 
 \item{return_results}{Boolean, indicating if results shall be exported.}
 }

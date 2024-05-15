@@ -34,8 +34,6 @@ late & sudden ald_business_unit trajectories.}
 \item{end_year}{Numeric, holding end year of analysis.}
 
 \item{time_horizon}{Considered timeframe for PACTA analysis.}
-
-\item{log_path}{String holding path to log file.}
 }
 \value{
 A tibble holding annual profits

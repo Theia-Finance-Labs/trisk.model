@@ -15,24 +15,7 @@ company_technology_asset_value_at_risk <- function(data,
                                                    div_netprofit_prop_coef = NULL,
                                                    flat_multiplier = NULL,
                                                    crispy = FALSE) {
-  force(data)
-  shock_scenario %||% stop("Must provide input for 'shock_scenario'", call. = FALSE)
-  div_netprofit_prop_coef %||% stop("Must provide input for 'div_netprofit_prop_coef'", call. = FALSE)
-
-  validate_data_has_expected_cols(
-    data = data,
-    expected_columns = c(
-      "company_id", "year", "scenario_geography", "ald_sector", "ald_business_unit",
-      "discounted_net_profit_ls", "discounted_net_profit_baseline"
-    )
-  )
-  validate_data_has_expected_cols(
-    data = shock_scenario,
-    expected_columns = c(
-      "scenario_name", "year_of_shock", "duration_of_shock"
-    )
-  )
-
+                                                    
   data <- data %>%
     dplyr::filter(
       .data$year >= shock_scenario$year_of_shock,

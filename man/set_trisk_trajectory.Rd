@@ -41,8 +41,6 @@ end year of the analysis.}
 
 \item{analysis_time_frame}{Numeric. A vector of length 1 indicating the number
 of years for which forward looking production data is considered.}
-
-\item{log_path}{String holding path to log file.}
 }
 \value{
 data frame

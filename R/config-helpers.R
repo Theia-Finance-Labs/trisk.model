@@ -6,11 +6,10 @@
 #' @return scenario_geography_x_ald_sector
 #' @export
 #'
-get_scenario_geography_x_ald_sector <- function(st_input_folder, whitelist_sectors=NULL) {
-
-  capacity_factors_power = read_capacity_factors_power(capacity_factor_file(st_input_folder))
-  df_price = read_price_data(price_data_file(st_input_folder))
-  scenario_data = read_scenario_data(scenario_data_file(st_input_folder))
+get_scenario_geography_x_ald_sector <- function(st_input_folder, whitelist_sectors = NULL) {
+  capacity_factors_power = read_capacity_factors_power(file.path(dir, capacity_factor_file))
+  df_price = read_price_data(file.path(dir, price_data_file))
+  scenario_data = read_scenario_data(file.path(dir, scenario_data_file))
 
   scenario_data_available <- scenario_data %>%
     dplyr::distinct(.data$scenario, .data$ald_sector, .data$scenario_geography, .data$scenario_type)
@@ -18,7 +17,7 @@ get_scenario_geography_x_ald_sector <- function(st_input_folder, whitelist_secto
   price_data_available <- df_price %>%
     dplyr::distinct(.data$scenario, .data$ald_sector)
 
-  scenario_geography_x_ald_sector <- dplyr::inner_join(price_data_available,scenario_data_available)
+  scenario_geography_x_ald_sector <- dplyr::inner_join(price_data_available, scenario_data_available)
 
 
   capacity_factor_available <- capacity_factors_power %>%
@@ -31,7 +30,7 @@ get_scenario_geography_x_ald_sector <- function(st_input_folder, whitelist_secto
     scenario_geography_x_ald_sector %>% dplyr::filter(.data$ald_sector != "Power")
   )
 
-  if (!is.null(whitelist_sectors)){
+  if (!is.null(whitelist_sectors)) {
     scenario_geography_x_ald_sector <- scenario_geography_x_ald_sector |>
       dplyr::filter(.data$ald_sector %in% whitelist_sectors)
   }
@@ -48,7 +47,8 @@ get_scenario_geography_x_ald_sector <- function(st_input_folder, whitelist_secto
     dplyr::inner_join(
       baseline_df, shock_df,
       by = c("ald_sector", "scenario_geography", "scenario_prefix"),
-      suffix = c("_baseline", "_shock")) |>
+      suffix = c("_baseline", "_shock")
+    ) |>
     dplyr::select(
       .data$ald_sector,
       .data$scenario_geography,

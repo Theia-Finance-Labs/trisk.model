@@ -11,25 +11,6 @@
 
 convert_cap_to_generation <- function(data,
                                       capacity_factors_power = NULL) {
-  force(data)
-  capacity_factors_power %||% stop("Must provide input for 'capacity_factors_power'", call. = FALSE)
-
-  validate_data_has_expected_cols(
-    data = data,
-    expected_columns = c(
-      "year", "investor_name", "portfolio_name", "equity_market", "ald_sector",
-      "ald_business_unit", "scenario", "allocation", "scenario_geography",
-      "plan_tech_prod", "plan_carsten", "scen_tech_prod", "plan_sec_prod",
-      "plan_sec_carsten", "company_id", "company_name"
-    )
-  )
-
-  validate_data_has_expected_cols(
-    data = capacity_factors_power,
-    expected_columns = c(
-      "ald_business_unit", "capacity_factor", "scenario_geography"
-    )
-  )
 
   # ADO 1945 - Left join is applied since only rows in data from ald_sector
   # power will have matching rows in capacity_factors_power
@@ -81,32 +62,6 @@ convert_power_cap_to_generation <- function(data,
                                             capacity_factors_power = NULL,
                                             baseline_scenario,
                                             target_scenario) {
-  force(data)
-  capacity_factors_power %||% stop("Must provide input for 'capacity_factors_power'", call. = FALSE)
-
-  validate_data_has_expected_cols(
-    data = data,
-    expected_columns = c(
-      "year", "ald_sector", "ald_business_unit", "scenario_geography", "plan_tech_prod",
-      baseline_scenario, target_scenario, "company_id", "company_name"
-    )
-  )
-
-  validate_data_has_expected_cols(
-    data = capacity_factors_power,
-    expected_columns = c(
-      "ald_business_unit", "capacity_factor", "scenario_geography", "year", "scenario"
-    )
-  )
-
-  # ensure required scenarios for planned capacity and scenario capacity are given
-  if (
-    !baseline_scenario %in% unique(capacity_factors_power$scenario) |
-      !target_scenario %in% unique(capacity_factors_power$scenario)
-  ) {
-    stop(glue::glue("At least one input scenario from {baseline_scenario} or
-                    {target_scenario} is missing in power capacity factor data."))
-  }
 
   capacity_factors_power <- capacity_factors_power %>%
     dplyr::filter(.data$scenario %in% c(baseline_scenario, target_scenario)) %>%
