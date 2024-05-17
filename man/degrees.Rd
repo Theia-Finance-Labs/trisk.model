@@ -13,8 +13,8 @@ A string.
 Insert the symbol for degrees
 }
 \examples{
-r2dii.climate.stress.test:::degrees()
-glue::glue("2{r2dii.climate.stress.test:::degrees()} Investing Initiative")
+trisk.model:::degrees()
+glue::glue("2{trisk.model:::degrees()} Investing Initiative")
 }
 \seealso{
 Other miscellaneous utility functions: 

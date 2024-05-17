@@ -21,7 +21,7 @@ conveniently access stress test related files in the directory set via envvar
 or options
 }
 \examples{
-r2dii.climate.stress.test:::data_path()
+trisk.model:::data_path()
 }
 \seealso{
 Other miscellaneous utility functions: 

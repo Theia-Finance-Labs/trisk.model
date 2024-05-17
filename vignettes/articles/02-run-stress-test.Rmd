@@ -20,10 +20,10 @@ In order to keep this vignette concise, we assume the following has been set up:
 
 1. R and RStudio are installed.
 2. All required R packages are installed, specifically
-`r2dii.climate.stress.test`. Note that this may require installing additional
+`trisk.model`. Note that this may require installing additional
 packages. You will be prompted to install these in case any are missing.
 3. The input files are organized in a folder structure consistent with the one
-described in the vignette [Set up project directories](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/01-setup-project-directories.html).
+described in the vignette [Set up project directories](https://2degreesinvesting.github.io/trisk.model/articles/articles/01-setup-project-directories.html).
 
 
 ## Running the Analysis
@@ -36,7 +36,7 @@ all other arguments get one input value each. We will look at both cases.
 Use `library()` to attach the package
 
 ```{r setup}
-library(r2dii.climate.stress.test)
+library(trisk.model)
 ```
 
 ## Running the Stress Test for one scenario
@@ -67,7 +67,7 @@ We find this is the easiest and most user friendly way to obtain results. We alt
 a list holding the result objects by setting the argument `return results` to TRUE . This allows the user to inspect and further analyze the data directly in R.
 
 ## Available scenario geopgrahies and sectors 
-The r2dii.climate.stress.test currently supports a number of scenario geographies 
+The trisk.model currently supports a number of scenario geographies 
 and four of the PACTA for Banks sectors of company production. They are the following:
 
 ```{r, eval = FALSE}
@@ -158,7 +158,7 @@ location) results shall be calculated for.
 terms for companies as configured in company_terms.csv shall be used instead of
 fallback as provided in `fallback_term`. The default is FALSE. For more details
 compare ["Advanced data
-settings"](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/04-advanced-data-settings.html).
+settings"](https://2degreesinvesting.github.io/trisk.model/articles/articles/04-advanced-data-settings.html).
 * `return_results` Logical parameter that indicates if the outputs of the
 analysis should be directly written to the indicated output path or simply
 returned as a list of results within the running session. The default is FALSE,
@@ -268,4 +268,4 @@ given calculation.
 ## Interpretation of the output files
 
 Detailed explanations of the result files can be found in the vignette:
-[Understand the output files of the transition risk stress test](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/04-read-the-outputs.html).
+[Understand the output files of the transition risk stress test](https://2degreesinvesting.github.io/trisk.model/articles/articles/04-read-the-outputs.html).

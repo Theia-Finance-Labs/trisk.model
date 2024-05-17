@@ -20,15 +20,15 @@ In order to keep this vignette concise, we assume the following has been set up:
 
 1. R and RStudio are installed.
 2. All required R packages are installed, specifically
-`r2dii.climate.stress.test`. Note that this may require installing additional
+`trisk.model`. Note that this may require installing additional
 packages. You will be prompted to install these in case any are missing.
 3. The input files are organized in a folder structure consistent with the one
-described in the vignette [Set up project directories](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/01-setup-project-directories.html).
+described in the vignette [Set up project directories](https://2degreesinvesting.github.io/trisk.model/articles/articles/01-setup-project-directories.html).
 
 ## Prerequisites
 In order to keep this vignette concise, we assume that you have successfully
 completed all preparation steps described in the vignettes [Set up project
-directories](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/01-setup-project-directories.html).
+directories](https://2degreesinvesting.github.io/trisk.model/articles/articles/01-setup-project-directories.html).
 
 
 ## Financial data
@@ -62,14 +62,14 @@ or larger than 0.
 
 In column `company_name` include all unique company names from
 `Loans_results_company.rda`, which you generated in [prepare loans
-inputs](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/02-prepare-loans-inputs.html).
+inputs](https://2degreesinvesting.github.io/trisk.model/articles/articles/02-prepare-loans-inputs.html).
 Running the following code will generate a dataset with all required columns.
 Column `campany_name` includes the unique company names, `company_id` includes a
 placeholder id, all other columns are empty.
 
 ```{r, eval = FALSE}
 library(readr)
-library(r2dii.climate.stress.test)
+library(trisk.model)
 
 loans_results_company_file_path <- file.path("/example_project/project_specific_input", "Loans_results_company.rda")
 validate_file_exists(loans_results_company_file_path)
@@ -100,7 +100,7 @@ by executing the following lines of code. You will receive warning/error
 messages in case problems are detected.
 ```{r, eval = FALSE}
 library(readr)
-library(r2dii.climate.stress.test)
+library(trisk.model)
 
 financial_data_path <- file.path(
   "/example_project/project_agnostic_input",
@@ -119,9 +119,9 @@ in
 * `project_agnostic_input/`  
     
 as set up in [Set up project
-directories](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/01-setup-project-directories.html).
+directories](https://2degreesinvesting.github.io/trisk.model/articles/articles/01-setup-project-directories.html).
 If the respective dataset as provided by 2DII already exists there make sure to 
 replace it with your custom file.
 
 ### Running the Stress Test with provided financial data
-You can now run the stress test as described in vignette [Run stress test](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/02-run-stress-test.html).
+You can now run the stress test as described in vignette [Run stress test](https://2degreesinvesting.github.io/trisk.model/articles/articles/02-run-stress-test.html).

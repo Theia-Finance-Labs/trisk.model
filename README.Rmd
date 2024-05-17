@@ -12,14 +12,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-# r2dii.climate.stress.test <a href='https://github.com/2DegreesInvesting/r2dii.climate.stress.test'><img src='https://imgur.com/A5ASZPE.png' align='right' height='43' /></a>
+# trisk.model <a href='https://github.com/2DegreesInvesting/trisk.model'><img src='https://imgur.com/A5ASZPE.png' align='right' height='43' /></a>
 
 <!-- badges: start -->
 [![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![R-CMD-check](https://github.com/2DegreesInvesting/r2dii.climate.stress.test/workflows/R-CMD-check/badge.svg)](https://github.com/2DegreesInvesting/r2dii.climate.stress.test/actions)
+[![R-CMD-check](https://github.com/2DegreesInvesting/trisk.model/workflows/R-CMD-check/badge.svg)](https://github.com/2DegreesInvesting/trisk.model/actions)
 <!-- badges: end -->
 
-The goal of r2dii.climate.stress.test is to provide a tool that can be used to
+The goal of trisk.model is to provide a tool that can be used to
 conduct what-if climate stress test analyses for financial institutions,
 supervisors, regulators and other stakeholders. The tool aims at highlighting
 potential financial risk in especially climate relevant sectors, split by
@@ -33,21 +33,21 @@ a pilot of the stress test in cooperation with 2DII, please contact
 
 ## Prerequisites
 
-We assume the user has successfully run at least the matching part of PACTA for Banks to produce the relevant project-specific raw input files. For a complete overview of the necessary prerequisites (including technical setup) please see [Prerequisites](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/00-prerequisites.html).
+We assume the user has successfully run at least the matching part of PACTA for Banks to produce the relevant project-specific raw input files. For a complete overview of the necessary prerequisites (including technical setup) please see [Prerequisites](https://2degreesinvesting.github.io/trisk.model/articles/articles/00-prerequisites.html).
 
 ## Installation
 
-Install the development version of r2dii.climate.stress.test from GitHub with:
+Install the development version of trisk.model from GitHub with:
 
 ```r
 # install.packages("devtools")
-devtools::install_github("2DegreesInvesting/r2dii.climate.stress.test")
+devtools::install_github("2DegreesInvesting/trisk.model")
 ```
 
 ## Example
 * Use `library()` to attach the package
 ```{r}
-library(r2dii.climate.stress.test)
+library(trisk.model)
 ```
 
 * Run climate stress tests
@@ -75,7 +75,7 @@ To actually run an analysis...
 * the detailed options available for running the functions ought to be understood.
 
 Detailed information for all these steps and on interpreting the outcomes can be
-found in the articles linked [here](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/).
+found in the articles linked [here](https://2degreesinvesting.github.io/trisk.model/articles/).
 
 ## Funding
 The development of the stress test methodology and the technical software

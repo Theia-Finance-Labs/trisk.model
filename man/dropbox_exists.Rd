@@ -13,7 +13,7 @@ Logical.
 Does this computer have a local copy of 2dii's dropbox folder?
 }
 \examples{
-r2dii.climate.stress.test:::dropbox_exists()
+trisk.model:::dropbox_exists()
 }
 \seealso{
 Other miscellaneous utility functions: 

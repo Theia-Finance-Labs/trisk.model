@@ -1,4 +1,4 @@
 library(testthat)
-library(r2dii.climate.stress.test)
+library(trisk.model)
 
-test_check("r2dii.climate.stress.test")
+test_check("trisk.model")

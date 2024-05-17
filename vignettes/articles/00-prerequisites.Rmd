@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette describes the necessary prerequisites for installing `r2dii.climate.stress.test` and performing the stress testing analysis.
+This vignette describes the necessary prerequisites for installing `trisk.model` and performing the stress testing analysis.
 
 ## Hardware requirements
 
@@ -66,8 +66,8 @@ After successfully completing the prerequisites, see the README on how to
 install the package followed by the below-mentioned vignettes on how to run 
 the analysis:
 
-* [README document with installation procedure](https://2degreesinvesting.github.io/r2dii.climate.stress.test/index.html)
-* [Set up project directories for climate transition risk stress test](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/01-setup-project-directories.html)
+* [README document with installation procedure](https://2degreesinvesting.github.io/trisk.model/index.html)
+* [Set up project directories for climate transition risk stress test](https://2degreesinvesting.github.io/trisk.model/articles/articles/01-setup-project-directories.html)
 
 ### Is the 1in1000 model suite ran for you by 2DII ? 
-*  [Read and understand the output of the  1in1000 model suite  ](https://2degreesinvesting.github.io/r2dii.climate.stress.test/articles/articles/04-setup-project-directories.html)
+*  [Read and understand the output of the  1in1000 model suite  ](https://2degreesinvesting.github.io/trisk.model/articles/articles/04-setup-project-directories.html)
