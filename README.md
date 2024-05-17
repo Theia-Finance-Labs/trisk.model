@@ -31,12 +31,12 @@ technical setup) please see
 
 ## Installation
 
-Install the development version of r2dii.climate.stress.test from GitHub
+Install the development version of trisk.model from GitHub
 with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("2DegreesInvesting/r2dii.climate.stress.test")
+devtools::install_github("Theia-Finance-Labs/trisk.model")
 ```
 
 ## Example
@@ -44,7 +44,7 @@ devtools::install_github("2DegreesInvesting/r2dii.climate.stress.test")
 - Use `library()` to attach the package
 
 ``` r
-library(r2dii.climate.stress.test)
+library(trisk.model)
 ```
 
 - Run climate stress tests
