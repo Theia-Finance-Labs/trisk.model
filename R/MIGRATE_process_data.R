@@ -1,5 +1,3 @@
-
-
 #' Remove rows from PACTA results that belong to company-sector combinations
 #' for which there is no positive production value in the relevant year of
 #' exposure (last year of forecast). This handles the edge case that a company
@@ -142,7 +140,6 @@ remove_high_carbon_tech_with_missing_production <- function(data,
 
     percent_affected_companies <- (length(unique(affected_company_sector_tech_overview$company_name)) * 100) / length(unique(data$company_name))
     affected_companies <- affected_company_sector_tech_overview$company_name
-
   }
 
   return(data_filtered)
@@ -255,7 +252,7 @@ process_carbon_data <- function(data, start_year, end_year, carbon_price_model) 
 #' @noRd
 process_financial_data <- function(data) {
   data_processed <- data %>%
-    stop_if_empty(data_name = "Financial Data") 
+    stop_if_empty(data_name = "Financial Data")
 
   return(data_processed)
 }
@@ -265,7 +262,7 @@ st_process <- function(data, scenario_geography, baseline_scenario,
   scenarios_filter <- c(baseline_scenario, shock_scenario)
 
   end_year <- get_end_year(data, scenarios_filter)
-  start_year=2022
+  start_year <- 2022
 
   sectors_and_technologies_list <- infer_sectors_and_technologies(
     price_data = data$df_price,

@@ -21,7 +21,6 @@ calculate_trisk_trajectory <- function(input_data_list,
                                        start_year,
                                        end_year,
                                        time_horizon) {
-                                        
   production_data <- input_data_list$production_data %>%
     set_baseline_trajectory(
       baseline_scenario = baseline_scenario
@@ -31,7 +30,7 @@ calculate_trisk_trajectory <- function(input_data_list,
       target_scenario_aligned = target_scenario,
       start_year = start_year,
       end_year = end_year,
-      shock_year=shock_year,
+      shock_year = shock_year,
       analysis_time_frame = time_horizon
     )
 
@@ -40,7 +39,7 @@ calculate_trisk_trajectory <- function(input_data_list,
       baseline_scenario = baseline_scenario,
       target_scenario = target_scenario,
       start_year = start_year,
-      shock_year=shock_year
+      shock_year = shock_year
     )
 
   full_trajectory <- production_data %>%

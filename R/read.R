@@ -1,13 +1,11 @@
 st_read_agnostic <- function(
     dir,
-    capacity_factor_file="prewrangled_capacity_factors.csv",
-    price_data_file="price_data_long.csv",
-    scenario_data_file="Scenarios_AnalysisInput.csv",
-    financial_data_file="prewrangled_financial_data_stress_test.csv", 
-    production_data_file="abcd_stress_test_input.csv", 
-    carbon_price_data_file="ngfs_carbon_price.csv"
-    ) {
-
+    capacity_factor_file = "prewrangled_capacity_factors.csv",
+    price_data_file = "price_data_long.csv",
+    scenario_data_file = "Scenarios_AnalysisInput.csv",
+    financial_data_file = "prewrangled_financial_data_stress_test.csv",
+    production_data_file = "abcd_stress_test_input.csv",
+    carbon_price_data_file = "ngfs_carbon_price.csv") {
   out <- list(
     capacity_factors_power = read_capacity_factors_power(file.path(dir, capacity_factor_file)),
     df_price = read_price_data(file.path(dir, price_data_file)),
@@ -88,8 +86,8 @@ read_financial_data <- function(path = NULL) {
         volatility = "d"
       )
     )
-    
-  check_valid_financial_data_values(data) #TODO move to DBT
+
+  check_valid_financial_data_values(data) # TODO move to DBT
   return(data)
 }
 

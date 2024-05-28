@@ -17,7 +17,6 @@ calculate_pd_change_overall <- function(data,
                                         shock_year = NULL,
                                         end_of_analysis = NULL,
                                         risk_free_interest_rate = NULL) {
-                                          
   data <- data %>%
     dplyr::filter(.data$year >= .env$shock_year) %>%
     dplyr::group_by(

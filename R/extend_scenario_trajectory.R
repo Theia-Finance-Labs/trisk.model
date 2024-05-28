@@ -256,7 +256,7 @@ handle_phase_out_and_negative_targets <- function(data) {
 #'
 #' @noRd
 calculate_proximity_to_target <- function(data,
-                                          start_analysis=2022,
+                                          start_analysis = 2022,
                                           time_frame,
                                           target_scenario) {
   production_changes <- data %>%

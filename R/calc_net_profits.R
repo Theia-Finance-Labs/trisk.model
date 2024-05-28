@@ -27,7 +27,6 @@ calculate_net_profits <- function(data,
                                   shock_year,
                                   market_passthrough,
                                   financial_stimulus) {
-                                    
   baseline <- calculate_net_profits_baseline(data) %>%
     dplyr::select(
       .data$company_id,
@@ -85,7 +84,6 @@ calculate_net_profits <- function(data,
 
 calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, shock_year,
                                                                           carbon_data, market_passthrough) {
-  
   carbon_data$carbon_tax <- ifelse(
     carbon_data$scenario == "increasing_carbon_tax_50" & carbon_data$year < shock_year, 0,
     ifelse(

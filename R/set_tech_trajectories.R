@@ -138,7 +138,7 @@ set_trisk_trajectory <- function(data,
     )
 
 
-  
+
 
   data <- data %>%
     dplyr::group_by(

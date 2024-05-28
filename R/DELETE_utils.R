@@ -1,4 +1,3 @@
-
 #' Infer supported sectors and technologies
 #'
 #' Function returns supported sectors and technologies for provided combination
@@ -157,4 +156,3 @@ stop_if_empty <- function(data, data_name) {
   }
   return(invisible(data))
 }
-

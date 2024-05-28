@@ -11,7 +11,6 @@
 
 convert_cap_to_generation <- function(data,
                                       capacity_factors_power = NULL) {
-
   # ADO 1945 - Left join is applied since only rows in data from ald_sector
   # power will have matching rows in capacity_factors_power
   data <- data %>%
@@ -62,7 +61,6 @@ convert_power_cap_to_generation <- function(data,
                                             capacity_factors_power = NULL,
                                             baseline_scenario,
                                             target_scenario) {
-
   capacity_factors_power <- capacity_factors_power %>%
     dplyr::filter(.data$scenario %in% c(baseline_scenario, target_scenario)) %>%
     tidyr::pivot_wider(

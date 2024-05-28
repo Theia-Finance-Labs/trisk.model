@@ -7,13 +7,13 @@
 #' @export
 #'
 get_scenario_geography_x_ald_sector <- function(st_input_folder, whitelist_sectors = NULL) {
-  capacity_factor_file="prewrangled_capacity_factors.csv"
-      price_data_file="price_data_long.csv"
-    scenario_data_file="Scenarios_AnalysisInput.csv"
+  capacity_factor_file <- "prewrangled_capacity_factors.csv"
+  price_data_file <- "price_data_long.csv"
+  scenario_data_file <- "Scenarios_AnalysisInput.csv"
 
-  capacity_factors_power = read_capacity_factors_power(file.path(st_input_folder, capacity_factor_file))
-  df_price = read_price_data(file.path(st_input_folder, price_data_file))
-  scenario_data = read_scenario_data(file.path(st_input_folder, scenario_data_file))
+  capacity_factors_power <- read_capacity_factors_power(file.path(st_input_folder, capacity_factor_file))
+  df_price <- read_price_data(file.path(st_input_folder, price_data_file))
+  scenario_data <- read_scenario_data(file.path(st_input_folder, scenario_data_file))
 
   scenario_data_available <- scenario_data %>%
     dplyr::distinct(.data$scenario, .data$ald_sector, .data$scenario_geography, .data$scenario_type)
