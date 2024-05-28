@@ -8,8 +8,8 @@ calc_scenario_prices(
   price_data,
   baseline_scenario,
   target_scenario,
-  transition_scenario,
-  start_year
+  start_year,
+  shock_year
 )
 }
 \arguments{
@@ -19,10 +19,10 @@ calc_scenario_prices(
 
 \item{target_scenario}{String holding name of the target scenario.}
 
+\item{start_year}{Start_year of analysis}
+
 \item{transition_scenario}{Tibble with 1 row holding at least variables
 \code{year_of_shock} and \code{duration_of_shock}.}
-
-\item{start_year}{Start_year of analysis}
 }
 \value{
 A tibble holding late_and_sudden_prices

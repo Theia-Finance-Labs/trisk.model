@@ -45,10 +45,10 @@ calculate_annual_profits <- function(data,
 fill_annual_profit_cols <- function(annual_profits) {
   annual_profits_filled <- annual_profits %>%
     dplyr::arrange(
-      .data$scenario_name, .data$scenario_geography, .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit, .data$year
+      .data$scenario_geography, .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit, .data$year
     ) %>%
     dplyr::group_by(
-      .data$scenario_name, .data$scenario_geography, .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit
+      .data$scenario_geography, .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit
     ) %>%
     # NOTE: this assumes emissions factors stay constant after forecast and prod not continued
     tidyr::fill(

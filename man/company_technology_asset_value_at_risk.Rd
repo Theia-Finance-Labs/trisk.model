@@ -7,7 +7,7 @@ temporarily other asset types) on the company-ald_business_unit level}
 \usage{
 company_technology_asset_value_at_risk(
   data,
-  shock_scenario = NULL,
+  shock_year,
   div_netprofit_prop_coef = NULL,
   flat_multiplier = NULL,
   crispy = FALSE
@@ -15,9 +15,6 @@ company_technology_asset_value_at_risk(
 }
 \arguments{
 \item{data}{A dataframe containing the (discounted) annual profits}
-
-\item{shock_scenario}{A dataframe containing the specification of the
-shock scenario at hand}
 
 \item{div_netprofit_prop_coef}{Numeric. A coefficient that determines how
 strongly the future dividends propagate to the company value}
@@ -27,6 +24,9 @@ if how strongly the DCF should propagate to value changes.}
 
 \item{crispy}{Boolean. Indicates if the output should be used for the CRISPY
 database or for standard portfolio calculation (default).}
+
+\item{shock_scenario}{A dataframe containing the specification of the
+shock scenario at hand}
 }
 \description{
 Calculate percentage value change between scenarios for equity (and

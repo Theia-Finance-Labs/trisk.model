@@ -11,8 +11,7 @@ process_production_data(
   time_horizon,
   scenario_geography_filter,
   sectors,
-  technologies,
-  log_path
+  technologies
 )
 }
 \arguments{

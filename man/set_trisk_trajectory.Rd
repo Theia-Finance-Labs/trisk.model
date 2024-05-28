@@ -8,12 +8,11 @@ stress test.}
 set_trisk_trajectory(
   data,
   target_scenario,
-  shock_scenario,
+  shock_year,
   target_scenario_aligned,
   start_year,
   end_year,
-  analysis_time_frame,
-  log_path
+  analysis_time_frame
 )
 }
 \arguments{
@@ -23,10 +22,6 @@ step after the baseline trajectories are calculated.}
 \item{target_scenario}{Character. A string that indicates which
 of the scenarios included in the analysis should be used to set the
 late & sudden ald_business_unit trajectories.}
-
-\item{shock_scenario}{A dataframe that contains information about the
-transition scenario, specifically the shock year and, duration of the
-shock and the name of the shock scenario}
 
 \item{target_scenario_aligned}{Character. A string that indicates which
 of the scenarios included in the analysis should be used to set the
@@ -41,6 +36,10 @@ end year of the analysis.}
 
 \item{analysis_time_frame}{Numeric. A vector of length 1 indicating the number
 of years for which forward looking production data is considered.}
+
+\item{shock_scenario}{A dataframe that contains information about the
+transition scenario, specifically the shock year and, duration of the
+shock and the name of the shock scenario}
 }
 \value{
 data frame

@@ -10,8 +10,7 @@ calculate_annual_profits(
   shock_scenario,
   end_year,
   discount_rate,
-  growth_rate,
-  log_path
+  growth_rate
 )
 }
 \arguments{

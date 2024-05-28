@@ -88,8 +88,36 @@ read_financial_data <- function(path = NULL) {
         volatility = "d"
       )
     )
-
+    
+  check_valid_financial_data_values(data) #TODO move to DBT
   return(data)
+}
+
+
+#' Check if values in financial data are plausible
+#'
+#' Checks that numeric columns hold values in acceptable ranges.
+#'
+#' @inheritParams check_financial_data
+#'
+#' @return NULL
+check_valid_financial_data_values <- function(financial_data) {
+  if (any(financial_data$pd < 0 | financial_data$pd >= 1)) {
+    stop("Implausibe value(s) < 0 or >= 1 for pd detected. Please check.")
+  }
+
+  if (any(financial_data$net_profit_margin <= 0 | financial_data$net_profit_margin > 1)) {
+    stop("Implausibe value(s) <= 0 or > 1 for net_profit_margin detected. Please check.")
+  }
+
+
+  if (any(financial_data$debt_equity_ratio < 0)) {
+    stop("Implausibe value(s) < 0 for debt_equity_ratio detected. Please check.")
+  }
+
+  if (any(financial_data$volatility < 0)) {
+    stop("Implausibe value(s) < 0 for volatility detected. Please check.")
+  }
 }
 
 #' Read in price data
@@ -196,4 +224,56 @@ read_scenario_data <- function(path) {
   )
 
   return(scenario_data)
+}
+
+
+
+#' Validate that a file exists in a given directory
+#'
+#' Before performing an operation on a file assumed to be found in a given
+#' directory, validate this file exists and give indicative error if not.
+#'
+#' @param path Character vector indicating the directory of a file.
+#'
+#' @return String holding provided `path`.
+#' @export
+validate_file_exists <- function(path) {
+  valid_file_path <- file.exists(path)
+
+  if (!valid_file_path) {
+    rlang::abort(c(
+      "Path must point to an existing file.",
+      x = glue::glue("Invalid file path: {file.path(path)}."),
+      i = "Did you set path to data correctly?."
+    ))
+  }
+  invisible(path)
+}
+
+#' Validate that a data frame contains expected columns
+#'
+#' Validate that all expected columns for an operation are given in a data frame.
+#'
+#' @param data data frame that is to be validated
+#' @param expected_columns Character vector listing the expected columns
+#'
+#' @return NULL
+#' @export
+validate_data_has_expected_cols <- function(data,
+                                            expected_columns) {
+  stopifnot(rlang::is_named(data))
+  stopifnot(is.character(expected_columns))
+
+  data_has_expected_columns <-
+    all(expected_columns %in% colnames(data))
+
+  if (!data_has_expected_columns) {
+    affected_cols <- glue::glue_collapse(sort(setdiff(expected_columns, names(data))), sep = ", ")
+    rlang::abort(c(
+      "Must include expected columns in data set.",
+      x = glue::glue("Missing columns: {affected_cols}."),
+      i = "Please check that data have expected columns."
+    ))
+  }
+  invisible()
 }

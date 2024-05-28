@@ -45,16 +45,6 @@ remove_sectors_with_missing_production_end_of_forecast <- function(data,
         data_filtered$company_name
       )
     )
-    paste_write(
-      format_indent_1(), "When filtering out holdings with 0 production in relevant sector, dropped rows for",
-      n_companies_pre - n_companies_post, "out of", n_companies_pre, "companies",
-      log_path = log_path
-    )
-    paste_write(format_indent_2(), "percent loss:", percent_loss, log_path = log_path)
-    paste_write(format_indent_2(), "affected companies:", log_path = log_path)
-    purrr::walk(affected_companies, function(company) {
-      paste_write(format_indent_2(), company, log_path = log_path)
-    })
   }
 
 
@@ -74,8 +64,7 @@ remove_sectors_with_missing_production_end_of_forecast <- function(data,
 #' @return A tibble of data without rows with no exposure info
 #' @noRd
 remove_sectors_with_missing_production_start_year <- function(data,
-                                                              start_year,
-                                                              log_path) {
+                                                              start_year) {
   n_companies_pre <- length(unique(data$company_name))
 
   companies_missing_sector_production_start_year <- data %>%
@@ -106,17 +95,6 @@ remove_sectors_with_missing_production_start_year <- function(data,
         data_filtered$company_name
       )
     )
-    paste_write(
-      format_indent_1(), "When filtering out holdings with 0 production in
-      relevant sector in the start year of the analysis, dropped rows for",
-      n_companies_pre - n_companies_post, "out of", n_companies_pre, "companies",
-      log_path = log_path
-    )
-    paste_write(format_indent_2(), "percent loss:", percent_loss, log_path = log_path)
-    paste_write(format_indent_2(), "affected companies:", log_path = log_path)
-    purrr::walk(affected_companies, function(company) {
-      paste_write(format_indent_2(), company, log_path = log_path)
-    })
   }
 
 
@@ -137,8 +115,7 @@ remove_sectors_with_missing_production_start_year <- function(data,
 #' @noRd
 remove_high_carbon_tech_with_missing_production <- function(data,
                                                             start_year,
-                                                            time_horizon,
-                                                            log_path) {
+                                                            time_horizonlog_path) {
   companies_missing_high_carbon_tech_production <- data %>%
     dplyr::filter(.data$ald_business_unit %in% high_carbon_tech_lookup) %>%
     dplyr::group_by(
@@ -166,18 +143,6 @@ remove_high_carbon_tech_with_missing_production <- function(data,
     percent_affected_companies <- (length(unique(affected_company_sector_tech_overview$company_name)) * 100) / length(unique(data$company_name))
     affected_companies <- affected_company_sector_tech_overview$company_name
 
-    paste_write(
-      format_indent_1(), "When filtering out holdings with 0 production in given high-carbon ald_business_unit, dropped rows for",
-      length(affected_companies), "out of", length(unique(data$company_name)), "companies",
-      log_path = log_path
-    )
-    paste_write(format_indent_2(), "percent loss:", percent_affected_companies, log_path = log_path)
-    paste_write(format_indent_2(), "affected company-sector-ald_business_unit combinations:", log_path = log_path)
-
-    affected_company_sector_tech_overview %>%
-      purrr::pwalk(function(company_name, ald_sector, ald_business_unit) {
-        paste_write(format_indent_2(), "company name:", company_name, "sector:", ald_sector, "ald_business_unit:", ald_business_unit, log_path = log_path)
-      })
   }
 
   return(data_filtered)
@@ -296,11 +261,11 @@ process_financial_data <- function(data) {
 }
 
 st_process <- function(data, scenario_geography, baseline_scenario,
-                       shock_scenario, start_year, carbon_price_model,
-                       log_path) {
+                       shock_scenario, start_year, carbon_price_model) {
   scenarios_filter <- c(baseline_scenario, shock_scenario)
 
   end_year <- get_end_year(data, scenarios_filter)
+  start_year=2022
 
   sectors_and_technologies_list <- infer_sectors_and_technologies(
     price_data = data$df_price,
@@ -349,8 +314,7 @@ st_process <- function(data, scenario_geography, baseline_scenario,
     time_horizon = time_horizon_lookup,
     scenario_geography_filter = scenario_geography,
     sectors = sectors_and_technologies_list$sectors,
-    technologies = sectors_and_technologies_list$technologies,
-    log_path = log_path
+    technologies = sectors_and_technologies_list$technologies
   )
 
   # add extend production data with scenario targets
@@ -411,7 +375,7 @@ st_process <- function(data, scenario_geography, baseline_scenario,
 #' @return A tibble of data as indicated by function name.
 process_production_data <- function(data, start_year, end_year, time_horizon,
                                     scenario_geography_filter, sectors,
-                                    technologies, log_path) {
+                                    technologies) {
   data_processed <- data %>%
     dplyr::filter(.data$scenario_geography %in% .env$scenario_geography_filter) %>%
     dplyr::filter(.data$ald_sector %in% .env$sectors) %>%
@@ -419,17 +383,14 @@ process_production_data <- function(data, start_year, end_year, time_horizon,
     dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$start_year + .env$time_horizon)) %>%
     remove_sectors_with_missing_production_end_of_forecast(
       start_year = start_year,
-      time_horizon = time_horizon,
-      log_path = log_path
+      time_horizon = time_horizon
     ) %>%
     remove_sectors_with_missing_production_start_year(
-      start_year = start_year,
-      log_path = log_path
+      start_year = start_year
     ) %>%
     remove_high_carbon_tech_with_missing_production(
       start_year = start_year,
-      time_horizon = time_horizon,
-      log_path = log_path
+      time_horizon = time_horizon
     ) %>%
     stop_if_empty(data_name = "Production Data")
 

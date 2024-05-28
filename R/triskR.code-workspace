@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "../../app.services"
+		},
+		{
+			"path": "../../app.st.trisk"
+		},
+		{
+			"path": "../../trisk.datawrangle"
+		},
+		{
+			"path": "../../trisk.demo"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../trisk.plots"
+		},
+		{
+			"name": "trisk.model @ fd45515",
+			"uri": "gitlens://7b22726566223a2266643435353135613464343632393436613762373462383462636136313830353635633835323164222c227265706f50617468223a222f55736572732f6265727472616e6467616c6c6963652f32c2b020496e76657374696e672044726f70626f782f636f64652f54686569612d46696e616e63652d4c6162732f747269736b2e6d6f64656c227d/Users/bertrandgallice/2° Investing Dropbox/code/Theia-Finance-Labs/trisk.model?{\"ref\":\"fd45515\"}"
+		}
+	]
+}

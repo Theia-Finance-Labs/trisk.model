@@ -8,11 +8,10 @@ calculate_trisk_trajectory(
   input_data_list,
   baseline_scenario,
   target_scenario,
-  transition_scenario,
+  shock_year,
   start_year,
   end_year,
-  time_horizon,
-  log_path
+  time_horizon
 )
 }
 \arguments{
@@ -26,14 +25,14 @@ baseline ald_business_unit trajectories.}
 of the scenarios included in the analysis should be used to set the
 late & sudden ald_business_unit trajectories.}
 
-\item{transition_scenario}{Tibble with 1 row holding at least variables
-\code{year_of_shock} and \code{duration_of_shock}.}
-
 \item{start_year}{Numeric, holding start year of analysis.}
 
 \item{end_year}{Numeric, holding end year of analysis.}
 
 \item{time_horizon}{Considered timeframe for PACTA analysis.}
+
+\item{transition_scenario}{Tibble with 1 row holding at least variables
+\code{year_of_shock} and \code{duration_of_shock}.}
 }
 \value{
 A tibble holding annual profits

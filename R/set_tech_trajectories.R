@@ -105,14 +105,13 @@ set_baseline_trajectory <- function(data,
 #' @return data frame
 set_trisk_trajectory <- function(data,
                                  target_scenario,
-                                 shock_scenario,
+                                 shock_year,
                                  target_scenario_aligned,
                                  start_year,
                                  end_year,
                                  analysis_time_frame) {
-  scenario_name <- shock_scenario$scenario_name
-  year_of_shock <- shock_scenario$year_of_shock
-  duration_of_shock <- shock_scenario$duration_of_shock
+  year_of_shock <- shock_year
+  duration_of_shock <- shock_year - start_year
 
   data <- data %>%
     dplyr::mutate(
@@ -177,9 +176,7 @@ set_trisk_trajectory <- function(data,
         "scenario_change_baseline",
         "scenario_change_aligned"
       ))
-    ) %>%
-    dplyr::mutate(scenario_name = .env$scenario_name)
-
+    )
   data <- filter_negative_late_and_sudden(data)
 
   return(data)

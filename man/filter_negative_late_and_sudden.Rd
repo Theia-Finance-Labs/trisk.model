@@ -4,7 +4,7 @@
 \alias{filter_negative_late_and_sudden}
 \title{Remove negative late and sudden rows}
 \usage{
-filter_negative_late_and_sudden(data_with_late_and_sudden, log_path)
+filter_negative_late_and_sudden(data_with_late_and_sudden)
 }
 \arguments{
 \item{data_with_late_and_sudden}{A tibble containing scenario data with

@@ -17,7 +17,7 @@
 calculate_trisk_trajectory <- function(input_data_list,
                                        baseline_scenario,
                                        target_scenario,
-                                       transition_scenario,
+                                       shock_year,
                                        start_year,
                                        end_year,
                                        time_horizon) {
@@ -27,10 +27,10 @@ calculate_trisk_trajectory <- function(input_data_list,
     ) %>%
     set_trisk_trajectory(
       target_scenario = target_scenario,
-      shock_scenario = transition_scenario,
       target_scenario_aligned = target_scenario,
       start_year = start_year,
       end_year = end_year,
+      shock_year=shock_year,
       analysis_time_frame = time_horizon
     )
 
@@ -38,7 +38,6 @@ calculate_trisk_trajectory <- function(input_data_list,
     calc_scenario_prices(
       baseline_scenario = baseline_scenario,
       target_scenario = target_scenario,
-      transition_scenario = transition_scenario,
       start_year = start_year
     )
 
