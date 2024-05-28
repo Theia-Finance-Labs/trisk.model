@@ -52,8 +52,6 @@ fill_annual_profit_cols <- function(annual_profits) {
     ) %>%
     # NOTE: this assumes emissions factors stay constant after forecast and prod not continued
     tidyr::fill(
-      # TODO: what is company_id even doing here?
-      # company_id,
       .data$pd, .data$net_profit_margin, .data$debt_equity_ratio, .data$volatility,
       .direction = "down"
     ) %>%

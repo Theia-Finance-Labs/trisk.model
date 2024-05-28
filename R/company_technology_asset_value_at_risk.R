@@ -12,6 +12,7 @@
 #'   database or for standard portfolio calculation (default).
 company_technology_asset_value_at_risk <- function(data,
                                                    shock_year,
+                                                   start_year,
                                                    div_netprofit_prop_coef = NULL,
                                                    flat_multiplier = NULL,
                                                    crispy = FALSE) {
@@ -33,7 +34,6 @@ company_technology_asset_value_at_risk <- function(data,
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      scenario_name = .env$shock_scenario$scenario_name,
       VaR_tech_company = .env$flat_multiplier * 100 * .env$div_netprofit_prop_coef *
         (.data$total_disc_npv_ls - .data$total_disc_npv_baseline) /
         .data$total_disc_npv_baseline
@@ -49,8 +49,8 @@ company_technology_asset_value_at_risk <- function(data,
 
   data <- data %>%
     dplyr::mutate(
-      duration_of_shock = .env$shock_scenario$duration_of_shock,
-      year_of_shock = .env$shock_scenario$year_of_shock
+      duration_of_shock = shock_year - start_year,
+      year_of_shock = shock_year
     )
 
   return(data)

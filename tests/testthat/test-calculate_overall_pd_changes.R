@@ -38,7 +38,6 @@ test_that("PD_changes point in expected direction", {
     dplyr::filter(.data$year == filter_year) %>%
     dplyr::select(
       dplyr::all_of(c(
-        "scenario_name",
         "scenario_geography",
         "company_name",
         "ald_sector",
@@ -72,7 +71,7 @@ test_that("PD_changes point in expected direction", {
     dplyr::inner_join(
       expected_direction,
       by = c(
-        "scenario_name", "scenario_geography", "company_name", "ald_sector"
+        "scenario_geography", "company_name", "ald_sector"
       )
     )
 

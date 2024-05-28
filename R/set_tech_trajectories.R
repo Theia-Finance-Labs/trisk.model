@@ -138,6 +138,7 @@ set_trisk_trajectory <- function(data,
     )
 
 
+  
 
   data <- data %>%
     dplyr::group_by(
@@ -250,7 +251,6 @@ calc_late_sudden_traj <- function(start_year, end_year, year_of_shock, duration_
                                   scenario_change, scenario_change_baseline, scenario_change_aligned,
                                   overshoot_direction, time_frame) {
   time_frame %||% stop("Must provide input for 'time_frame'", call. = FALSE)
-
 
   # calculate the position where the shock kicks in
   position_shock_year <- year_of_shock - start_year + 1

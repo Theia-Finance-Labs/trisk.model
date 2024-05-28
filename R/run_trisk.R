@@ -16,29 +16,43 @@
 #' @param return_results Boolean, indicating if results shall be exported.
 #'
 #' @inheritParams run_trisk_model
-run_trisk <- function(input_path, output_path,
-                      return_results = FALSE, ...) {
+run_trisk <- function(input_path, output_path=NULL,
+                      return_results = FALSE, 
+                      baseline_scenario = "WEO2021_STEPS",
+                            shock_scenario = "WEO2021_SDS",
+                            scenario_geography = "Global",
+                            start_year = 2022,
+                            carbon_price_model = "no_carbon_tax", ...) {
+
+  if (!return_results | !is.null(output_path)){
+    stop("Either output_path arg must be set, or return_results set to TRUE")
+  }
   
   input_data_list <- st_read_agnostic(input_path)
 
   input_data_list <- input_data_list %>%
-    st_process(...
-      # scenario_geography = scenario_geography,
-      # baseline_scenario = baseline_scenario,
-      # shock_scenario = shock_scenario,
-      # start_year = start_year,
-      # carbon_price_model = carbon_price_model
+    st_process(
+      scenario_geography = scenario_geography,
+      baseline_scenario = baseline_scenario,
+      shock_scenario = shock_scenario,
+      start_year = start_year,
+      carbon_price_model = carbon_price_model
       )
 
-  output_list <- run_trisk_model(input_data_list=input_data_list, ...)
+  output_list <- run_trisk_model(input_data_list=input_data_list,
+  scenario_geography = scenario_geography,
+      baseline_scenario = baseline_scenario,
+      shock_scenario = shock_scenario,
+      start_year = start_year, ...)
   company_pd_changes_overall <- output_list$company_pd_changes_overall
   company_trajectories <- output_list$company_annual_profits
   company_technology_npv <- output_list$company_technology_npv
 
-  write_results(output_list, output_path) # TODO
 
   if (return_results) {
     return(output_list)
+  } else {
+       write_results(output_list=output_list, output_path=output_path, show_params_cols=TRUE) # TODO
   }
 }
 
@@ -78,21 +92,23 @@ run_trisk <- function(input_path, output_path,
 #' @return NULL
 #' @export
 run_trisk_model <- function(input_data_list,
-                            baseline_scenario = "WEO2021_STEPS",
-                            shock_scenario = "WEO2021_SDS",
+                            baseline_scenario,
+                            shock_scenario,
+                            scenario_geography,
+                            start_year,
                             lgd = 0.45,
                             risk_free_rate = 0.02,
                             discount_rate = 0.07,
                             growth_rate = 0.03,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
-                            scenario_geography = "Global",
-                            start_year = 2022,
-                            carbon_price_model = "no_carbon_tax",
+                            
                             market_passthrough = 0,
                             financial_stimulus = 1) {
   # input_data_list <- preprocess_data() # TODO
 
+  end_year <- max(input_data_list$scenario_data$year)
+  
 
   cat("-- Calculating production trajectory under trisk shock. \n")
 
@@ -132,6 +148,7 @@ run_trisk_model <- function(input_data_list,
   company_technology_npv <- company_annual_profits %>%
     company_technology_asset_value_at_risk(
       shock_year=shock_year,
+      start_year=start_year,
       div_netprofit_prop_coef = div_netprofit_prop_coef,
       flat_multiplier = flat_multiplier_lookup,
       crispy = TRUE
@@ -154,3 +171,4 @@ run_trisk_model <- function(input_data_list,
     )
   )
 }
+
