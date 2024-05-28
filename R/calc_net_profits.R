@@ -130,27 +130,6 @@ calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, 
 }
 
 
-#' Calculates annual net profits on the company-ald_business_unit level for the
-#' baseline and late and sudden scenarios - without a carbon tax being added.
-#'
-#' @param data A data frame containing the production forecasts of companies
-#'   under baseline and late and sudden, market prices/costs, company net profit
-#'   margins, the proximity to target in the production forecast period and an
-#'   indication of the direction of the ald_business_unit.
-#'
-#' @return Data frame with annual netprofits for all cases without carbon tax
-calculate_net_profits_without_carbon_tax <- function(data) {
-  baseline <- calculate_net_profits_baseline(data)
-  shock_increasing_technologies <- calculate_net_profits_shock_increasing_technologies_without_carbon_tax(data = data %>% dplyr::filter(.data$direction == "increasing"))
-  shock_declining_technologies <- calculate_net_profits_shock_declining_technologies_without_carbon_tax(data = data %>% dplyr::filter(.data$direction == "declining"))
-
-  data <- dplyr::full_join(shock_increasing_technologies, shock_declining_technologies)
-  data <- dplyr::full_join(data, baseline)
-
-  return(data)
-}
-
-
 #' Calculates annual net profits on the company-ald_business_unit level for the baseline scenario
 #'
 #' @param data A data frame containing the production forecasts of companies
@@ -168,31 +147,6 @@ calculate_net_profits_baseline <- function(data) {
 }
 
 
-#' Calculates annual net profits on the company-ald_business_unit level for the shock scenario for declining technologies
-#'
-#' @param data A data frame containing the production forecasts of companies
-#'   under baseline and late and sudden, market prices/costs, company net profit
-#'   margins, the proximity to target in the production forecast period and an
-#'   indication of the direction of the ald_business_unit.
-#'
-#' @return A data frame with net profits of companies with a declining ald_business_unit
-
-calculate_net_profits_shock_declining_technologies <- function(data) {
-  data <- data %>%
-    dplyr::mutate(net_profits_ls = .data$late_sudden * .data$late_sudden_price * .data$net_profit_margin) # %>%
-  # dplyr::select(-c("proximity_to_target"))
-
-  return(data)
-}
-
-
-
-calculate_net_profits_shock_declining_technologies_without_carbon_tax <- function(data) {
-  data <- data %>%
-    dplyr::mutate(net_profits_ls = .data$late_sudden * .data$late_sudden_price * .data$net_profit_margin)
-
-  return(data)
-}
 
 
 #' Calculates annual net profits on the company-ald_business_unit level for the shock scenario for increasing technologies.
@@ -238,42 +192,6 @@ calculate_net_profits_shock_increasing_technologies <- function(data, financial_
     dplyr::select(-c("proximity_to_target", "production_compensation"))
 
   data <- dplyr::bind_rows(data_overshoot_increasing, data_overshoot_decreasing)
-
-  return(data)
-}
-
-calculate_net_profits_shock_increasing_technologies_without_carbon_tax <- function(data) {
-  data <- data %>%
-    dplyr::mutate(
-      production_compensation = .data$late_sudden - .data$baseline,
-      net_profits_ls = .data$late_sudden * .data$late_sudden_price * .data$net_profit_margin -
-        .data$production_compensation * .data$late_sudden_price * .data$net_profit_margin * (1 - .data$proximity_to_target)
-    )
-
-  return(data)
-}
-
-#' Calculates discounted net profits based on a dividends discount model
-#'
-#' @param data A data frame containing the annual net profits on company
-#'   ald_business_unit level
-#' @param discount_rate Numeric, that holds the discount rate of dividends per
-#'   year in the DCF.
-dividend_discount_model <- function(data, discount_rate) {
-  data <- data %>%
-    dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
-      .data$scenario_geography
-    ) %>%
-    dplyr::mutate(
-      t_calc = seq(0, (dplyr::n() - 1)),
-      discounted_net_profit_baseline = .data$net_profits_baseline /
-        (1 + .env$discount_rate)^.data$t_calc,
-      discounted_net_profit_ls = .data$net_profits_ls /
-        (1 + .env$discount_rate)^.data$t_calc
-    ) %>%
-    dplyr::select(-.data$t_calc) %>%
-    dplyr::ungroup()
 
   return(data)
 }

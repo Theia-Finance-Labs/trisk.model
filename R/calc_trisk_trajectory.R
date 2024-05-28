@@ -1,3 +1,58 @@
+#' Calculate transition shock trajectory
+#'
+#' @param input_data_list List with project agnostic and project specific input data
+#' @param baseline_scenario Character. A string that indicates which
+#'   of the scenarios included in the analysis should be used to set the
+#'   baseline ald_business_unit trajectories.
+#' @param target_scenario Character. A string that indicates which
+#'   of the scenarios included in the analysis should be used to set the
+#'   late & sudden ald_business_unit trajectories.
+#' @param transition_scenario Tibble with 1 row holding at least variables
+#'   `year_of_shock` and `duration_of_shock`.
+#' @param start_year Numeric, holding start year of analysis.
+#' @param end_year Numeric, holding end year of analysis.
+#'
+#' @return A tibble holding annual profits
+calculate_trisk_trajectory <- function(input_data_list,
+                                       baseline_scenario,
+                                       target_scenario,
+                                       shock_year,
+                                       start_year,
+                                       end_year) {
+  production_data <- input_data_list$production_data %>%
+    set_baseline_trajectory(
+      baseline_scenario = baseline_scenario
+    ) %>%
+    set_trisk_trajectory(
+      target_scenario = target_scenario,
+      target_scenario_aligned = target_scenario,
+      start_year = start_year,
+      end_year = end_year,
+      shock_year = shock_year
+    )
+
+  price_data <- input_data_list$df_price %>%
+    calc_scenario_prices(
+      baseline_scenario = baseline_scenario,
+      target_scenario = target_scenario,
+      start_year = start_year,
+      shock_year = shock_year
+    )
+
+  full_trajectory <- production_data %>%
+    dplyr::inner_join(
+      y = input_data_list$financial_data,
+      by = c("company_id")
+    )
+
+  full_trajectory <- full_trajectory %>%
+    join_price_data(df_prices = price_data)
+
+  return(full_trajectory)
+}
+
+
+
 #' Defines which scenario values to use for the baseline trajectory in the
 #' stress test.
 #'
@@ -132,9 +187,6 @@ set_trisk_trajectory <- function(data,
         0
       )
     )
-
-
-
 
   data <- data %>%
     dplyr::group_by(

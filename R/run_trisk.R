@@ -16,16 +16,20 @@
 #' @param return_results Boolean, indicating if results shall be exported.
 #'
 #' @inheritParams run_trisk_model
-run_trisk <- function(input_path, output_path = NULL,
-                      return_results = FALSE,
+run_trisk <- function(
+  input_path, 
+  output_path = NULL,
                       baseline_scenario,
                       shock_scenario,
                       scenario_geography,
                       start_year = 2022,
-                      carbon_price_model = "no_carbon_tax", ...) {
-  if (!(return_results | !is.null(output_path))) {
-    stop("Either output_path arg must be set, or return_results set to TRUE")
-  }
+                      carbon_price_model = "no_carbon_tax", 
+                      save_and_check = TRUE,
+                      ...) {
+  
+  # stopifnot(!((save_and_check & !is.null(output_path)) | !save_and_check),
+  #  "Either output_path arg must be set, or save_and_check set to TRUE")
+  
 
   input_data_list <- st_read_agnostic(input_path)
 
@@ -50,12 +54,14 @@ run_trisk <- function(input_path, output_path = NULL,
   company_technology_npv <- output_list$company_technology_npv
 
 
-  if (return_results) {
-    return(output_list)
-  } else {
-    write_results(output_list = output_list, output_path = output_path, show_params_cols = TRUE) # TODO
-  }
+  if (save_and_check) {
+    check_results <- function(output_list){} # TODO
+    check_results(output_list) 
+    write_results(output_list = output_list, output_path = output_path, show_params_cols = TRUE)
+  } 
+  return(output_list)
 }
+
 
 
 #' Run stress test model
@@ -125,7 +131,8 @@ run_trisk_model <- function(input_data_list,
   cat("-- Calculating net profits. \n")
 
   # calc net profits
-  company_net_profits <- calculate_net_profits(input_data_list$full_trajectory,
+  company_net_profits <- calculate_net_profits(
+    input_data_list$full_trajectory,
     carbon_data = input_data_list$carbon_data,
     shock_year = shock_year,
     market_passthrough = market_passthrough,

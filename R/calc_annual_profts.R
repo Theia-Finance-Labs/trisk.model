@@ -34,28 +34,75 @@ calculate_annual_profits <- function(data,
 }
 
 
-#' Fill missing values on annual_profits
+
+
+#' Calculates discounted net profits based on a dividends discount model
 #'
-#' Function fill missing rows on cols company_id, pd, net_profit_margin,
-#' debt_equity_ratio, volatility.
-#'
-#' @param annual_profits A tibble holding annual profit data.
-#'
-#' @return Tibble holding `annual profits` with replaces missings.
-fill_annual_profit_cols <- function(annual_profits) {
-  annual_profits_filled <- annual_profits %>%
-    dplyr::arrange(
-      .data$scenario_geography, .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit, .data$year
-    ) %>%
+#' @param data A data frame containing the annual net profits on company
+#'   ald_business_unit level
+#' @param discount_rate Numeric, that holds the discount rate of dividends per
+#'   year in the DCF.
+dividend_discount_model <- function(data, discount_rate) {
+  data <- data %>%
     dplyr::group_by(
-      .data$scenario_geography, .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit
+      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
+      .data$scenario_geography
     ) %>%
-    # NOTE: this assumes emissions factors stay constant after forecast and prod not continued
-    tidyr::fill(
-      .data$pd, .data$net_profit_margin, .data$debt_equity_ratio, .data$volatility,
-      .direction = "down"
+    dplyr::mutate(
+      t_calc = seq(0, (dplyr::n() - 1)),
+      discounted_net_profit_baseline = .data$net_profits_baseline /
+        (1 + .env$discount_rate)^.data$t_calc,
+      discounted_net_profit_ls = .data$net_profits_ls /
+        (1 + .env$discount_rate)^.data$t_calc
     ) %>%
+    dplyr::select(-.data$t_calc) %>%
     dplyr::ungroup()
 
-  return(annual_profits_filled)
+  return(data)
+}
+
+
+
+
+calculate_terminal_value <- function(data,
+                                     end_year,
+                                     growth_rate,
+                                     discount_rate,
+                                     baseline_scenario,
+                                     shock_scenario) {
+  # the calculation follows the formula described in the 2DII paper "Limited
+  # Visibility", available under https://2degrees-investing.org/resource/limited-visibility-the-current-state-of-corporate-disclosure-on-long-term-risks/
+  terminal_value <- data %>%
+    dplyr::filter(.data$year == .env$end_year) %>%
+    dplyr::mutate(
+      year = .env$end_year + 1,
+      net_profits_baseline = .data$net_profits_baseline * (1 + .env$growth_rate),
+      net_profits_ls = .data$net_profits_ls * (1 + .env$growth_rate),
+      discounted_net_profit_baseline = .data$net_profits_baseline /
+        (.env$discount_rate - .env$growth_rate),
+      discounted_net_profit_ls = .data$net_profits_ls /
+        (.env$discount_rate - .env$growth_rate)
+    ) %>%
+    # ADO3112: All columns that reflect a change over time are set to NA, as
+    # they cannot be extrapolated from the start_year to end_year period. All
+    # columns that are time invariant are kept.
+    dplyr::mutate(
+      !!rlang::sym(baseline_scenario) := NA_real_,
+      !!rlang::sym(shock_scenario) := NA_real_,
+      baseline = NA_real_,
+      scen_to_follow_aligned = NA_real_,
+      late_sudden = NA_real_,
+      Baseline_price = NA_real_,
+      late_sudden_price = NA_real_,
+      production_compensation = NA_real_
+    )
+
+  data <- data %>%
+    dplyr::bind_rows(terminal_value) %>%
+    dplyr::arrange(
+      .data$company_id, .data$scenario_geography, .data$company_name, .data$ald_sector,
+      .data$ald_business_unit, .data$year
+    )
+
+  return(data)
 }
