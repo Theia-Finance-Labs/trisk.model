@@ -8,7 +8,6 @@ process_production_data(
   data,
   start_year,
   end_year,
-  time_horizon,
   scenario_geography_filter,
   sectors,
   technologies
@@ -20,8 +19,6 @@ process_production_data(
 \item{start_year}{Numeric, holding start year of analysis.}
 
 \item{end_year}{Numeric, holding end year of analysis.}
-
-\item{time_horizon}{Numeric, holding time horizon of production data.}
 
 \item{scenario_geography_filter}{Character. A vector of length 1 that
 indicates which geographic scenario to apply in the analysis.}

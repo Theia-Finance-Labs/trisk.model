@@ -11,7 +11,6 @@
 #'   `year_of_shock` and `duration_of_shock`.
 #' @param start_year Numeric, holding start year of analysis.
 #' @param end_year Numeric, holding end year of analysis.
-#' @param time_horizon Considered timeframe for PACTA analysis.
 #'
 #' @return A tibble holding annual profits
 calculate_trisk_trajectory <- function(input_data_list,
@@ -19,8 +18,7 @@ calculate_trisk_trajectory <- function(input_data_list,
                                        target_scenario,
                                        shock_year,
                                        start_year,
-                                       end_year,
-                                       time_horizon) {
+                                       end_year) {
   production_data <- input_data_list$production_data %>%
     set_baseline_trajectory(
       baseline_scenario = baseline_scenario
@@ -30,8 +28,7 @@ calculate_trisk_trajectory <- function(input_data_list,
       target_scenario_aligned = target_scenario,
       start_year = start_year,
       end_year = end_year,
-      shock_year = shock_year,
-      analysis_time_frame = time_horizon
+      shock_year = shock_year
     )
 
   price_data <- input_data_list$df_price %>%

@@ -119,8 +119,7 @@ run_trisk_model <- function(input_data_list,
     target_scenario = shock_scenario,
     start_year = start_year,
     shock_year = shock_year,
-    end_year = end_year,
-    time_horizon = time_horizon_lookup
+    end_year = end_year
   )
 
   cat("-- Calculating net profits. \n")
@@ -150,7 +149,6 @@ run_trisk_model <- function(input_data_list,
       shock_year = shock_year,
       start_year = start_year,
       div_netprofit_prop_coef = div_netprofit_prop_coef,
-      flat_multiplier = flat_multiplier_lookup,
       crispy = TRUE
     )
 

@@ -11,8 +11,7 @@ set_trisk_trajectory(
   shock_year,
   target_scenario_aligned,
   start_year,
-  end_year,
-  analysis_time_frame
+  end_year
 )
 }
 \arguments{
@@ -33,9 +32,6 @@ start year of the analysis.}
 
 \item{end_year}{Numeric. A numeric vector of length 1 that contains the
 end year of the analysis.}
-
-\item{analysis_time_frame}{Numeric. A vector of length 1 indicating the number
-of years for which forward looking production data is considered.}
 
 \item{shock_scenario}{A dataframe that contains information about the
 transition scenario, specifically the shock year and, duration of the

@@ -4,10 +4,10 @@
 \alias{scenario_for_sector_x_geography}
 \title{Obtain available scenario_x_source for geography - sector combinations}
 \usage{
-scenario_for_sector_x_geography(st_input_folder, sector, scenario_geography)
+scenario_for_sector_x_geography(input_path, sector, scenario_geography)
 }
 \arguments{
-\item{st_input_folder}{path to the input folder containing stress test input files}
+\item{input_path}{path to the input folder containing stress test input files}
 
 \item{sector}{String of length 1 holding sector name.}
 

@@ -14,7 +14,7 @@ company_technology_asset_value_at_risk <- function(data,
                                                    shock_year,
                                                    start_year,
                                                    div_netprofit_prop_coef = NULL,
-                                                   flat_multiplier = NULL,
+                                                   flat_multiplier = 1,
                                                    crispy = FALSE) {
   data <- data %>%
     dplyr::filter(

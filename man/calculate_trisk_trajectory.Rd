@@ -10,8 +10,7 @@ calculate_trisk_trajectory(
   target_scenario,
   shock_year,
   start_year,
-  end_year,
-  time_horizon
+  end_year
 )
 }
 \arguments{
@@ -28,8 +27,6 @@ late & sudden ald_business_unit trajectories.}
 \item{start_year}{Numeric, holding start year of analysis.}
 
 \item{end_year}{Numeric, holding end year of analysis.}
-
-\item{time_horizon}{Considered timeframe for PACTA analysis.}
 
 \item{transition_scenario}{Tibble with 1 row holding at least variables
 \code{year_of_shock} and \code{duration_of_shock}.}

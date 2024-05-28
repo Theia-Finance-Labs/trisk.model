@@ -20,8 +20,6 @@
 #'   year of the analysis.
 #' @param end_analysis Numeric. A vector of length 1 indicating the end
 #'   year of the analysis.
-#' @param time_frame Numeric. A vector of length 1 indicating the number of
-#'   years for which forward looking production data is considered.
 #' @param target_scenario Character. A vector of length 1 indicating target
 #'   scenario
 #' @noRd
@@ -29,12 +27,10 @@ extend_scenario_trajectory <- function(data,
                                        scenario_data,
                                        start_analysis,
                                        end_analysis,
-                                       time_frame,
                                        target_scenario) {
   data <- data %>%
     summarise_production_technology_forecasts(
-      start_analysis = start_analysis,
-      time_frame = time_frame
+      start_analysis = start_analysis
     ) %>%
     identify_technology_phase_out() %>%
     extend_to_full_analysis_timeframe(
@@ -58,7 +54,6 @@ extend_scenario_trajectory <- function(data,
   data <- data %>%
     calculate_proximity_to_target(
       start_analysis = start_analysis,
-      time_frame = time_frame,
       target_scenario = target_scenario
     )
 
@@ -87,11 +82,10 @@ extend_scenario_trajectory <- function(data,
 #'   (in the portfolio). Pre-processed to fit analysis parameters and after
 #'   conversion of power capacity to generation.
 #' @param start_analysis start of the analysis
-#' @param time_frame number of years with forward looking production data
 #' @noRd
 summarise_production_technology_forecasts <- function(data,
-                                                      start_analysis,
-                                                      time_frame) {
+                                                      start_analysis) {
+                                                        
   data <- data %>%
     dplyr::select(
       dplyr::all_of(c(
@@ -100,7 +94,6 @@ summarise_production_technology_forecasts <- function(data,
         "plan_emission_factor"
       ))
     ) %>%
-    dplyr::filter(.data$year <= .env$start_analysis + .env$time_frame) %>%
     dplyr::arrange(.data$year) %>%
     dplyr::group_by(
       .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
@@ -249,21 +242,16 @@ handle_phase_out_and_negative_targets <- function(data) {
 #'   conversion of power capacity to generation.
 #' @param start_analysis Numeric. A vector of length 1 indicating the start
 #'   year of the analysis.
-#' @param time_frame Numeric. A vector of length 1 indicating the number of
-#'   years for which forward looking production data is considered.
 #' @param target_scenario Character. A vector of length 1 indicating target
 #'   scenario
 #'
 #' @noRd
 calculate_proximity_to_target <- function(data,
                                           start_analysis = 2022,
-                                          time_frame,
                                           target_scenario) {
+  
   production_changes <- data %>%
     dplyr::filter(
-      dplyr::between(
-        .data$year, .env$start_analysis, .env$start_analysis + .env$time_frame
-      ),
       .data$scenario == .env$target_scenario
     ) %>%
     dplyr::group_by(

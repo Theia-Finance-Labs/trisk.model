@@ -17,8 +17,7 @@ calc_late_sudden_traj(
   scenario_change,
   scenario_change_baseline,
   scenario_change_aligned,
-  overshoot_direction,
-  time_frame
+  overshoot_direction
 )
 }
 \arguments{
@@ -77,9 +76,6 @@ TODO: (move to data argument)}
 the ald_business_unit at hand is increasing or decreasing over the time frame of
 the analysis.
 TODO: (move to data argument)}
-
-\item{time_frame}{Numeric. A vector of length 1 indicating the number of years
-for which forward looking production data is considered.}
 }
 \value{
 numeric vector

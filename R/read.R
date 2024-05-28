@@ -96,7 +96,6 @@ read_financial_data <- function(path = NULL) {
 #'
 #' Checks that numeric columns hold values in acceptable ranges.
 #'
-#' @inheritParams check_financial_data
 #'
 #' @return NULL
 check_valid_financial_data_values <- function(financial_data) {
