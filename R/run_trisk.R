@@ -13,51 +13,31 @@
 #'   NOTE: Results and logs per run are saved to a subdirectory of output_path
 #'   that will be generated automatically. The name of the subdirectory is the
 #'   timestamp of the run of the analysis.
-#' @param return_results Boolean, indicating if results shall be exported.
+#' @param save_and_check Boolean, indicating if results shall be exported.
 #'
 #' @inheritParams run_trisk_model
 run_trisk <- function(
   input_path, 
   output_path = NULL,
-                      baseline_scenario,
-                      shock_scenario,
-                      scenario_geography,
-                      start_year = 2022,
-                      carbon_price_model = "no_carbon_tax", 
-                      save_and_check = TRUE,
-                      ...) {
+  save_and_check = TRUE,
+  show_params_cols=TRUE,
+  ...) {
   
   # stopifnot(!((save_and_check & !is.null(output_path)) | !save_and_check),
   #  "Either output_path arg must be set, or save_and_check set to TRUE")
   
-
   input_data_list <- st_read_agnostic(input_path)
 
-  input_data_list <- input_data_list %>%
-    st_process(
-      scenario_geography = scenario_geography,
-      baseline_scenario = baseline_scenario,
-      shock_scenario = shock_scenario,
-      start_year = start_year,
-      carbon_price_model = carbon_price_model
-    )
-
-  output_list <- run_trisk_model(
-    input_data_list = input_data_list,
-    scenario_geography = scenario_geography,
-    baseline_scenario = baseline_scenario,
-    shock_scenario = shock_scenario,
-    start_year = start_year, ...
-  )
-  company_pd_changes_overall <- output_list$company_pd_changes_overall
-  company_trajectories <- output_list$company_annual_profits
-  company_technology_npv <- output_list$company_technology_npv
-
+  output_list <- run_trisk_model(input_data_list = input_data_list, ...)
 
   if (save_and_check) {
-    check_results <- function(output_list){} # TODO
-    check_results(output_list) 
-    write_results(output_list = output_list, output_path = output_path, show_params_cols = TRUE)
+    
+    check_results <- function(output_list){TRUE} # TODO
+    stopifnot(check_results(output_list))
+    
+    trisk_params <- process_params(fun=run_trisk_model, ...)
+
+    write_results(output_list = output_list, output_path = output_path, trisk_params=trisk_params, show_params_cols = show_params_cols)
   } 
   return(output_list)
 }
@@ -102,7 +82,8 @@ run_trisk_model <- function(input_data_list,
                             baseline_scenario,
                             shock_scenario,
                             scenario_geography,
-                            start_year,
+                            start_year = 2022,
+                            carbon_price_model = "no_carbon_tax", 
                             lgd = 0.45,
                             risk_free_rate = 0.02,
                             discount_rate = 0.07,
@@ -111,7 +92,15 @@ run_trisk_model <- function(input_data_list,
                             shock_year = 2030,
                             market_passthrough = 0,
                             financial_stimulus = 1) {
-  # input_data_list <- preprocess_data() # TODO
+    
+    input_data_list <- input_data_list %>%
+      st_process(
+        scenario_geography = scenario_geography,
+        baseline_scenario = baseline_scenario,
+        shock_scenario = shock_scenario,
+        start_year = start_year,
+        carbon_price_model = carbon_price_model
+      )
 
   end_year <- max(input_data_list$scenario_data$year)
 

@@ -27,8 +27,8 @@ company_technology_asset_value_at_risk <- function(data,
       .data$scenario_geography
     ) %>%
     dplyr::summarise(
-      total_disc_npv_ls = sum(.data$discounted_net_profit_ls),
-      total_disc_npv_baseline = sum(.data$discounted_net_profit_baseline),
+      total_disc_npv_ls = sum(.data$discounted_net_profit_ls), # TODO delete
+      total_disc_npv_baseline = sum(.data$discounted_net_profit_baseline), # TODO delete
       .groups = "drop_last"
     ) %>%
     dplyr::ungroup() %>%
