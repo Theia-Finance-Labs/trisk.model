@@ -85,7 +85,6 @@ extend_scenario_trajectory <- function(data,
 #' @noRd
 summarise_production_technology_forecasts <- function(data,
                                                       start_analysis) {
-                                                        
   data <- data %>%
     dplyr::select(
       dplyr::all_of(c(
@@ -249,7 +248,6 @@ handle_phase_out_and_negative_targets <- function(data) {
 calculate_proximity_to_target <- function(data,
                                           start_analysis = 2022,
                                           target_scenario) {
-  
   production_changes <- data %>%
     dplyr::filter(
       .data$scenario == .env$target_scenario

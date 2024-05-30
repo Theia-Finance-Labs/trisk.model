@@ -1,10 +1,10 @@
-process_params <- function(fun, ...){
-    #Extract the parameters and their default values, replace by user inputs where applicable
-    params <- formals(fun)
-    default_params <- params[!sapply(params, is.symbol)]
-    args <- list(...)
-    final_params <- modifyList(default_params, args)
-    return(final_params)
+process_params <- function(fun, ...) {
+  # Extract the parameters and their default values, replace by user inputs where applicable
+  params <- formals(fun)
+  default_params <- params[!sapply(params, is.symbol)]
+  args <- list(...)
+  final_params <- modifyList(default_params, args)
+  return(final_params)
 }
 
 write_results <- function(output_list, output_path, trisk_params, show_params_cols) {
@@ -12,21 +12,21 @@ write_results <- function(output_list, output_path, trisk_params, show_params_co
   run_id <- uuid::UUIDgenerate()
 
   # Prepare results
-  npv_results <- prepare_npv_results(output_list, show_params_cols, run_id)
-  pd_results <- prepare_pd_results(output_list, show_params_cols, run_id)
-  company_trajectories <- prepare_company_trajectories(output_list, show_params_cols, run_id)
+  npv_results <- prepare_npv_results(output_list)
+  pd_results <- prepare_pd_results(output_list)
+  company_trajectories <- prepare_company_trajectories(output_list)
   params_df <- prepare_params_df(trisk_params, run_id)
 
 
-  if (show_params_cols){
-    npv_results <- npv_results %>% 
-      dplyr::bind_cols(params_df[rep(1, n()), ])
-    
-    pd_results <- pd_results %>% 
-      dplyr::bind_cols(params_df[rep(1, n()), ])
-    
-    company_trajectories <- company_trajectories %>% 
-      dplyr::bind_cols(params_df[rep(1, n()), ])
+  if (show_params_cols) {
+    npv_results <- npv_results %>%
+      dplyr::bind_cols(params_df[rep(1, nrow(npv_results)), ])
+
+    pd_results <- pd_results %>%
+      dplyr::bind_cols(params_df[rep(1, nrow(pd_results)), ])
+
+    company_trajectories <- company_trajectories %>%
+      dplyr::bind_cols(params_df[rep(1, nrow(company_trajectories)), ])
   }
 
   # Create output folder
@@ -40,21 +40,19 @@ write_results <- function(output_list, output_path, trisk_params, show_params_co
   params_df %>% readr::write_csv(fs::path(output_path, "params.csv"))
 }
 
-prepare_params_df <- function(trisk_params, run_id){
-  params_df <- tibble::as_tibble(trisk_params)%>%
+prepare_params_df <- function(trisk_params, run_id) {
+  params_df <- tibble::as_tibble(trisk_params) %>%
     dplyr::mutate(run_id = .env$run_id)
   return(params_df)
 }
 
-prepare_npv_results <- function(output_list, show_params_cols, run_id) {
+prepare_npv_results <- function(output_list) {
   npv_results <- output_list$company_technology_npv %>%
     dplyr::rename(
       net_present_value_baseline = .data$total_disc_npv_baseline,
       net_present_value_shock = .data$total_disc_npv_ls,
     ) %>%
-    dplyr::mutate(run_id = .env$run_id) %>%
     dplyr::select(
-      .data$run_id,
       .data$company_id,
       .data$ald_sector,
       .data$ald_business_unit,
@@ -64,15 +62,13 @@ prepare_npv_results <- function(output_list, show_params_cols, run_id) {
   return(npv_results)
 }
 
-prepare_pd_results <- function(output_list, show_params_cols, run_id) {
+prepare_pd_results <- function(output_list) {
   pd_results <- output_list$company_pd_changes_overall %>%
     dplyr::rename(
       pd_baseline = .data$PD_baseline,
       pd_shock = .data$PD_late_sudden
     ) %>%
-    dplyr::mutate(run_id = .env$run_id) %>%
     dplyr::select(
-      .data$run_id,
       .data$company_id,
       .data$ald_sector,
       .data$term,
@@ -83,7 +79,7 @@ prepare_pd_results <- function(output_list, show_params_cols, run_id) {
 }
 
 
-prepare_company_trajectories <- function(output_list, show_params_cols, run_id) {
+prepare_company_trajectories <- function(output_list) {
   company_trajectories <- output_list$company_trajectories %>%
     dplyr::rename(
       company_id = .data$company_id,
@@ -97,10 +93,9 @@ prepare_company_trajectories <- function(output_list, show_params_cols, run_id) 
       discounted_net_profits_baseline_scenario = .data$discounted_net_profit_baseline,
       discounted_net_profits_shock_scenario = .data$discounted_net_profit_ls
     ) %>%
-    dplyr::mutate(run_id = .env$run_id) %>%
     dplyr::select(
-      .data$run_id, .data$company_name, .data$year,
-      .data$scenario_geography, .data$ald_sector, .data$ald_business_unit,
+      .data$company_name, .data$year,
+      .data$ald_sector, .data$ald_business_unit,
       .data$plan_tech_prod, .data$phase_out, .data$production_baseline_scenario,
       .data$production_target_scenario, .data$production_shock_scenario, .data$company_id,
       .data$pd, .data$net_profit_margin, .data$debt_equity_ratio,

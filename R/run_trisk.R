@@ -17,28 +17,28 @@
 #'
 #' @inheritParams run_trisk_model
 run_trisk <- function(
-  input_path, 
-  output_path = NULL,
-  save_and_check = TRUE,
-  show_params_cols=TRUE,
-  ...) {
-  
+    input_path,
+    output_path = NULL,
+    save_and_check = TRUE,
+    show_params_cols = TRUE,
+    ...) {
   # stopifnot(!((save_and_check & !is.null(output_path)) | !save_and_check),
   #  "Either output_path arg must be set, or save_and_check set to TRUE")
-  
+
   input_data_list <- st_read_agnostic(input_path)
 
   output_list <- run_trisk_model(input_data_list = input_data_list, ...)
 
   if (save_and_check) {
-    
-    check_results <- function(output_list){TRUE} # TODO
+    check_results <- function(output_list) {
+      TRUE
+    } # TODO
     stopifnot(check_results(output_list))
-    
-    trisk_params <- process_params(fun=run_trisk_model, ...)
 
-    write_results(output_list = output_list, output_path = output_path, trisk_params=trisk_params, show_params_cols = show_params_cols)
-  } 
+    trisk_params <- process_params(fun = run_trisk_model, ...)
+
+    write_results(output_list = output_list, output_path = output_path, trisk_params = trisk_params, show_params_cols = show_params_cols)
+  }
   return(output_list)
 }
 
@@ -83,7 +83,7 @@ run_trisk_model <- function(input_data_list,
                             shock_scenario,
                             scenario_geography,
                             start_year = 2022,
-                            carbon_price_model = "no_carbon_tax", 
+                            carbon_price_model = "no_carbon_tax",
                             lgd = 0.45,
                             risk_free_rate = 0.02,
                             discount_rate = 0.07,
@@ -92,15 +92,15 @@ run_trisk_model <- function(input_data_list,
                             shock_year = 2030,
                             market_passthrough = 0,
                             financial_stimulus = 1) {
-    
-    input_data_list <- input_data_list %>%
-      st_process(
-        scenario_geography = scenario_geography,
-        baseline_scenario = baseline_scenario,
-        shock_scenario = shock_scenario,
-        start_year = start_year,
-        carbon_price_model = carbon_price_model
-      )
+
+  input_data_list <- input_data_list %>%
+    st_process(
+      scenario_geography = scenario_geography,
+      baseline_scenario = baseline_scenario,
+      shock_scenario = shock_scenario,
+      start_year = start_year,
+      carbon_price_model = carbon_price_model
+    )
 
   end_year <- max(input_data_list$scenario_data$year)
 
@@ -148,7 +148,7 @@ run_trisk_model <- function(input_data_list,
       crispy = TRUE
     )
 
-  cat("-- Calculating credit risk. \n\n\n")
+  cat("-- Calculating credit risk. \n")
 
   company_pd_changes_overall <- company_annual_profits %>%
     calculate_pd_change_overall(

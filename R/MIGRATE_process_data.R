@@ -1,5 +1,3 @@
-
-
 #' Process data of type indicated by function name
 #'
 #' @inheritParams process_production_data
@@ -116,7 +114,7 @@ st_process <- function(data, scenario_geography, baseline_scenario,
                        shock_scenario, start_year, carbon_price_model) {
   scenarios_filter <- c(baseline_scenario, shock_scenario)
 
-  end_year  <-  max(data$scenario_data$year)
+  end_year <- max(data$scenario_data$year)
   start_year <- min(data$production_data$year)
 
   sectors_and_technologies_list <- infer_sectors_and_technologies(
@@ -233,4 +231,3 @@ process_production_data <- function(data, start_year, end_year,
 
   return(data_processed)
 }
-
