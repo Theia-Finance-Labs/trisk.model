@@ -19,11 +19,10 @@
 calculate_trisk_trajectory <- function(input_data_list,
                                        baseline_scenario,
                                        target_scenario,
-                                       transition_scenario,
+                                       shock_year,
                                        start_year,
                                        end_year,
-                                       time_horizon,
-                                       log_path) {
+                                       time_horizon=5) {
 
   production_data <- input_data_list$production_data %>%
     set_baseline_trajectory(
@@ -31,19 +30,18 @@ calculate_trisk_trajectory <- function(input_data_list,
     ) %>%
     set_trisk_trajectory(
       target_scenario = target_scenario,
-      shock_scenario = transition_scenario,
+      shock_year = shock_year,
       target_scenario_aligned = target_scenario,
       start_year = start_year,
       end_year = end_year,
-      analysis_time_frame = time_horizon,
-      log_path = log_path
+      analysis_time_frame = time_horizon
     )
 
   price_data <- input_data_list$df_price %>%
     calc_scenario_prices(
       baseline_scenario = baseline_scenario,
       target_scenario = target_scenario,
-      transition_scenario = transition_scenario,
+      shock_year = shock_year,
       start_year = start_year
     )
 

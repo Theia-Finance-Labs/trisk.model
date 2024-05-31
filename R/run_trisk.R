@@ -93,44 +93,35 @@ run_trisk_model <- function(input_data_list,
                             market_passthrough = 0,
                             financial_stimulus = 1) {
 
-  log_path = "workspace/st_outputs/logs.txt"
   input_data_list <- input_data_list %>%
-    st_process_agnostic(
+    st_process(
       scenario_geography = scenario_geography,
       baseline_scenario = baseline_scenario,
       shock_scenario = shock_scenario,
       start_year = start_year,
-      carbon_price_model = carbon_price_model,
-      log_path = log_path
+      carbon_price_model = carbon_price_model
     )
 
   end_year <- max(input_data_list$scenario_data$year)
 
 
-  transition_scenario <- generate_transition_shocks(
-    start_of_analysis = start_year,
-    end_of_analysis = end_year,
-    shock_year = shock_year
-  )
-
-
   cat("-- Calculating production trajectory under trisk shock. \n")
+
 
   input_data_list$full_trajectory <- calculate_trisk_trajectory(
     input_data_list = input_data_list,
     baseline_scenario = baseline_scenario,
     target_scenario = shock_scenario,
-    transition_scenario = transition_scenario,
     start_year = start_year,
-    end_year = end_year,
-    time_horizon = time_horizon_lookup,
-    log_path = log_path
+    shock_year = shock_year,
+    end_year = end_year
   )
 
   cat("-- Calculating net profits. \n")
 
   # calc net profits
-  company_net_profits <- calculate_net_profits(input_data_list$full_trajectory,
+  company_net_profits <- calculate_net_profits(
+    input_data_list$full_trajectory,
     carbon_data = input_data_list$carbon_data,
     shock_year = shock_year,
     market_passthrough = market_passthrough,
@@ -144,25 +135,24 @@ run_trisk_model <- function(input_data_list,
     shock_scenario = shock_scenario,
     end_year = end_year,
     discount_rate = discount_rate,
-    growth_rate = growth_rate,
-    log_path = log_path
+    growth_rate = growth_rate
   )
 
   cat("-- Calculating market risk. \n")
 
   company_technology_npv <- company_annual_profits %>%
     company_technology_asset_value_at_risk(
-      shock_scenario = transition_scenario,
+      shock_year = shock_year,
+      start_year = start_year,
       div_netprofit_prop_coef = div_netprofit_prop_coef,
-      flat_multiplier = flat_multiplier_lookup,
       crispy = TRUE
     )
 
-  cat("-- Calculating credit risk. \n\n\n")
+  cat("-- Calculating credit risk. \n")
 
   company_pd_changes_overall <- company_annual_profits %>%
     calculate_pd_change_overall(
-      shock_year = transition_scenario$year_of_shock,
+      shock_year = shock_year,
       end_of_analysis = end_year,
       risk_free_interest_rate = risk_free_rate
     )

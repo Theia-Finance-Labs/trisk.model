@@ -115,12 +115,11 @@ set_baseline_trajectory <- function(data,
 #' @return data frame
 set_trisk_trajectory <- function(data,
                                  target_scenario,
-                                 shock_scenario,
+                                 shock_year,
                                  target_scenario_aligned,
                                  start_year,
                                  end_year,
-                                 analysis_time_frame,
-                                 log_path) {
+                                 analysis_time_frame) {
 
   validate_data_has_expected_cols(
     data = data,
@@ -131,16 +130,9 @@ set_trisk_trajectory <- function(data,
     )
   )
 
-  validate_data_has_expected_cols(
-    data = shock_scenario,
-    expected_columns = c(
-      "year_of_shock", "duration_of_shock", "scenario_name"
-    )
-  )
-
-  scenario_name <- shock_scenario$scenario_name
-  year_of_shock <- shock_scenario$year_of_shock
-  duration_of_shock <- shock_scenario$duration_of_shock
+  scenario_name <- "TEST"
+  year_of_shock <- shock_year
+  duration_of_shock <- shock_year - start_year
 
   data <- data %>%
     dplyr::mutate(
@@ -208,7 +200,7 @@ set_trisk_trajectory <- function(data,
     ) %>%
     dplyr::mutate(scenario_name = .env$scenario_name)
 
-  data <- filter_negative_late_and_sudden(data, log_path = log_path)
+  data <- filter_negative_late_and_sudden(data)
 
   return(data)
 }
@@ -373,7 +365,7 @@ calc_late_sudden_traj <- function(start_year, end_year, year_of_shock, duration_
 #'   projected late and sudden trajectory.
 #'
 #' @return Input tibble with potentially removed rows.
-filter_negative_late_and_sudden <- function(data_with_late_and_sudden, log_path) {
+filter_negative_late_and_sudden <- function(data_with_late_and_sudden) {
   negative_late_and_sudden <- data_with_late_and_sudden %>%
     dplyr::filter(.data$late_sudden < 0) %>%
     dplyr::select(dplyr::all_of(c("company_name", "ald_business_unit"))) %>%
@@ -385,15 +377,6 @@ filter_negative_late_and_sudden <- function(data_with_late_and_sudden, log_path)
     data_with_late_and_sudden <-
       data_with_late_and_sudden %>%
       dplyr::anti_join(negative_late_and_sudden, by = c("company_name", "ald_business_unit"))
-
-    # log_path will be NULL when function is called from webtool
-    if (!is.null(log_path)) {
-      paste_write(
-        format_indent_1(), "Removed", n_rows_before_removal - nrow(data_with_late_and_sudden),
-        "rows because negative production compensation targets were set in late and sudden production paths ways. Negative absolute production is impossible \n",
-        log_path = log_path
-      )
-    }
 
     if (nrow(data_with_late_and_sudden) == 0) {
       stop("No rows remain after removing negative late and sudden trajectories.")

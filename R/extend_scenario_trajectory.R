@@ -30,7 +30,6 @@ extend_scenario_trajectory <- function(data,
                                        scenario_data,
                                        start_analysis,
                                        end_analysis,
-                                       time_frame,
                                        target_scenario) {
 
   validate_data_has_expected_cols(
@@ -52,8 +51,7 @@ extend_scenario_trajectory <- function(data,
 
   data <- data %>%
     summarise_production_technology_forecasts(
-      start_analysis = start_analysis,
-      time_frame = time_frame
+      start_analysis = start_analysis
     ) %>%
     identify_technology_phase_out() %>%
     extend_to_full_analysis_timeframe(
@@ -84,7 +82,6 @@ extend_scenario_trajectory <- function(data,
   data <- data %>%
     calculate_proximity_to_target(
       start_analysis = start_analysis,
-      time_frame = time_frame,
       target_scenario = target_scenario
     )
 
@@ -117,7 +114,7 @@ extend_scenario_trajectory <- function(data,
 #' @noRd
 summarise_production_technology_forecasts <- function(data,
                                                       start_analysis,
-                                                      time_frame) {
+                                                      time_frame=5) {
   data <- data %>%
     dplyr::select(
       dplyr::all_of(c(
@@ -283,7 +280,7 @@ handle_phase_out_and_negative_targets <- function(data) {
 #' @noRd
 calculate_proximity_to_target <- function(data,
                                           start_analysis,
-                                          time_frame,
+                                          time_frame=5,
                                           target_scenario) {
   production_changes <- data %>%
     dplyr::filter(

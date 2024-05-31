@@ -11,12 +11,13 @@
 #' @param crispy Boolean. Indicates if the output should be used for the CRISPY
 #'   database or for standard portfolio calculation (default).
 company_technology_asset_value_at_risk <- function(data,
-                                                   shock_scenario = NULL,
+                                                   shock_year,
+                                                   start_year,
                                                    div_netprofit_prop_coef = NULL,
-                                                   flat_multiplier = NULL,
+                                                   flat_multiplier = 1,
                                                    crispy = FALSE) {
   force(data)
-  shock_scenario %||% stop("Must provide input for 'shock_scenario'", call. = FALSE)
+  
   div_netprofit_prop_coef %||% stop("Must provide input for 'div_netprofit_prop_coef'", call. = FALSE)
 
   validate_data_has_expected_cols(
@@ -26,16 +27,10 @@ company_technology_asset_value_at_risk <- function(data,
       "discounted_net_profit_ls", "discounted_net_profit_baseline"
     )
   )
-  validate_data_has_expected_cols(
-    data = shock_scenario,
-    expected_columns = c(
-      "scenario_name", "year_of_shock", "duration_of_shock"
-    )
-  )
-
+  
   data <- data %>%
     dplyr::filter(
-      .data$year >= shock_scenario$year_of_shock,
+      .data$year >= shock_year,
       !is.na(.data$discounted_net_profit_ls),
       !is.na(.data$discounted_net_profit_baseline)
     ) %>%
@@ -50,7 +45,7 @@ company_technology_asset_value_at_risk <- function(data,
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      scenario_name = .env$shock_scenario$scenario_name,
+      scenario_name = "TEST",
       VaR_tech_company = .env$flat_multiplier * 100 * .env$div_netprofit_prop_coef *
         (.data$total_disc_npv_ls - .data$total_disc_npv_baseline) /
         .data$total_disc_npv_baseline
@@ -66,8 +61,8 @@ company_technology_asset_value_at_risk <- function(data,
 
   data <- data %>%
     dplyr::mutate(
-      duration_of_shock = .env$shock_scenario$duration_of_shock,
-      year_of_shock = .env$shock_scenario$year_of_shock
+      duration_of_shock = .env$shock_year - .env$start_year,
+      year_of_shock = .env$shock_year
     )
 
   return(data)

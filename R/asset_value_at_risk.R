@@ -94,7 +94,7 @@ asset_value_at_risk <- function(data,
     dplyr::mutate(
       VaR_sector = sum(.data$VaR_technology * .data$plan_carsten, na.rm = TRUE) /
         sum(.data$plan_carsten, na.rm = TRUE),
-      scenario_name = .env$shock_scenario$scenario_name,
+      scenario_name = "TEST",
       technology_exposure = .data$asset_portfolio_value * .data$plan_carsten,
       sector_exposure = .data$asset_portfolio_value * .data$plan_sec_carsten,
       sector_loss = .data$sector_exposure * .data$VaR_sector / 100
