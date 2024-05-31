@@ -13,6 +13,39 @@
 #'   NOTE: Results and logs per run are saved to a subdirectory of output_path
 #'   that will be generated automatically. The name of the subdirectory is the
 #'   timestamp of the run of the analysis.
+#' @param save_and_check Boolean, indicating if results shall be exported.
+#'
+#' @inheritParams run_trisk_model
+run_trisk <- function(
+    input_path,
+    output_path = NULL,
+    save_and_check = TRUE,
+    show_params_cols = TRUE,
+    ...) {
+  # stopifnot(!((save_and_check & !is.null(output_path)) | !save_and_check),
+  #  "Either output_path arg must be set, or save_and_check set to TRUE")
+
+  input_data_list <- st_read_agnostic(input_path)
+
+  output_list <- run_trisk_model(input_data_list = input_data_list, ...)
+
+  if (save_and_check) {
+    check_results <- function(output_list) {
+      TRUE
+    } # TODO
+    stopifnot(check_results(output_list))
+
+    trisk_params <- process_params(fun = run_trisk_model, ...)
+
+    write_results(output_list = output_list, output_path = output_path, trisk_params = trisk_params, show_params_cols = show_params_cols)
+  }
+  return(output_list)
+}
+
+
+
+#' Run stress test model
+#'
 #' @param baseline_scenario Holds the name of the baseline scenario to be used
 #'   in the stress test, for accepted value range check `stress_test_arguments`.
 #' @param shock_scenario Holds the name of the shock scenario to be used in the
@@ -41,171 +74,38 @@
 #' @param carbon_price_model Character vector, indicating which NGFS model is used in regards to
 #'   carbon prices. Default is no carbon tax.
 #' @param market_passthrough Firm's ability to pass carbon tax onto the consumer
-#' @param return_results Boolean, indicating if results shall be exported.
 #' @param financial_stimulus Additional support for low carbon companies.
 #'
 #' @return NULL
 #' @export
-run_trisk <- function(input_path,
-                      output_path,
-                      baseline_scenario = "WEO2021_STEPS",
-                      shock_scenario = "WEO2021_SDS",
-                      lgd = 0.45,
-                      risk_free_rate = 0.02,
-                      discount_rate = 0.07,
-                      growth_rate = 0.03,
-                      div_netprofit_prop_coef = 1,
-                      shock_year = 2030,
-                      scenario_geography = "Global",
-                      start_year = 2022,
-                      carbon_price_model = "no_carbon_tax",
-                      market_passthrough = 0,
-                      financial_stimulus = 1,
-                      return_results = FALSE) {
-  cat("-- Running transition risk stress test. \n\n\n")
+run_trisk_model <- function(input_data_list,
+                            baseline_scenario,
+                            shock_scenario,
+                            scenario_geography,
+                            start_year = 2022,
+                            carbon_price_model = "no_carbon_tax",
+                            lgd = 0.45,
+                            risk_free_rate = 0.02,
+                            discount_rate = 0.07,
+                            growth_rate = 0.03,
+                            div_netprofit_prop_coef = 1,
+                            shock_year = 2030,
+                            market_passthrough = 0,
+                            financial_stimulus = 1) {
 
-  args_list <- mget(names(formals()), sys.frame(sys.nframe())) %>%
-    fail_if_input_args_are_missing()
-
-  iter_var <- get_iter_var(args_list)
-
-  cat("-- Validating input arguments. \n")
-
-  validate_input_values(
-    baseline_scenario = baseline_scenario,
-    shock_scenario = shock_scenario,
-    scenario_geography = scenario_geography,
-    lgd = lgd,
-    risk_free_rate = risk_free_rate,
-    discount_rate = discount_rate,
-    growth_rate = growth_rate,
-    div_netprofit_prop_coef = div_netprofit_prop_coef,
-    shock_year = shock_year,
-    carbon_price_model = carbon_price_model,
-    market_passthrough = market_passthrough,
-    financial_stimulus = financial_stimulus,
-    risk_type = "trisk"
-  )
-
-  args_list$output_path <- customise_output_path(
-    output_path = args_list$output_path,
-    iter_var = iter_var,
-    shock_scenario = shock_scenario,
-    scenario_geography = scenario_geography,
-    financial_stimulus = financial_stimulus,
-    carbon_price_model = carbon_price_model,
-    risk_type = "trisk"
-  )
-
-  st_results_list <- run_stress_test_iteration(args_list)
-
-  result_names <- names(st_results_list[[1]])
-  st_results <- result_names %>%
-    purrr::map(function(tib) {
-      purrr::map_dfr(st_results_list, `[[`, tib)
-    }) %>%
-    purrr::set_names(result_names)
-
-  st_results_wrangled_and_checked <- wrangle_results(
-    results_list = st_results,
-    sensitivity_analysis_vars = names(args_list)[!names(args_list) %in% setup_vars_lookup],
-    risk_type = "trisk"
-  ) %>%
-    check_results(
-      sensitivity_analysis_vars = names(args_list)[!names(args_list) %in% setup_vars_lookup],
-      risk_type = "trisk"
+  log_path = "workspace/st_outputs/logs.txt"
+  input_data_list <- input_data_list %>%
+    st_process_agnostic(
+      scenario_geography = scenario_geography,
+      baseline_scenario = baseline_scenario,
+      shock_scenario = shock_scenario,
+      start_year = start_year,
+      carbon_price_model = carbon_price_model,
+      log_path = log_path
     )
 
-  if (return_results) {
-    return(st_results_wrangled_and_checked)
-  }
+  end_year <- max(input_data_list$scenario_data$year)
 
-  write_stress_test_results(
-    results_list = st_results_wrangled_and_checked,
-    iter_var = iter_var,
-    shock_scenario = shock_scenario,
-    scenario_geography = scenario_geography,
-    carbon_price_model = carbon_price_model,
-    financial_stimulus = financial_stimulus,
-    risk_type = "trisk",
-    output_path = args_list$output_path
-  )
-
-  cat("-- Exported results to designated output path. \n")
-}
-
-run_stress_test_iteration <- function(args_list) {
-  run_stress_test_iteration_once <- function(arg_tibble_row) {
-    arg_list_row <- arg_tibble_row %>%
-      dplyr::select(-.data$return_results) %>%
-      as.list()
-
-    arg_tibble_row <- arg_tibble_row %>%
-      dplyr::select(-dplyr::all_of(setup_vars_lookup)) %>%
-      dplyr::rename_with(~ paste0(.x, "_arg"))
-
-    st_result <- read_and_process_and_calc(arg_list_row) %>%
-      purrr::map(dplyr::bind_cols, data_y = arg_tibble_row)
-
-    return(st_result)
-  }
-
-  iter_var <- get_iter_var(args_list)
-  args_tibble <- tibble::as_tibble(args_list) %>%
-    dplyr::mutate(iter_var = .env$iter_var)
-
-  out <- iteration_sequence(args_list) %>%
-    purrr::map(~ dplyr::slice(args_tibble, .x)) %>%
-    purrr::map(run_stress_test_iteration_once)
-
-  return(out)
-}
-
-# Avoid R CMD check NOTE: "Undefined global functions or variables"
-globalVariables(c(names(formals(run_trisk)), "iter_var", "risk_type"))
-
-read_and_process_and_calc <- function(args_list) {
-  list2env(args_list, envir = rlang::current_env())
-
-  if (financial_stimulus > 1) {
-    log_path <- file.path(output_path, sprintf("log_file_%s_%s_%s_%s_%s.txt", iter_var, shock_scenario, scenario_geography, carbon_price_model, financial_stimulus))
-  } else {
-    log_path <- file.path(output_path, sprintf("log_file_%s_%s_%s_%s.txt", iter_var, shock_scenario, scenario_geography, carbon_price_model))
-  }
-
-  paste_write("\n\nIteration with parameter settings:", log_path = log_path)
-  purrr::walk(names(args_list), function(name) {
-    paste(name, magrittr::extract2(args_list, name), sep = ": ") %>%
-      paste_write(log_path = log_path)
-  })
-  paste_write("\n", log_path = log_path)
-
-
-  cat("-- Reading input data from designated input path. \n")
-
-  data <- st_read_agnostic(input_path, risk_type = "trisk")
-  end_year <- get_end_year(
-    data, 
-    scenarios_filter=c(baseline_scenario, shock_scenario)
-    )
-
-  cat("-- Processing input data. \n")
-
-  input_data_list <- st_process_agnostic(
-    data = data,
-    scenario_geography = scenario_geography,
-    baseline_scenario = baseline_scenario,
-    shock_scenario = shock_scenario,
-    start_year = start_year,
-    carbon_price_model = carbon_price_model,
-    log_path = log_path
-  )
-  
-  # TODO: this requires company company_id to work for all companies, i.e. using 2021Q4 PAMS data
-  report_company_drops(
-    data_list = input_data_list,
-    log_path = log_path
-  )
 
   transition_scenario <- generate_transition_shocks(
     start_of_analysis = start_year,
@@ -274,13 +174,4 @@ read_and_process_and_calc <- function(args_list) {
       company_technology_npv = company_technology_npv
     )
   )
-}
-
-iteration_sequence <- function(args_list) {
-  iter_var <- get_iter_var(args_list)
-  if (identical(iter_var, "standard")) {
-    return(1L)
-  } else {
-    return(seq_along(args_list[[iter_var]]))
-  }
 }
