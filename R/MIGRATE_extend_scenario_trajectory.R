@@ -85,6 +85,7 @@ extend_scenario_trajectory <- function(data,
 #' @noRd
 summarise_production_technology_forecasts <- function(data,
                                                       start_analysis) {
+  time_frame <- 5
   data <- data %>%
     dplyr::select(
       dplyr::all_of(c(
@@ -93,6 +94,7 @@ summarise_production_technology_forecasts <- function(data,
         "plan_emission_factor"
       ))
     ) %>%
+    dplyr::filter(.data$year <= .env$start_analysis + .env$time_frame) %>%
     dplyr::arrange(.data$year) %>%
     dplyr::group_by(
       .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
@@ -248,8 +250,12 @@ handle_phase_out_and_negative_targets <- function(data) {
 calculate_proximity_to_target <- function(data,
                                           start_analysis = 2022,
                                           target_scenario) {
+  time_frame <- 5
   production_changes <- data %>%
     dplyr::filter(
+      dplyr::between(
+        .data$year, .env$start_analysis, .env$start_analysis + .env$time_frame
+      ),
       .data$scenario == .env$target_scenario
     ) %>%
     dplyr::group_by(

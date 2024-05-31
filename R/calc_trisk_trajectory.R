@@ -296,8 +296,8 @@ calc_late_sudden_traj <- function(start_year, end_year, year_of_shock, duration_
                                   scenario_change, scenario_change_baseline, scenario_change_aligned,
                                   overshoot_direction) {
   # calculate the position where the shock kicks in
-  position_shock_year <- year_of_shock - start_year + 1
-  time_frame <- min(which(is.na(planned_prod)))
+  position_shock_year <- year_of_shock - start_year 
+  time_frame <- min(which(is.na(planned_prod))) -1
 
   # get the NA indexes of values from last known planned prodcucion to the shock year
   na_range_to_shockyear <- which(is.na(planned_prod[1:position_shock_year]))
