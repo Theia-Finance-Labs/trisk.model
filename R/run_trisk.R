@@ -93,7 +93,7 @@ run_trisk_model <- function(input_data_list,
                             market_passthrough = 0,
                             financial_stimulus = 1) {
 
-  input_data_list <- input_data_list %>%
+  outputs <- input_data_list %>%
     st_process(
       scenario_geography = scenario_geography,
       baseline_scenario = baseline_scenario,
@@ -101,8 +101,8 @@ run_trisk_model <- function(input_data_list,
       start_year = start_year,
       carbon_price_model = carbon_price_model
     )
-
-  end_year <- max(input_data_list$scenario_data$year)
+  input_data_list <- outputs$input_data_list
+  end_year <- outputs$end_year
 
 
   cat("-- Calculating production trajectory under trisk shock. \n")

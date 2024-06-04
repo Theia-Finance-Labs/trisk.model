@@ -36,7 +36,8 @@ calculate_trisk_trajectory <- function(input_data_list,
       baseline_scenario = baseline_scenario,
       target_scenario = target_scenario,
       start_year = start_year,
-      shock_year = shock_year
+      shock_year = shock_year,
+      duration_of_shock = end_year - shock_year +1 # TODO REMOVE
     )
 
   full_trajectory <- production_data %>%
@@ -206,7 +207,6 @@ set_trisk_trajectory <- function(data,
         start_year = start_year,
         end_year = end_year,
         year_of_shock = year_of_shock,
-        duration_of_shock = duration_of_shock,
         scen_to_follow = .data$scen_to_follow,
         planned_prod = .data$plan_tech_prod,
         late_sudden = .data$late_sudden,
@@ -225,6 +225,8 @@ set_trisk_trajectory <- function(data,
         "scenario_change_aligned"
       ))
     )
+  data %>% dplyr::filter(company_id=="4928", ald_business_unit=="Gas") %>% print(width=Inf, n=1000)
+  browser()    
   data <- filter_negative_late_and_sudden(data)
 
   return(data)
@@ -291,14 +293,13 @@ set_trisk_trajectory <- function(data,
 #' @family scenario definition
 #'
 #' @return numeric vector
-calc_late_sudden_traj <- function(start_year, end_year, year_of_shock, duration_of_shock,
-                                  shock_strength, scen_to_follow, planned_prod, late_sudden,
+calc_late_sudden_traj <- function(start_year, end_year, year_of_shock, 
+                                  scen_to_follow, planned_prod, late_sudden,
                                   scenario_change, scenario_change_baseline, scenario_change_aligned,
                                   overshoot_direction) {
   # calculate the position where the shock kicks in
-  position_shock_year <- year_of_shock - start_year 
-  time_frame <- min(which(is.na(planned_prod))) -1
-
+  position_shock_year <- year_of_shock - start_year + 1 
+  time_frame <- 5
   # get the NA indexes of values from last known planned prodcucion to the shock year
   na_range_to_shockyear <- which(is.na(planned_prod[1:position_shock_year]))
 
@@ -326,8 +327,8 @@ calc_late_sudden_traj <- function(start_year, end_year, year_of_shock, duration_
   # we do not need to compensate production capacity, and set LS trajectory to follow
   # the scenario indicated as late & sudden aligned
   if (
-    (overshoot_direction == "Decreasing" & sum(scen_to_follow[1:time_frame]) < sum(late_sudden[1:time_frame])) |
-      (overshoot_direction == "Increasing" & sum(scen_to_follow[1:time_frame]) > sum(late_sudden[1:time_frame]))
+    (overshoot_direction == "Decreasing" & sum(scen_to_follow[1:time_frame + 1]) < sum(late_sudden[1:time_frame + 1])) |
+      (overshoot_direction == "Increasing" & sum(scen_to_follow[1:time_frame + 1]) > sum(late_sudden[1:time_frame + 1]))
   ) {
     x <- (
       sum(scen_to_follow) -
@@ -372,6 +373,7 @@ calc_late_sudden_traj <- function(start_year, end_year, year_of_shock, duration_
     # Update late_sudden vector
     late_sudden[first_production_na:length(late_sudden)] <- cumulsum_change_aligned
   }
+  
   return(late_sudden)
 }
 

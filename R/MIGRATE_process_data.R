@@ -110,11 +110,48 @@ process_financial_data <- function(data) {
   return(data_processed)
 }
 
+
+
+#' Get End year from data
+#'
+#' @param data data
+#' @param scenarios_filter scenarios to use
+#'
+#' @return the end year
+get_end_year <- function(data, scenarios_filter, MAX_POSSIBLE_YEAR=2050){
+
+  available_min_of_max_years <- dplyr::bind_rows(
+    data$df_price %>%
+      dplyr::distinct(.data$year, .data$scenario) %>%
+      dplyr::group_by(.data$scenario) %>%
+      dplyr::summarise(year=max(.data$year)),
+    data$capacity_factors_power %>%
+      dplyr::distinct(.data$year, .data$scenario) %>%
+      dplyr::group_by(.data$scenario) %>%
+      dplyr::summarise(year=max(.data$year)),
+    data$scenario_data %>%
+      dplyr::distinct(.data$year, .data$scenario) %>%
+      dplyr::group_by(.data$scenario) %>%
+      dplyr::summarise(year=max(.data$year))
+  ) %>%
+    dplyr::group_by(.data$scenario) %>%
+    dplyr::summarise(year=min(.data$year)) %>%
+    dplyr::filter(.data$scenario %in% scenarios_filter) %>%
+    dplyr::pull(.data$year)
+
+  end_year <- min(MAX_POSSIBLE_YEAR, min(available_min_of_max_years))
+
+  return(end_year)
+
+}
+
 st_process <- function(data, scenario_geography, baseline_scenario,
                        shock_scenario, start_year, carbon_price_model) {
   scenarios_filter <- c(baseline_scenario, shock_scenario)
+ 
+  # TODO MAX_POSSIBLE_YEAR begone!
+  end_year <- get_end_year(data, scenarios_filter, MAX_POSSIBLE_YEAR=2050)
 
-  end_year <- max(data$scenario_data$year)
   start_year <- min(data$production_data$year)
 
   sectors_and_technologies_list <- infer_sectors_and_technologies(
@@ -156,14 +193,15 @@ st_process <- function(data, scenario_geography, baseline_scenario,
     end_year = end_year,
     carbon_price_model = carbon_price_model
   )
-
+  
   production_data <- process_production_data(
     data$production_data,
     start_year = start_year,
     end_year = end_year,
     scenario_geography_filter = scenario_geography,
     sectors = sectors_and_technologies_list$sectors,
-    technologies = sectors_and_technologies_list$technologies
+    technologies = sectors_and_technologies_list$technologies,
+    TIME_HORIZON_LOOKUP=6 # TODO TIME_HORIZON_LOOKUP begone!
   )
 
   # add extend production data with scenario targets
@@ -206,7 +244,9 @@ st_process <- function(data, scenario_geography, baseline_scenario,
     carbon_data = carbon_data
   )
 
-  return(out)
+  return(list(
+    input_data_list=out,
+    end_year=end_year))
 }
 
 #' Process data of type indicated by function name
@@ -222,11 +262,13 @@ st_process <- function(data, scenario_geography, baseline_scenario,
 #' @return A tibble of data as indicated by function name.
 process_production_data <- function(data, start_year, end_year,
                                     scenario_geography_filter, sectors,
-                                    technologies) {
+                                    technologies, TIME_HORIZON_LOOKUP) {
+  
   data_processed <- data %>%
     dplyr::filter(.data$scenario_geography %in% .env$scenario_geography_filter) %>%
     dplyr::filter(.data$ald_sector %in% .env$sectors) %>%
     dplyr::filter(.data$ald_business_unit %in% .env$technologies) %>%
+    dplyr::filter(.data$year < (min(.data$year) + TIME_HORIZON_LOOKUP)) %>%
     stop_if_empty(data_name = "Production Data")
 
   return(data_processed)

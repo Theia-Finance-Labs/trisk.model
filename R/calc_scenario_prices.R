@@ -15,7 +15,7 @@
 #' @param start_year Start_year of analysis
 #'
 #' @return A tibble holding late_and_sudden_prices
-calc_scenario_prices <- function(price_data, baseline_scenario, target_scenario, start_year, shock_year) {
+calc_scenario_prices <- function(price_data, baseline_scenario, target_scenario, start_year, shock_year, duration_of_shock) {
   data <- price_data %>%
     dplyr::mutate(Baseline_price = !!rlang::sym(paste0("price_", baseline_scenario))) %>%
     # NOTE: deviating from lower snake case here due legacy functions
@@ -27,7 +27,7 @@ calc_scenario_prices <- function(price_data, baseline_scenario, target_scenario,
         baseline_price = .data$Baseline_price,
         year_of_shock = shock_year,
         start_year = start_year,
-        duration_of_shock = shock_year - start_year
+        duration_of_shock = duration_of_shock
       )
     ) %>%
     dplyr::ungroup() %>%

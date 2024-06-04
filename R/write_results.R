@@ -38,6 +38,8 @@ write_results <- function(output_list, output_path, trisk_params, show_params_co
   pd_results %>% readr::write_csv(fs::path(output_path, "pd_results.csv"))
   company_trajectories %>% readr::write_csv(fs::path(output_path, "company_trajectories.csv"))
   params_df %>% readr::write_csv(fs::path(output_path, "params.csv"))
+
+  print(paste("Outputs saved in folder:", output_path))
 }
 
 prepare_params_df <- function(trisk_params, run_id) {
