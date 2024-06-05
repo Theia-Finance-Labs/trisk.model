@@ -92,7 +92,6 @@ run_trisk_model <- function(input_data_list,
                             shock_year = 2030,
                             market_passthrough = 0,
                             financial_stimulus = 1) {
-
   outputs <- input_data_list %>%
     st_process(
       scenario_geography = scenario_geography,
