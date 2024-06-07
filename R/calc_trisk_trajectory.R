@@ -225,8 +225,6 @@ set_trisk_trajectory <- function(data,
         "scenario_change_aligned"
       ))
     )
-  data %>% dplyr::filter(company_id=="4928", ald_business_unit=="Gas") %>% print(width=Inf, n=1000)
-  browser()    
   data <- filter_negative_late_and_sudden(data)
 
   return(data)
