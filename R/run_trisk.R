@@ -74,7 +74,6 @@ run_trisk <- function(
 #' @param carbon_price_model Character vector, indicating which NGFS model is used in regards to
 #'   carbon prices. Default is no carbon tax.
 #' @param market_passthrough Firm's ability to pass carbon tax onto the consumer
-#' @param financial_stimulus Additional support for low carbon companies.
 #'
 #' @return NULL
 #' @export
@@ -90,8 +89,7 @@ run_trisk_model <- function(input_data_list,
                             growth_rate = 0.03,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
-                            market_passthrough = 0,
-                            financial_stimulus = 1) {
+                            market_passthrough = 0) {
   outputs <- input_data_list %>%
     st_process(
       scenario_geography = scenario_geography,
@@ -123,8 +121,7 @@ run_trisk_model <- function(input_data_list,
     input_data_list$full_trajectory,
     carbon_data = input_data_list$carbon_data,
     shock_year = shock_year,
-    market_passthrough = market_passthrough,
-    financial_stimulus = financial_stimulus
+    market_passthrough = market_passthrough
   )
 
   # calc discounted net profits
