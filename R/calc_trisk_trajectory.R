@@ -19,7 +19,7 @@ calculate_trisk_trajectory <- function(input_data_list,
                                        shock_year,
                                        start_year,
                                        end_year) {
-  production_data <- input_data_list$production_data %>%
+  trisk_trajectory <- input_data_list$production_data %>%
     set_baseline_trajectory(
       baseline_scenario = baseline_scenario
     ) %>%
@@ -30,25 +30,7 @@ calculate_trisk_trajectory <- function(input_data_list,
       shock_year = shock_year
     )
 
-  price_data <- input_data_list$df_price %>%
-    calc_scenario_prices(
-      baseline_scenario = baseline_scenario,
-      target_scenario = target_scenario,
-      start_year = start_year,
-      shock_year = shock_year,
-      duration_of_shock = end_year - shock_year + 1 # TODO REMOVE
-    )
-
-  full_trajectory <- production_data %>%
-    dplyr::inner_join(
-      y = input_data_list$financial_data,
-      by = c("company_id")
-    )
-
-  full_trajectory <- full_trajectory %>%
-    join_price_data(df_prices = price_data)
-
-  return(full_trajectory)
+  return(trisk_trajectory)
 }
 
 

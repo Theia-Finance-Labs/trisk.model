@@ -104,7 +104,7 @@ run_trisk_model <- function(input_data_list,
 
   cat("-- Calculating production trajectory under trisk shock. \n")
 
-  input_data_list$full_trajectory <- calculate_trisk_trajectory(
+  trisk_trajectory <- calculate_trisk_trajectory(
     input_data_list = input_data_list,
     baseline_scenario = baseline_scenario,
     target_scenario = shock_scenario,
@@ -112,6 +112,26 @@ run_trisk_model <- function(input_data_list,
     shock_year = shock_year,
     end_year = end_year
   )
+
+
+  price_data <- input_data_list$df_price %>%
+    calc_scenario_prices(
+      baseline_scenario = baseline_scenario,
+      target_scenario = target_scenario,
+      start_year = start_year,
+      shock_year = shock_year,
+      duration_of_shock = end_year - shock_year + 1 # TODO REMOVE
+    )
+
+  full_trajectory <- trisk_trajectory %>%
+    dplyr::inner_join(
+      y = input_data_list$financial_data,
+      by = c("company_id")
+    )
+
+  input_data_list$full_trajectory <- full_trajectory %>%
+    join_price_data(df_prices = price_data)
+
 
   cat("-- Calculating net profits. \n")
 
