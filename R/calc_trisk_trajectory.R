@@ -25,7 +25,6 @@ calculate_trisk_trajectory <- function(input_data_list,
     ) %>%
     set_trisk_trajectory(
       target_scenario = target_scenario,
-      target_scenario_aligned = target_scenario,
       start_year = start_year,
       end_year = end_year,
       shock_year = shock_year
@@ -145,10 +144,6 @@ set_baseline_trajectory <- function(data,
 #' @param shock_scenario A dataframe that contains information about the
 #'   transition scenario, specifically the shock year and, duration of the
 #'   shock and the name of the shock scenario
-#' @param target_scenario_aligned Character. A string that indicates which
-#'   of the scenarios included in the analysis should be used to set the
-#'   late & sudden ald_business_unit trajectories in case the company is aligned after
-#'   the forecast period.
 #' @param start_year Numeric. A numeric vector of length 1 that contains the
 #'   start year of the analysis.
 #' @param end_year Numeric. A numeric vector of length 1 that contains the
@@ -159,7 +154,6 @@ set_baseline_trajectory <- function(data,
 set_trisk_trajectory <- function(data,
                                  target_scenario,
                                  shock_year,
-                                 target_scenario_aligned,
                                  start_year,
                                  end_year) {
   year_of_shock <- shock_year
@@ -168,17 +162,10 @@ set_trisk_trajectory <- function(data,
   data <- data %>%
     dplyr::mutate(
       scen_to_follow = !!rlang::sym(target_scenario),
-      scen_to_follow_aligned = !!rlang::sym(target_scenario_aligned),
       scenario_change =
         dplyr::if_else(
           is.na(.data$plan_tech_prod),
           .data$scen_to_follow - dplyr::lag(.data$scen_to_follow),
-          0
-        ),
-      scenario_change_aligned =
-        dplyr::if_else(
-          is.na(.data$plan_tech_prod),
-          .data$scen_to_follow_aligned - dplyr::lag(.data$scen_to_follow_aligned),
           0
         ),
       scenario_change_baseline = dplyr::if_else(
@@ -208,7 +195,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
   ladata <- data %>%
     dplyr::select_at(c(
       "company_id", "company_name", "year", "ald_sector", "ald_business_unit", "scenario_geography",
-      "plan_tech_prod", "scen_to_follow", "scenario_change_aligned", "scenario_change_baseline"
+      "plan_tech_prod", "scen_to_follow", "scenario_change", "scenario_change_baseline"
     ))  %>%
     dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
     dplyr::arrange(year, .by_group = TRUE) %>%
@@ -216,7 +203,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
       overshoot_direction = ifelse( dplyr::first(.data$scen_to_follow) - dplyr::last(.data$scen_to_follow) > 0, "Decreasing", "Increasing"),
       # Compute cumulative sums for baseline and aligned scenario changes
       scenario_change_baseline_cumsum = cumsum(scenario_change_baseline),
-      scenario_change_aligned_cumsum = cumsum(scenario_change_aligned),
+      scenario_change_cumsum = cumsum(scenario_change),
       # Fill missing planned production values
       plan_tech_prod_filled = .data$plan_tech_prod,
     ) %>%
@@ -319,7 +306,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
 
     ls_post_prod_not_compensated <- ladata_to_not_compensate %>%
       dplyr::mutate(
-        late_sudden = plan_tech_prod_filled + scenario_change_aligned_cumsum
+        late_sudden = plan_tech_prod_filled + scenario_change_cumsum
         
       ) %>%
       dplyr::select(company_id, company_name, ald_sector, ald_business_unit, scenario_geography, year, late_sudden)
