@@ -402,7 +402,7 @@ calc_late_sudden_traj2 <- function(data, start_year, end_year, year_of_shock, TI
         dplyr::select(-requires_overshoot_correction) %>%
         dplyr::distinct_at(c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography", "overshoot_direction"))
       , by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"))
-browser()
+
   return(late_sudden_df)
 }
 
