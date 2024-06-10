@@ -3,7 +3,7 @@
 
 # LATE AND SUDDEN PRICES ----------------------------------------
 
-late_sudden_prices <- function(target_price,
+late_sudden_prices <- function(price_target_scenario,
                                baseline_price,
                                year_of_shock,
                                start_year,
@@ -12,7 +12,7 @@ late_sudden_prices <- function(target_price,
   ls_price <- baseline_price
 
   baseline_price_at_shock <- baseline_price[0 + position_shock_year]
-  target_price_end_shockperiod <- target_price[duration_of_shock + position_shock_year - 1]
+  target_price_end_shockperiod <- price_target_scenario[duration_of_shock + position_shock_year - 1]
 
   ls_price[position_shock_year:(position_shock_year + duration_of_shock - 1)] <- zoo::na.approx(c(baseline_price_at_shock, rep(NA, duration_of_shock - 2), target_price_end_shockperiod))
 
