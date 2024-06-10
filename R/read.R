@@ -209,6 +209,9 @@ read_scenario_data <- function(path) {
         direction = "c",
         fair_share_perc = "d"
       )
+    ) %>%
+    dplyr::mutate(
+      direction=ifelse(.data$direction == "declining", "carbontech", "greentech")
     )
 
   validate_data_has_expected_cols(

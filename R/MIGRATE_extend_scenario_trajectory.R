@@ -205,7 +205,7 @@ apply_scenario_targets <- function(data) {
   data <- data %>%
     dplyr::mutate(
       scen_tech_prod = dplyr::if_else(
-        .data$direction == "declining",
+        .data$direction == "carbontech",
         .data$initial_technology_production * (1 + .data$fair_share_perc), # tmsr
         .data$initial_technology_production + (.data$initial_sector_production * .data$fair_share_perc) # smsp
       )
