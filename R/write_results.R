@@ -30,7 +30,8 @@ write_results <- function(output_list, output_path, trisk_params, show_params_co
   }
 
   # Create output folder
-  output_path <- fs::path(output_path, run_id)
+  timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+  output_path <- fs::path(output_path, paste0(timestamp, "__", run_id))
   dir.create(output_path, recursive = TRUE)
 
   # Save results
