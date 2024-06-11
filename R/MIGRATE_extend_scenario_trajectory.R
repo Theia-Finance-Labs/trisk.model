@@ -23,20 +23,20 @@
 #' @param target_scenario Character. A vector of length 1 indicating target
 #'   scenario
 #' @noRd
-extend_scenario_trajectory <- function(data,
+extend_scenario_trajectory <- function(production_data,
                                        scenario_data,
                                        start_analysis,
                                        end_analysis,
-                                       target_scenario) {
+                                       target_scenario,
+                                       baseline_scenario) {
 time_frame <- 5
 
-data_scen_preprocessed <- data%>%
-    dplyr::select(
-      dplyr::all_of(c(
+data_scen_preprocessed <- production_data %>%
+    dplyr::select_at(c(
         "company_id", "company_name", "ald_sector", "ald_business_unit",
         "scenario_geography", "year", "plan_tech_prod", "plan_sec_prod",
         "plan_emission_factor"
-      ))
+      )
     ) %>%
     dplyr::filter(.data$year <= .env$start_analysis + .env$time_frame) %>%
     dplyr::arrange(.data$year) %>%
@@ -294,13 +294,13 @@ extend_to_full_analysis_timeframe <- function(data,
 #'   conversion of power capacity to generation.
 #' @noRd
 summarise_production_sector_forecasts <- function(data) {
-
-  
-  data <- data %>% 
-    dplyr::select(.data$company_id, .data$company_name, .data$ald_sector, .data$scenario, .data$direction,
-                  .data$initial_technology_production, .data$fair_share_perc, .data$phase_out,
-                  .data$ald_business_unit, .data$emission_factor,
-                  .data$scenario_geography, .data$year, .data$plan_sec_prod, .data$plan_tech_prod) %>%
+  data <- data %>%
+    dplyr::select(
+      .data$company_id, .data$company_name, .data$ald_sector, .data$scenario, .data$direction,
+      .data$initial_technology_production, .data$fair_share_perc, .data$phase_out,
+      .data$ald_business_unit, .data$emission_factor,
+      .data$scenario_geography, .data$year, .data$plan_sec_prod, .data$plan_tech_prod
+    ) %>%
     # dplyr::group_by(
     #   .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
     #   .data$scenario_geography, .data$year
@@ -312,14 +312,13 @@ summarise_production_sector_forecasts <- function(data) {
       .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
       .data$scenario_geography
     ) %>%
-    dplyr::arrange(.data$year, by_group=TRUE)%>%
+    dplyr::arrange(.data$year, by_group = TRUE) %>%
     dplyr::mutate(
       # first year plan and scenario values are equal by construction,
       # can thus be used for production and target
       initial_sector_production = dplyr::first(.data$plan_sec_prod)
     ) %>%
     dplyr::ungroup()
-    
 }
 
 #' Apply TMSR/SMSP scenario targets based on initial ald_business_unit or sector
