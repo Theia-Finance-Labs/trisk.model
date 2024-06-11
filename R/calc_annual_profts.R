@@ -91,7 +91,7 @@ calculate_terminal_value <- function(data,
       !!rlang::sym(shock_scenario) := NA_real_,
       baseline = NA_real_,
       late_sudden = NA_real_,
-      price_baseline_scenario = NA_real_,
+      price_baseline = NA_real_,
       late_sudden_price = NA_real_,
       production_compensation = NA_real_
     )

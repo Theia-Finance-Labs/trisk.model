@@ -23,59 +23,31 @@
 #' @param target_scenario Character. A vector of length 1 indicating target
 #'   scenario
 #' @noRd
-extend_scenario_trajectory <- function(production_data,
+extend_scenario_trajectory <- function(assets_data,
                                        scenario_data,
                                        start_analysis,
                                        end_analysis,
                                        baseline_scenario,
                                        target_scenario) {
-  # browser()
-  production_data <- production_data %>%
-    summarise_production_technology_forecasts(
-      start_analysis = start_analysis
-    ) %>%
-    extend_to_full_analysis_timeframe(
-      start_analysis = start_analysis,
-      end_analysis = end_analysis
-    )
 
-  trisk_model_data <- production_data %>%
-    dplyr::inner_join(
-      scenario_data,
+  trisk_model_data <- dplyr::inner_join(
+      assets_data, scenario_data,
       by = c("ald_sector", "ald_business_unit", "scenario_geography", "year")
     )
 
   trisk_model_data <- trisk_model_data %>%
-    summarise_production_sector_forecasts()
+    summarise_production_sector_forecasts() %>%
+    convert_fair_share_perc_to_production() %>%
+    convert_power_cap_to_generation() %>%
+    lag_scenario_productions() %>%
+    pivot_to_baseline_target_columns()
 
-  trisk_model_data <- trisk_model_data %>%
-    apply_scenario_targets()
-
+  # TODO MOVE TO NPV COMPUTATION
   trisk_model_data <- trisk_model_data %>%
     calculate_proximity_to_target(
       start_analysis = start_analysis,
       target_scenario = target_scenario
     )
-
-  trisk_model_data <- trisk_model_data %>%
-    tidyr::pivot_wider(
-      id_cols = dplyr::all_of(c(
-        "company_id", "company_name", "year", "scenario_geography", "ald_sector",
-        "ald_business_unit", "plan_tech_prod",  "emission_factor",
-        "proximity_to_target", "direction"
-      )),
-      names_from = "scenario",
-      values_from = "scen_tech_prod"
-    ) %>%
-    dplyr::arrange(
-      .data$company_id, .data$company_name, .data$scenario_geography, .data$ald_sector,
-      .data$ald_business_unit, .data$year
-    )
-  #  %>%
-  # dplyr::mutate(
-  #   baseline_scenario_change =  .data$prod_baseline_scenario - dplyr::lag(.data$prod_baseline_scenario),
-  #   target_scenario_change =.data$prod_target_scenario - dplyr::lag(.data$prod_target_scenario)
-  # )
 
   return(trisk_model_data)
 }
@@ -201,7 +173,7 @@ summarise_production_sector_forecasts <- function(data) {
 #'   (in the portfolio). Pre-processed to fit analysis parameters and after
 #'   conversion of power capacity to generation.
 #' @noRd
-apply_scenario_targets <- function(data) {
+convert_fair_share_perc_to_production <- function(data) {
   data <- data %>%
     dplyr::mutate(
       scen_tech_prod = dplyr::if_else(
@@ -279,4 +251,86 @@ calculate_proximity_to_target <- function(data,
         "company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"
       )
     )
+}
+
+
+
+#' Translate power capacity to power generation
+#'
+#' Units of generated power are assumed to be sold and hence get priced in the
+#' net profit calculations. This also entails converting MWh into MW per year,
+#' since we calculate yearly profits. Note: For use in webscripts
+#' [convert_cap_to_generation()] is used currently, which only distinguishes
+#' capacity factor by ald_business_unit and scenario_geography, whereas this function
+#' distinguishes further by year and scenario. Also note that for generation of
+#' variable `plan_tech_prod` (planned capacity) capacity factors from baseline
+#' scenario are used.
+#'
+#' @param data A data frame filtered and wrangled company level production
+#'   forecasts (of the companies in the portfolio). Usually based on PACTA
+#'   output.
+#' @param capacity_factors_power A data frame containing capacity factors to
+#'   translate company level power capacity to units sold. Contains information
+#'   on the ald_business_unit (power sector only) and scenario_geography levels.
+#' @param baseline_scenario String holding name of baseline scenario.
+#' @param target_scenario String holding name of target scenario.
+convert_power_cap_to_generation <- function(data) {
+  hours_to_year <- 24 * 365
+
+  data <- data %>%
+    dplyr::mutate(
+      # the planned generation is assumed to follow baseline
+      plan_tech_prod = dplyr::if_else(
+        .data$ald_sector == "Power",
+        .data$plan_tech_prod * !!rlang::sym(glue::glue("capfac_{baseline_scenario}")) * .env$hours_to_year,
+        .data$plan_tech_prod
+      ),
+      baseline_scenario := dplyr::if_else(
+        .data$ald_sector == "Power",
+        !!rlang::sym(baseline_scenario) * !!rlang::sym(glue::glue("capfac_{baseline_scenario}")) * .env$hours_to_year,
+        !!rlang::sym(baseline_scenario)
+      ),
+      !!rlang::sym(target_scenario) := dplyr::if_else(
+        .data$ald_sector == "Power",
+        !!rlang::sym(target_scenario) * !!rlang::sym(glue::glue("capfac_{target_scenario}")) * .env$hours_to_year,
+        !!rlang::sym(target_scenario)
+      ),
+      scenario_geography = .data$scenario_geography
+    ) 
+
+    return(data)
+}
+
+
+lag_scenario_productions <- function(trisk_model_data){
+
+    trisk_model_data <- trisk_model_data %>%
+    tidyr::pivot_wider(
+      id_cols = dplyr::all_of(
+        c("year", "scenario_geography", "ald_sector","ald_business_unit", "direction")
+        ),
+      names_from = "scenario",
+      values_from = "scen_tech_prod"
+    ) %>%
+    dplyr::arrange(
+      .data$scenario_geography, .data$ald_sector,
+      .data$ald_business_unit, .data$year
+    ) %>% 
+    dplyr::rename(
+      prod_baseline_scenario = .env$baseline_scenario,
+      prod_target_scenario = .env$target_scenario
+    ) %>%
+  dplyr::mutate(
+    baseline_scenario_change =  .data$prod_baseline_scenario - dplyr::lag(.data$prod_baseline_scenario),
+    target_scenario_change =.data$prod_target_scenario - dplyr::lag(.data$prod_target_scenario)
+  ) %>%
+  tidyr::replace_na(replace=list(baseline_scenario_change=0, target_scenario_change=0))
+
+  return(trisk_model_data)
+}
+
+pivot_to_baseline_target_columns <- function(trisk_model_data){
+  trisk_model_data <- trisk_model_data%>%
+    tidyr::pivot_wider(id_cols=c("scenario_geography", "ald_sector", "ald_business_unit", "units", "year", "direction"), names_from = "scenario_type", values_from = c("price", "fair_share_perc")) 
+  return(trisk_model_data)  
 }

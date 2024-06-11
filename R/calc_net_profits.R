@@ -138,7 +138,7 @@ calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, 
 
 calculate_net_profits_baseline <- function(data) {
   data <- data %>%
-    dplyr::mutate(net_profits_baseline = .data$baseline * .data$price_baseline_scenario * .data$net_profit_margin)
+    dplyr::mutate(net_profits_baseline = .data$baseline * .data$price_baseline * .data$net_profit_margin)
 
   return(data)
 }

@@ -94,7 +94,7 @@ run_trisk_model <- function(input_data_list,
     st_process(
       scenario_geography = scenario_geography,
       baseline_scenario = baseline_scenario,
-      shock_scenario = shock_scenario,
+      target_scenario = shock_scenario,
       start_year = start_year,
       carbon_price_model = carbon_price_model
     )

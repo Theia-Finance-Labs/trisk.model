@@ -20,15 +20,15 @@ calc_scenario_prices <- function(price_data, baseline_scenario, target_scenario,
     dplyr::group_by(.data$ald_sector, .data$ald_business_unit) %>%
     dplyr::mutate(
       late_sudden_price = late_sudden_prices(
-        price_target_scenario = .data$price_target_scenario,
-        baseline_price = .data$price_baseline_scenario,
+        price_target = .data$price_target,
+        baseline_price = .data$price_baseline,
         year_of_shock = shock_year,
         start_year = start_year,
         duration_of_shock = duration_of_shock
       )
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(.data$year, .data$ald_sector, .data$ald_business_unit, .data$price_baseline_scenario, .data$late_sudden_price)
+    dplyr::select(.data$year, .data$ald_sector, .data$ald_business_unit, .data$price_baseline, .data$late_sudden_price)
 
   return(data)
 }

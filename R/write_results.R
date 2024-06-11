@@ -89,7 +89,7 @@ prepare_company_trajectories <- function(output_list) {
       production_baseline_scenario = .data$baseline,
       production_target_scenario = .data$scen_to_follow,
       production_shock_scenario = .data$late_sudden,
-      price_baseline_scenario = .data$price_baseline_scenario,
+      price_baseline = .data$price_baseline,
       price_shock_scenario = .data$late_sudden_price,
       net_profits_baseline_scenario = .data$net_profits_baseline,
       net_profits_shock_scenario = .data$net_profits_ls,
@@ -102,7 +102,7 @@ prepare_company_trajectories <- function(output_list) {
       .data$plan_tech_prod, .data$production_baseline_scenario,
       .data$production_target_scenario, .data$production_shock_scenario, .data$company_id,
       .data$pd, .data$net_profit_margin, .data$debt_equity_ratio,
-      .data$volatility, .data$price_baseline_scenario, .data$price_shock_scenario,
+      .data$volatility, .data$price_baseline, .data$price_shock_scenario,
       .data$net_profits_baseline_scenario, .data$net_profits_shock_scenario,
       .data$discounted_net_profits_baseline_scenario, .data$discounted_net_profits_shock_scenario,
     )
