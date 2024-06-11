@@ -37,7 +37,7 @@ calculate_trisk_trajectory <- function(input_data_list,
       target_scenario = target_scenario,
       start_year = start_year,
       shock_year = shock_year,
-      duration_of_shock = end_year - shock_year +1 # TODO REMOVE
+      duration_of_shock = end_year - shock_year + 1 # TODO REMOVE
     )
 
   full_trajectory <- production_data %>%
@@ -167,69 +167,244 @@ set_trisk_trajectory <- function(data,
 
   data <- data %>%
     dplyr::mutate(
-      late_sudden = .data$plan_tech_prod,
       scen_to_follow = !!rlang::sym(target_scenario),
       scen_to_follow_aligned = !!rlang::sym(target_scenario_aligned),
       scenario_change =
         dplyr::if_else(
-          is.na(.data$late_sudden),
+          is.na(.data$plan_tech_prod),
           .data$scen_to_follow - dplyr::lag(.data$scen_to_follow),
           0
         ),
       scenario_change_aligned =
         dplyr::if_else(
-          is.na(.data$late_sudden),
+          is.na(.data$plan_tech_prod),
           .data$scen_to_follow_aligned - dplyr::lag(.data$scen_to_follow_aligned),
           0
         ),
       scenario_change_baseline = dplyr::if_else(
-        is.na(.data$late_sudden),
+        is.na(.data$plan_tech_prod),
         .data$baseline - dplyr::lag(.data$baseline),
         0
       )
     )
 
+
+  # data %>%
+  #     dplyr::group_by(
+  #       .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
+  #       .data$scenario_geography
+  #     ) %>%
+  #     dplyr::mutate(
+  #       overshoot_direction = rep(
+  #         dplyr::if_else(
+  #           .data$scen_to_follow[1] - .data$scen_to_follow[length(.data$scen_to_follow)] > 0,
+  #           "Decreasing",
+  #           "Increasing"
+  #         ),
+  #         dplyr::n()
+  #       ))%>% dplyr::filter(company_id==942, ald_business_unit=="Gas")
+
+  # data %>%
+  #     dplyr::group_by(
+  #       .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
+  #       .data$scenario_geography
+  #     ) %>%
+  #     dplyr::mutate(
+  #       overshoot_direction = rep(
+  #         dplyr::if_else(
+  #           .data$scen_to_follow[1] - .data$scen_to_follow[length(.data$scen_to_follow)] > 0,
+  #           "Decreasing",
+  #           "Increasing"
+  #         ),
+  #         dplyr::n()
+  #       ),
+  #       late_sudden = calc_late_sudden_traj(
+  #         start_year = start_year,
+  # #         end_year = end_year,
+  #         year_of_shock = year_of_shock,
+          # scen_to_follow = aa$scen_to_follow
+          # planned_prod = aa$plan_tech_prod
+          # late_sudden = aa$plan_tech_prod
+          # scenario_change_baseline = aa$scenario_change_baseline
+          # scenario_change_aligned = aa$scenario_change_aligned
+          # overshoot_direction = "Increasing"
+  #         data=data
+  #       )
+  #     ) %>%
+  #     dplyr::ungroup() %>%
+  #     dplyr::select(
+  #       -dplyr::all_of(c(
+  #         "scen_to_follow",
+  #         "scenario_change",
+  #         "scenario_change_baseline",
+  #         "scenario_change_aligned"
+  #       ))
+  #     )
+
+
+
+  late_sudden_df <- calc_late_sudden_traj2(data,
+    start_year = start_year,
+    end_year = end_year,
+    year_of_shock = year_of_shock
+  )
+
   data <- data %>%
-    dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
-      .data$scenario_geography
-    ) %>%
-    dplyr::mutate(
-      overshoot_direction = rep(
-        dplyr::if_else(
-          .data$scen_to_follow[1] - .data$scen_to_follow[length(.data$scen_to_follow)] > 0,
-          "Decreasing",
-          "Increasing"
-        ),
-        dplyr::n()
-      ),
-      late_sudden = calc_late_sudden_traj(
-        start_year = start_year,
-        end_year = end_year,
-        year_of_shock = year_of_shock,
-        scen_to_follow = .data$scen_to_follow,
-        planned_prod = .data$plan_tech_prod,
-        late_sudden = .data$late_sudden,
-        scenario_change = .data$scenario_change,
-        scenario_change_baseline = .data$scenario_change_baseline,
-        scenario_change_aligned = .data$scenario_change_aligned,
-        overshoot_direction = .data$overshoot_direction[1]
-      )
-    ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(
-      -dplyr::all_of(c(
-        "scen_to_follow",
-        "scenario_change",
-        "scenario_change_baseline",
-        "scenario_change_aligned"
-      ))
-    )
+    dplyr::inner_join(late_sudden_df, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography", "year"))
+
   data <- filter_negative_late_and_sudden(data)
 
   return(data)
 }
 
+calc_late_sudden_traj2 <- function(data, start_year, end_year, year_of_shock, TIME_FRAME_BEGONE=5) {
+  
+  # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
+  ladata <- data %>%
+    dplyr::select_at(c(
+      "company_id", "company_name", "year", "ald_sector", "ald_business_unit", "scenario_geography",
+      "plan_tech_prod", "scen_to_follow", "scenario_change_aligned", "scenario_change_baseline"
+    ))  %>%
+    dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
+    dplyr::arrange(year, .by_group = TRUE) %>%
+    dplyr::mutate(
+      overshoot_direction = ifelse( dplyr::first(.data$scen_to_follow) - dplyr::last(.data$scen_to_follow) > 0, "Decreasing", "Increasing"),
+      # Compute cumulative sums for baseline and aligned scenario changes
+      scenario_change_baseline_cumsum = cumsum(scenario_change_baseline),
+      scenario_change_aligned_cumsum = cumsum(scenario_change_aligned),
+      # Fill missing planned production values
+      plan_tech_prod_filled = .data$plan_tech_prod,
+    ) %>%
+    tidyr::fill(plan_tech_prod_filled, .direction = "down") %>%
+    dplyr::ungroup()
+
+
+  # Flag groups who need to be applied the overshoot compensation method
+  # group is considered to be applied the compensation if at least 1 year matches the condition
+  # overshoot_direction is the same for an entire group, and in all known cases the condition
+  #   returns the same value for all rows of the group
+  flagged_overshoot <- ladata %>%
+  dplyr::filter(year > min(year), year <= min(year)+TIME_FRAME_BEGONE)  %>% # TODO IS IT A BUG ??
+  dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
+    dplyr::summarise(
+      prod_to_follow = sum(.data$scen_to_follow),
+      real_prod = sum(.data$plan_tech_prod),
+      requires_overshoot_correction = any(
+        (.data$overshoot_direction == "Decreasing" & (prod_to_follow < real_prod)) |
+          (.data$overshoot_direction == "Increasing" & (prod_to_follow > real_prod))
+      ),
+      overshoot_direction = dplyr::first(overshoot_direction)
+    , .groups="drop")
+
+  # Separate companies into those needing and not needing overshoot compensation
+  to_compensate <- flagged_overshoot %>%
+    dplyr::filter(requires_overshoot_correction) %>%
+    dplyr::select(-c(requires_overshoot_correction, overshoot_direction))
+
+  to_not_compensate <- flagged_overshoot %>%
+    dplyr::filter(!requires_overshoot_correction) %>%
+    dplyr::select(-c(requires_overshoot_correction, overshoot_direction))
+
+  # Process companies requiring overshoot compensation
+  if (nrow(to_compensate) > 0) {
+    ladata_to_compensate <- ladata %>%
+      dplyr::inner_join(to_compensate, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"))
+
+    ls_pre_clean_to_compensate <- ladata_to_compensate %>%
+      dplyr::mutate(
+        late_sudden = ifelse(year <= year_of_shock, plan_tech_prod_filled + scenario_change_baseline_cumsum, 0)
+      )
+
+    ls_pre_shock_to_compensate <- ls_pre_clean_to_compensate %>%
+      dplyr::filter(year <= year_of_shock - 1) %>%
+      dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
+      dplyr::summarize(
+        late_sudden_pre_shock_val = dplyr::last(late_sudden),
+        late_sudden_pre_shock_tot = sum(late_sudden),
+        .groups = "drop"
+      )
+
+    scen_to_follow_tot_to_compensate <- ladata_to_compensate %>%
+      dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
+      dplyr::summarize(
+        scen_to_follow_total_sum = sum(scen_to_follow),
+        n_shocked_years = dplyr::last(year) - year_of_shock + 1,
+        .groups = "drop"
+      )
+
+    x_integral_to_compensate <- dplyr::left_join(ls_pre_shock_to_compensate, scen_to_follow_tot_to_compensate,
+      by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography")
+    ) %>%
+      dplyr::mutate(
+        sum_1_to_n_shocked_years = .data$n_shocked_years * (.data$n_shocked_years + 1) / 2,
+        x = (.data$scen_to_follow_total_sum - .data$late_sudden_pre_shock_tot - .data$n_shocked_years * .data$late_sudden_pre_shock_val) /
+          (-sum_1_to_n_shocked_years)
+      ) %>%
+      dplyr::select(company_id, company_name, ald_sector, ald_business_unit, scenario_geography, x)
+
+    ls_overshoot_compensated <-
+      dplyr::bind_rows(
+        ls_pre_clean_to_compensate %>%
+          dplyr::filter(.data$year < year_of_shock),
+        ls_pre_clean_to_compensate %>%
+          dplyr::filter(year >= year_of_shock) %>%
+          dplyr::left_join(ls_pre_shock_to_compensate, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography")) %>%
+          dplyr::left_join(x_integral_to_compensate, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography")) %>%
+          dplyr::mutate(
+            year_diff = year - year_of_shock + 1,
+            late_sudden = late_sudden_pre_shock_val - pmax(year_diff, 0) * x
+          ) 
+      )%>%
+          dplyr::select(company_id, company_name, ald_sector, ald_business_unit, scenario_geography, year, late_sudden)
+      
+  } else {
+    ls_overshoot_compensated <- dplyr::tibble(
+      company_id = character(),
+      company_name = character(),
+      ald_sector = character(),
+      ald_business_unit = character(),
+      scenario_geography = character(),
+      year = integer(),
+      late_sudden = numeric()
+    )
+  }
+
+  # Process companies not requiring overshoot compensation
+  if (nrow(to_not_compensate) > 0) {
+    ladata_to_not_compensate <- ladata %>%
+      dplyr::inner_join(to_not_compensate, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"))
+
+    ls_post_prod_not_compensated <- ladata_to_not_compensate %>%
+      dplyr::mutate(
+        late_sudden = plan_tech_prod_filled + scenario_change_aligned_cumsum
+        
+      ) %>%
+      dplyr::select(company_id, company_name, ald_sector, ald_business_unit, scenario_geography, year, late_sudden)
+  } else {
+    ls_post_prod_not_compensated <- dplyr::tibble(
+      company_id = character(),
+      company_name = character(),
+      ald_sector = character(),
+      ald_business_unit = character(),
+      scenario_geography = character(),
+      year = integer(),
+      late_sudden = numeric()
+    )
+  }
+
+  # Combine results
+  late_sudden_df <- dplyr::bind_rows(ls_overshoot_compensated, ls_post_prod_not_compensated) %>%
+    dplyr::select_at(c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography", "year", "late_sudden"))
+  late_sudden_df <- late_sudden_df %>%
+    dplyr::left_join(
+      flagged_overshoot %>%
+        dplyr::select(-requires_overshoot_correction) %>%
+        dplyr::distinct_at(c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography", "overshoot_direction"))
+      , by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"))
+
+  return(late_sudden_df)
+}
 
 #' Calculate how the production trajectory for a company/ald_business_unit changes
 #' after the policy shock hits.
@@ -291,12 +466,13 @@ set_trisk_trajectory <- function(data,
 #' @family scenario definition
 #'
 #' @return numeric vector
-calc_late_sudden_traj <- function(start_year, end_year, year_of_shock, 
+calc_late_sudden_traj <- function(start_year, end_year, year_of_shock,
                                   scen_to_follow, planned_prod, late_sudden,
                                   scenario_change, scenario_change_baseline, scenario_change_aligned,
-                                  overshoot_direction) {
+                                  overshoot_direction, data) {
+                                    
   # calculate the position where the shock kicks in
-  position_shock_year <- year_of_shock - start_year + 1 
+  position_shock_year <- year_of_shock - start_year + 1
   time_frame <- 5
   # get the NA indexes of values from last known planned prodcucion to the shock year
   na_range_to_shockyear <- which(is.na(planned_prod[1:position_shock_year]))
@@ -371,7 +547,7 @@ calc_late_sudden_traj <- function(start_year, end_year, year_of_shock,
     # Update late_sudden vector
     late_sudden[first_production_na:length(late_sudden)] <- cumulsum_change_aligned
   }
-  
+
   return(late_sudden)
 }
 
@@ -381,28 +557,14 @@ calc_late_sudden_traj <- function(start_year, end_year, year_of_shock,
 #' ald_business_unit x company_name combinations holding >= 1 negative value are
 #' removed.
 #'
-#' @param data_with_late_and_sudden A tibble containing scenario data with
+#' @param data A tibble containing scenario data with
 #'   projected late and sudden trajectory.
 #'
 #' @return Input tibble with potentially removed rows.
-filter_negative_late_and_sudden <- function(data_with_late_and_sudden) {
-  negative_late_and_sudden <- data_with_late_and_sudden %>%
-    dplyr::filter(.data$late_sudden < 0) %>%
-    dplyr::select(dplyr::all_of(c("company_name", "ald_business_unit"))) %>%
-    dplyr::distinct()
-
-  if (nrow(negative_late_and_sudden) > 0) {
-    n_rows_before_removal <- nrow(data_with_late_and_sudden)
-
-    data_with_late_and_sudden <-
-      data_with_late_and_sudden %>%
-      dplyr::anti_join(negative_late_and_sudden, by = c("company_name", "ald_business_unit"))
-
-
-    if (nrow(data_with_late_and_sudden) == 0) {
-      stop("No rows remain after removing negative late and sudden trajectories.")
-    }
-  }
-
-  return(data_with_late_and_sudden)
+filter_negative_late_and_sudden <- function(data) {
+  data <- data %>%
+    dplyr::mutate(
+      late_sudden = pmax(.data$late_sudden, 0)
+    )
+  return(data)
 }
