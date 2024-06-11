@@ -4,10 +4,10 @@ if (!requireNamespace("aws.s3", quietly = TRUE)) {
 }
 library(aws.s3)
 
-# Set your DigitalOcean Spaces credentials
-Sys.setenv("AWS_ACCESS_KEY_ID" = "DO00MZFJX8RFQBVUJJLT",
-           "AWS_SECRET_ACCESS_KEY" = "LgBKyYDnUf3VqUz4OdTqHeePgeB+y+9Oe88PO9oS6a0",
-           "AWS_DEFAULT_REGION" = "fra1")
+# # Set your S3 bucket credentials
+# Sys.setenv("AWS_ACCESS_KEY_ID" = AWS_ACCESS_KEY,
+#            "AWS_SECRET_ACCESS_KEY" = AWS_SECRET,
+#            "AWS_DEFAULT_REGION" = AWS_BUCKET_DEFAULT_REGION)
 
 
 # Function to download files from a DigitalOcean Space bucket into a timestamped subfolder
