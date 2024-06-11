@@ -45,6 +45,6 @@ download_files_with_timestamp <- function(bucket_name, local_directory, base_url
 # Usage
 bucket_name <- "trisk-input-files"
 local_directory <- "./workspace/st_inputs"
-base_url  <- "digitaloceanspaces.com"
+base_url <- "digitaloceanspaces.com"
 
 download_files_with_timestamp(bucket_name, local_directory, base_url)
