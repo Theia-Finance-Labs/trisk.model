@@ -27,152 +27,41 @@ extend_scenario_trajectory <- function(production_data,
                                        scenario_data,
                                        start_analysis,
                                        end_analysis,
-                                       target_scenario,
-                                       baseline_scenario) {
-time_frame <- 5
+                                       baseline_scenario,
+                                       target_scenario) {
+  # browser()
+  production_data <- production_data %>%
+    summarise_production_technology_forecasts(
+      start_analysis = start_analysis
+    ) %>%
+    extend_to_full_analysis_timeframe(
+      start_analysis = start_analysis,
+      end_analysis = end_analysis
+    )
 
-data_scen_preprocessed <- production_data %>%
-    dplyr::select_at(c(
-        "company_id", "company_name", "ald_sector", "ald_business_unit",
-        "scenario_geography", "year", "plan_tech_prod", "plan_sec_prod",
-        "plan_emission_factor"
-      )
-    ) %>%
-    dplyr::filter(.data$year <= .env$start_analysis + .env$time_frame) %>%
-    dplyr::arrange(.data$year) %>%
-    dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
-      .data$scenario_geography
-    ) %>%
-    dplyr::mutate(
-      # Initial value is identical between production and scenario target,
-      # can thus be used for both
-      initial_technology_production = dplyr::first(.data$plan_tech_prod),
-      final_technology_production = dplyr::last(.data$plan_tech_prod),
-      sum_production_forecast = sum(.data$plan_tech_prod, na.rm = TRUE)
-    ) %>%
-    dplyr::ungroup()%>%
-    dplyr::mutate(
-      phase_out = dplyr::if_else(
-        .data$final_technology_production == 0 &
-          .data$sum_production_forecast > 0,
-        TRUE,
-        FALSE
-      )
-    ) %>%
-    tidyr::complete(
-      year = seq(.env$start_analysis, .env$end_analysis),
-      tidyr::nesting(
-        !!!rlang::syms(
-          c(
-            "company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"
-          )
-        )
-      )
-    ) %>%
-    dplyr::arrange(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
-      .data$scenario_geography, .data$year
-    ) %>%
-    tidyr::fill(
-      dplyr::all_of(c(
-        "initial_technology_production",
-        "final_technology_production",
-        "phase_out",
-        "plan_emission_factor"
-      ))
-    ) %>%
-    dplyr::rename(
-      emission_factor = "plan_emission_factor"
-    ) %>%
+  trisk_model_data <- production_data %>%
     dplyr::inner_join(
       scenario_data,
       by = c("ald_sector", "ald_business_unit", "scenario_geography", "year")
-    )%>% 
-    dplyr::select(.data$company_id, .data$company_name, .data$ald_sector, .data$scenario, .data$direction,
-                  .data$initial_technology_production, .data$fair_share_perc, .data$phase_out,
-                  .data$ald_business_unit, .data$emission_factor,
-                 .data$scenario_geography, .data$year, .data$plan_sec_prod, .data$plan_tech_prod)%>%
-    # dplyr::group_by(
-    #   .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
-    #   .data$scenario_geography, .data$year
-    # ) %>%
-    # dplyr::mutate(plan_sec_prod = sum(.data$plan_tech_prod, na.rm = TRUE)) %>%
-    # tidyr::fill("plan_sec_prod", .direction="down") %>%
-    # dplyr::ungroup() %>%
-    dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
-      .data$scenario_geography
-    ) %>%
-    dplyr::arrange(.data$year, by_group=TRUE)%>%
-    dplyr::mutate(
-      # first year plan and scenario values are equal by construction,
-      # can thus be used for production and target
-      initial_sector_production = dplyr::first(.data$plan_sec_prod)
-    ) %>%
-    dplyr::ungroup()%>%
-    dplyr::mutate(
-      scen_tech_prod = dplyr::if_else(
-        .data$direction == "carbontech",
-        .data$initial_technology_production * (1 + .data$fair_share_perc), # tmsr
-        .data$initial_technology_production + (.data$initial_sector_production * .data$fair_share_perc) # smsp
-      )
-    )%>%
-    dplyr::mutate(
-      scen_tech_prod = dplyr::case_when(
-        .data$scen_tech_prod < 0 ~ 0,
-        .data$phase_out == TRUE ~ 0,
-        TRUE ~ .data$scen_tech_prod
-      )
-    )  
+    )
 
+  trisk_model_data <- trisk_model_data %>%
+    summarise_production_sector_forecasts()
 
+  trisk_model_data <- trisk_model_data %>%
+    apply_scenario_targets()
 
+  trisk_model_data <- trisk_model_data %>%
+    calculate_proximity_to_target(
+      start_analysis = start_analysis,
+      target_scenario = target_scenario
+    )
 
-    out <- data_scen_preprocessed %>% dplyr::inner_join(
-      data_scen_preprocessed %>%
-    dplyr::filter(
-      dplyr::between(
-        .data$year, .env$start_analysis, .env$start_analysis + .env$time_frame
-      ),
-      .data$scenario == .env$target_scenario
-    ) %>%
-    dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
-      .data$scenario_geography
-    ) %>%
-    dplyr::mutate(
-      required_change = .data$scen_tech_prod - .data$initial_technology_production,
-      realised_change = .data$plan_tech_prod - .data$initial_technology_production
-    ) %>%
-    dplyr::summarise(
-      sum_required_change = sum(.data$required_change, na.rm = TRUE),
-      sum_realised_change = sum(.data$realised_change, na.rm = TRUE),
-      .groups = "drop"
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(
-      ratio_realised_required = .data$sum_realised_change / .data$sum_required_change,
-      proximity_to_target = dplyr::case_when(
-        .data$ratio_realised_required < 0 ~ 0,
-        .data$ratio_realised_required > 1 ~ 1,
-        TRUE ~ .data$ratio_realised_required
-      )
-    ) %>%
-    dplyr::select(
-      -dplyr::all_of(c(
-        "sum_required_change", "sum_realised_change",
-        "ratio_realised_required"
-      ))
-    ),
-      by = c(
-        "company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"
-      )
-    ) %>%
+  trisk_model_data <- trisk_model_data %>%
     tidyr::pivot_wider(
       id_cols = dplyr::all_of(c(
         "company_id", "company_name", "year", "scenario_geography", "ald_sector",
-        "ald_business_unit", "plan_tech_prod", "phase_out", "emission_factor",
+        "ald_business_unit", "plan_tech_prod",  "emission_factor",
         "proximity_to_target", "direction"
       )),
       names_from = "scenario",
@@ -182,11 +71,13 @@ data_scen_preprocessed <- production_data %>%
       .data$company_id, .data$company_name, .data$scenario_geography, .data$ald_sector,
       .data$ald_business_unit, .data$year
     )
+  #  %>%
+  # dplyr::mutate(
+  #   baseline_scenario_change =  .data$prod_baseline_scenario - dplyr::lag(.data$prod_baseline_scenario),
+  #   target_scenario_change =.data$prod_target_scenario - dplyr::lag(.data$prod_target_scenario)
+  # )
 
-
-
-
-  return(out)
+  return(trisk_model_data)
 }
 
 #' Summarise the forecasts for company-tech level production within the five
@@ -226,24 +117,6 @@ summarise_production_technology_forecasts <- function(data,
   return(data)
 }
 
-#' Identify which company ald_business_unit combination is a phase out and mark as such
-#'
-#' @param data A data frame containing the production forecasts of companies
-#'   (in the portfolio). Pre-processed to fit analysis parameters and after
-#'   conversion of power capacity to generation.
-#' @noRd
-identify_technology_phase_out <- function(data) {
-  data <- data %>%
-    dplyr::mutate(
-      phase_out = dplyr::if_else(
-        .data$final_technology_production == 0 &
-          .data$sum_production_forecast > 0,
-        TRUE,
-        FALSE
-      )
-    )
-}
-
 #' Extend the dataframe containing the production and production summaries to
 #' cover the whole timeframe of the analysis, filling variables downwards where
 #' applicable.
@@ -275,7 +148,6 @@ extend_to_full_analysis_timeframe <- function(data,
       dplyr::all_of(c(
         "initial_technology_production",
         "final_technology_production",
-        "phase_out",
         "plan_emission_factor"
       ))
     ) %>%
@@ -294,13 +166,13 @@ extend_to_full_analysis_timeframe <- function(data,
 #'   conversion of power capacity to generation.
 #' @noRd
 summarise_production_sector_forecasts <- function(data) {
-  data <- data %>%
-    dplyr::select(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$scenario, .data$direction,
-      .data$initial_technology_production, .data$fair_share_perc, .data$phase_out,
-      .data$ald_business_unit, .data$emission_factor,
-      .data$scenario_geography, .data$year, .data$plan_sec_prod, .data$plan_tech_prod
-    ) %>%
+
+  
+  data <- data %>% 
+    dplyr::select(.data$company_id, .data$company_name, .data$ald_sector, .data$scenario, .data$direction,
+                  .data$initial_technology_production, .data$fair_share_perc,
+                  .data$ald_business_unit, .data$emission_factor,
+                 .data$scenario_geography, .data$year, .data$plan_sec_prod, .data$plan_tech_prod)%>%
     # dplyr::group_by(
     #   .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
     #   .data$scenario_geography, .data$year
@@ -312,13 +184,14 @@ summarise_production_sector_forecasts <- function(data) {
       .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
       .data$scenario_geography
     ) %>%
-    dplyr::arrange(.data$year, by_group = TRUE) %>%
+    dplyr::arrange(.data$year, by_group=TRUE)%>%
     dplyr::mutate(
       # first year plan and scenario values are equal by construction,
       # can thus be used for production and target
       initial_sector_production = dplyr::first(.data$plan_sec_prod)
     ) %>%
     dplyr::ungroup()
+    
 }
 
 #' Apply TMSR/SMSP scenario targets based on initial ald_business_unit or sector
@@ -339,24 +212,6 @@ apply_scenario_targets <- function(data) {
     )
 
   return(data)
-}
-
-#' Set scenario targets to zero where companies phase out a ald_business_unit or the
-#' extension of the ald_business_unit leads to negative values
-#'
-#' @param data A data frame containing the production forecasts of companies
-#'   (in the portfolio). Pre-processed to fit analysis parameters and after
-#'   conversion of power capacity to generation.
-#' @noRd
-handle_phase_out_and_negative_targets <- function(data) {
-  data <- data %>%
-    dplyr::mutate(
-      scen_tech_prod = dplyr::case_when(
-        .data$scen_tech_prod < 0 ~ 0,
-        .data$phase_out == TRUE ~ 0,
-        TRUE ~ .data$scen_tech_prod
-      )
-    )
 }
 
 #' Calculate the ratio of the required change in ald_business_unit that each company
