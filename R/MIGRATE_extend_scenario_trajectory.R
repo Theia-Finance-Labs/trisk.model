@@ -28,6 +28,7 @@ extend_scenario_trajectory <- function(data,
                                        start_analysis,
                                        end_analysis,
                                        target_scenario) {
+  # browser()
   data <- data %>%
     summarise_production_technology_forecasts(
       start_analysis = start_analysis
@@ -71,6 +72,11 @@ extend_scenario_trajectory <- function(data,
       .data$company_id, .data$company_name, .data$scenario_geography, .data$ald_sector,
       .data$ald_business_unit, .data$year
     )
+  #  %>%
+  # dplyr::mutate(
+  #   baseline_scenario_change =  .data$prod_baseline_scenario - dplyr::lag(.data$prod_baseline_scenario),
+  #   target_scenario_change =.data$prod_target_scenario - dplyr::lag(.data$prod_target_scenario)
+  # )
 
   return(data)
 }

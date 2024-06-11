@@ -16,7 +16,6 @@
 #'
 #' @return A tibble holding late_and_sudden_prices
 calc_scenario_prices <- function(price_data, baseline_scenario, target_scenario, start_year, shock_year, duration_of_shock) {
-  
   data <- price_data %>%
     dplyr::group_by(.data$ald_sector, .data$ald_business_unit) %>%
     dplyr::mutate(

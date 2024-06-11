@@ -211,7 +211,7 @@ read_scenario_data <- function(path) {
       )
     ) %>%
     dplyr::mutate(
-      direction=ifelse(.data$direction == "declining", "carbontech", "greentech")
+      direction = ifelse(.data$direction == "declining", "carbontech", "greentech")
     )
 
   validate_data_has_expected_cols(

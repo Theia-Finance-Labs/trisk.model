@@ -43,7 +43,6 @@ harmonise_cap_fac_geo_names <- function(data) {
 #' @noRd
 process_price_data <- function(data, technologies, sectors, start_year, end_year,
                                baseline_scenario, target_scenario) {
-                                
   data_processed <- data %>%
     dplyr::filter(.data$ald_sector %in% .env$sectors) %>%
     dplyr::filter(.data$ald_business_unit %in% .env$technologies) %>%
@@ -172,8 +171,8 @@ st_process <- function(data, scenario_geography, baseline_scenario,
     sectors = sectors_and_technologies_list$sectors,
     start_year = start_year,
     end_year = end_year,
-    baseline_scenario=baseline_scenario,
-    target_scenario=shock_scenario
+    baseline_scenario = baseline_scenario,
+    target_scenario = shock_scenario
   )
 
   scenario_data <- process_scenario_data(
@@ -238,26 +237,26 @@ st_process <- function(data, scenario_geography, baseline_scenario,
   } else {
     capacity_factors_power <- data$capacity_factors_power
   }
-# browser()
-#   trisk_model_data <- dplyr::inner_join(
-#     capacity_factors_power,
-#     dplyr::inner_join(df_price,
-#     dplyr::inner_join(scenario_data,
-#     dplyr::inner_join(financial_data,
-#     dplyr::inner_join(production_data,carbon_data))))) %>%
-#     dplyr::mutate(
-#       target_scenario_change =
-#         dplyr::if_else(
-#           is.na(.data$plan_tech_prod),
-#           .data$target_scenario - dplyr::lag(.data$target_scenario),
-#           0
-#         ),
-#       baseline_scenario_change = dplyr::if_else(
-#         is.na(.data$plan_tech_prod),
-#         .data$baseline_scenario - dplyr::lag(.data$baseline_scenario),
-#         0
-#       )
-#     )
+  # browser()
+  #   trisk_model_data <- dplyr::inner_join(
+  #     capacity_factors_power,
+  #     dplyr::inner_join(df_price,
+  #     dplyr::inner_join(scenario_data,
+  #     dplyr::inner_join(financial_data,
+  #     dplyr::inner_join(production_data,carbon_data))))) %>%
+  #     dplyr::mutate(
+  #       target_scenario_change =
+  #         dplyr::if_else(
+  #           is.na(.data$plan_tech_prod),
+  #           .data$target_scenario - dplyr::lag(.data$target_scenario),
+  #           0
+  #         ),
+  #       baseline_scenario_change = dplyr::if_else(
+  #         is.na(.data$plan_tech_prod),
+  #         .data$baseline_scenario - dplyr::lag(.data$baseline_scenario),
+  #         0
+  #       )
+  #     )
 
   out <- list(
     capacity_factors_power = capacity_factors_power,
@@ -297,4 +296,3 @@ process_production_data <- function(data, start_year, end_year,
 
   return(data_processed)
 }
-

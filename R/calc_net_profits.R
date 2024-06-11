@@ -171,7 +171,7 @@ calculate_net_profits_shock_increasing_technologies <- function(data, shock_year
     dplyr::mutate(
       production_compensation = .data$late_sudden - .data$baseline,
       net_profits_ls = (.data$late_sudden * .data$late_sudden_price * .data$net_profit_margin -
-        .data$production_compensation * .data$late_sudden_price * .data$net_profit_margin * (1 - .data$proximity_to_target)) 
+        .data$production_compensation * .data$late_sudden_price * .data$net_profit_margin * (1 - .data$proximity_to_target))
     ) %>%
     dplyr::select(-c("proximity_to_target", "production_compensation"))
 
