@@ -188,7 +188,7 @@ traj_check <- function(traj) {
 
 npv_check()
 
-traj_check("production_plan_company_technology")
-traj_check("production_baseline_scenario")
-traj_check("production_target_scenario")
+# traj_check("production_plan_company_technology")
+# traj_check("production_baseline_scenario")
+# traj_check("production_target_scenario")
 traj_check("production_shock_scenario")

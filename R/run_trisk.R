@@ -104,7 +104,7 @@ run_trisk_model <- function(input_data_list,
 
   cat("-- Calculating production trajectory under trisk shock. \n")
 
-  trisk_trajectory <- calculate_trisk_trajectory(
+  trisk_trajectory <- calculate_trajectories(
     input_data_list = input_data_list,
     baseline_scenario = baseline_scenario,
     target_scenario = shock_scenario,

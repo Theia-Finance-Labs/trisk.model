@@ -186,18 +186,32 @@ extend_to_full_analysis_timeframe <- function(data,
 #'   conversion of power capacity to generation.
 #' @noRd
 summarise_production_sector_forecasts <- function(data) {
-  data <- data %>%
-    dplyr::arrange(.data$year) %>%
+
+  
+  data <- data %>% 
+    dplyr::select(.data$company_id, .data$company_name, .data$ald_sector, .data$scenario, .data$direction,
+                  .data$initial_technology_production, .data$fair_share_perc, .data$phase_out,
+                  .data$ald_business_unit, .data$emission_factor,
+                 .data$scenario_geography, .data$year, .data$plan_sec_prod, .data$plan_tech_prod)%>%
+    # dplyr::group_by(
+    #   .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
+    #   .data$scenario_geography, .data$year
+    # ) %>%
+    # dplyr::mutate(plan_sec_prod = sum(.data$plan_tech_prod, na.rm = TRUE)) %>%
+    # tidyr::fill("plan_sec_prod", .direction="down") %>%
+    # dplyr::ungroup() %>%
     dplyr::group_by(
       .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
-      .data$scenario_geography, .data$units
+      .data$scenario_geography
     ) %>%
+    dplyr::arrange(.data$year, by_group=TRUE)%>%
     dplyr::mutate(
       # first year plan and scenario values are equal by construction,
       # can thus be used for production and target
       initial_sector_production = dplyr::first(.data$plan_sec_prod)
     ) %>%
     dplyr::ungroup()
+    
 }
 
 #' Apply TMSR/SMSP scenario targets based on initial ald_business_unit or sector

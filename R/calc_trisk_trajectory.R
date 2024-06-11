@@ -13,13 +13,13 @@
 #' @param end_year Numeric, holding end year of analysis.
 #'
 #' @return A tibble holding annual profits
-calculate_trisk_trajectory <- function(input_data_list,
-                                       baseline_scenario,
-                                       target_scenario,
-                                       shock_year,
-                                       start_year,
-                                       end_year) {
-  trisk_trajectory <- input_data_list$production_data %>%
+calculate_trajectories <- function(input_data_list,
+                                   baseline_scenario,
+                                   target_scenario,
+                                   shock_year,
+                                   start_year,
+                                   end_year) {
+  trajectories <- input_data_list$production_data %>%
     set_baseline_trajectory(
       baseline_scenario = baseline_scenario
     ) %>%
@@ -30,7 +30,7 @@ calculate_trisk_trajectory <- function(input_data_list,
       shock_year = shock_year
     )
 
-  return(trisk_trajectory)
+  return(trajectories)
 }
 
 
