@@ -38,7 +38,7 @@ run_trisk(
   input_path = get_latest_timestamped_folder("workspace/st_inputs"),
   output_path = "workspace/st_outputs",
   baseline_scenario = "NGFS2023MESSAGE_NDC",
-  shock_scenario = "NGFS2023MESSAGE_B2DS",
+  target_scenario = "NGFS2023MESSAGE_B2DS",
   scenario_geography = "Global"
 )
 

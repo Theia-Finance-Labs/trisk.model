@@ -2,7 +2,7 @@ process_trisk_input <- function(assets_data, scenarios_data,
                                 target_scenario, start_analysis) {
   # add extend production data with scenario targets
   trisk_model_data <- dplyr::inner_join(
-    assets_data, scenario_data,
+    assets_data, scenarios_data,
     by = c("ald_sector", "ald_business_unit", "scenario_geography", "year")
   ) %>%
     convert_fair_share_perc_to_production() %>%
@@ -143,7 +143,7 @@ convert_fair_share_perc_to_production <- function(data) {
 #' @param target_scenario String holding name of target scenario.
 convert_power_cap_to_generation <- function(data) {
   hours_to_year <- 24 * 365
-
+browser()
   data <- data %>%
     dplyr::mutate(
       # the planned generation is assumed to follow baseline
@@ -152,7 +152,7 @@ convert_power_cap_to_generation <- function(data) {
         .data$plan_tech_prod * !!rlang::sym(glue::glue("capfac_{baseline_scenario}")) * .env$hours_to_year,
         .data$plan_tech_prod
       ),
-      baseline_scenario := dplyr::if_else(
+      baseline_scenario_ := dplyr::if_else(
         .data$ald_sector == "Power",
         !!rlang::sym(baseline_scenario) * !!rlang::sym(glue::glue("capfac_{baseline_scenario}")) * .env$hours_to_year,
         !!rlang::sym(baseline_scenario)

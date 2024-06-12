@@ -48,7 +48,7 @@ run_trisk <- function(
 #'
 #' @param baseline_scenario Holds the name of the baseline scenario to be used
 #'   in the stress test, for accepted value range check `stress_test_arguments`.
-#' @param shock_scenario Holds the name of the shock scenario to be used in the
+#' @param target_scenario Holds the name of the shock scenario to be used in the
 #'   stress test, for accepted value range check `stress_test_arguments`.
 #' @param lgd Numeric, holding the loss given default for accepted value range
 #'   check `stress_test_arguments`.
@@ -79,7 +79,7 @@ run_trisk <- function(
 #' @export
 run_trisk_model <- function(input_data_list,
                             baseline_scenario,
-                            shock_scenario,
+                            target_scenario,
                             scenario_geography,
                             start_year = 2022,
                             carbon_price_model = "no_carbon_tax",
@@ -93,9 +93,9 @@ run_trisk_model <- function(input_data_list,
 
   cat("-- Processing inputs. \n")                              
   # TODO remove MAX_POSSIBLE_YEAR
-  end_analysis <- get_end_year(data, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
+  end_analysis <- get_end_year(input_data_list, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
 
-  end_analysis <- min(data$production_data$year)
+  start_analysis <- min(input_data_list$production_data$year)
 
   assets_data <- process_assets_data(data=input_data_list, start_analysis = start_analysis, end_analysis = end_analysis)
   scenarios_data <- process_scenarios_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
