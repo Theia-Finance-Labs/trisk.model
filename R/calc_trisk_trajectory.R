@@ -13,11 +13,11 @@
 #'
 #' @return A tibble holding annual profits
 extend_assets_trajectories <- function(trisk_model_input,
-                                   baseline_scenario,
-                                   target_scenario,
-                                   shock_year,
-                                   start_year,
-                                   end_year) {
+                                       baseline_scenario,
+                                       target_scenario,
+                                       shock_year,
+                                       start_year,
+                                       end_year) {
   trajectories <- trisk_model_input %>%
     set_baseline_trajectory(
       baseline_scenario = baseline_scenario
@@ -131,7 +131,6 @@ set_trisk_trajectory <- function(data,
                                  shock_year,
                                  start_year,
                                  end_year) {
-                        
   year_of_shock <- shock_year
   duration_of_shock <- shock_year - start_year
 
@@ -160,9 +159,10 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
     dplyr::mutate(
       overshoot_direction = ifelse(
         dplyr::first(.data$production_scenario_shock) -
-         dplyr::last(.data$production_scenario_shock) > 0,
-          "Decreasing", 
-          "Increasing"),
+          dplyr::last(.data$production_scenario_shock) > 0,
+        "Decreasing",
+        "Increasing"
+      ),
       # Compute cumulative sums for baseline and aligned scenario changes
       scenario_change_baseline_cumsum = cumsum(production_change_scenario_baseline),
       scenario_change_cumsum = cumsum(production_change_scenario_target),

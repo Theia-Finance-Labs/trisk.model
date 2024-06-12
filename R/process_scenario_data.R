@@ -3,7 +3,7 @@ process_scenarios_data <- function(data, baseline_scenario, target_scenario, sce
   capacity_factors_power <- data$capacity_factors_power %>% harmonise_cap_fac_geo_names()
   df_price <- data$df_price
 
-  scenarios_data <- scenarios_pathways %>% 
+  scenarios_data <- scenarios_pathways %>%
     dplyr::left_join(capacity_factors_power, by = c("scenario", "scenario_geography", "ald_business_unit", "year")) %>%
     dplyr::left_join(df_price, by = c("year", "scenario", "ald_sector", "ald_business_unit"))
 
@@ -16,4 +16,3 @@ process_scenarios_data <- function(data, baseline_scenario, target_scenario, sce
 
   return(scenarios_data)
 }
-

@@ -1,5 +1,3 @@
-
-
 #' Process data of type indicated by function name
 #'
 #' @inheritParams process_production_data
@@ -186,19 +184,18 @@ run_trisk_model <- function(input_data_list,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
                             market_passthrough = 0) {
-
-  cat("-- Processing inputs. \n")                              
+  cat("-- Processing inputs. \n")
   # TODO remove MAX_POSSIBLE_YEAR
   end_analysis <- get_end_year(input_data_list, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
 
   start_analysis <- min(input_data_list$production_data$year)
 
-  assets_data <- process_assets_data(data=input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, scenario_geography=scenario_geography)
+  assets_data <- process_assets_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, scenario_geography = scenario_geography)
   scenarios_data <- process_scenarios_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
   trisk_model_input <- process_trisk_input(
-      assets_data = assets_data, scenarios_data = scenarios_data,
-      target_scenario = target_scenario, start_analysis = start_analysis
-    )
+    assets_data = assets_data, scenarios_data = scenarios_data,
+    target_scenario = target_scenario, start_analysis = start_analysis
+  )
 
   cat("-- Calculating baseline and shock trajectories. \n")
 

@@ -1,6 +1,5 @@
 process_trisk_input <- function(assets_data, scenarios_data,
                                 target_scenario, start_analysis) {
-                                  
   # add extend production data with scenario targets
   assets_scenario_productions <- dplyr::inner_join(
     assets_data, scenarios_data,
@@ -13,11 +12,11 @@ process_trisk_input <- function(assets_data, scenarios_data,
     ) %>%
     pivot_to_baseline_target_columns() %>%
     lag_scenario_productions()
-  
+
 
   trisk_model_input <- dplyr::inner_join(
     assets_data, assets_scenario_productions,
-    by = c("company_id","ald_sector", "ald_business_unit", "scenario_geography", "year")
+    by = c("company_id", "ald_sector", "ald_business_unit", "scenario_geography", "year")
   )
 
   return(trisk_model_input)
@@ -26,7 +25,7 @@ process_trisk_input <- function(assets_data, scenarios_data,
 
 
 #' Transform assets capacities into yearly real and theoretical (baseline and target) productions
-#' 
+#'
 #' 1. Apply TMSR/SMSP scenario targets based on initial ald_business_unit or sector
 #' production and type of ald_business_unit
 #'
@@ -45,8 +44,7 @@ process_trisk_input <- function(assets_data, scenarios_data,
 #'   (in the portfolio). Pre-processed to fit analysis parameters and after
 #'   conversion of power capacity to generation.
 #' @noRd
-create_base_production_trajectories <- function(data){
-  
+create_base_production_trajectories <- function(data) {
   hours_to_year <- 24 * 365
   data <- data %>%
     # 1. Apply tmsr / smsp
@@ -59,7 +57,7 @@ create_base_production_trajectories <- function(data){
     ) %>%
     dplyr::mutate(
       production_scenario = ifelse(.data$production_scenario < 0, 0, .data$production_scenario)
-    )%>%
+    ) %>%
     # 2. Apply capacity factors
     dplyr::mutate(
       plan_tech_prod = .data$plan_tech_prod * .data$capacity_factor * .env$hours_to_year,
@@ -71,8 +69,7 @@ create_base_production_trajectories <- function(data){
 
 
 pivot_to_baseline_target_columns <- function(data) {
-
-  index_cols <- c("company_id" ,"scenario_geography", "ald_sector", "ald_business_unit", "year")
+  index_cols <- c("company_id", "scenario_geography", "ald_sector", "ald_business_unit", "year")
   to_pivot <- c("production_scenario", "price")
 
   # Filter baseline scenario
@@ -104,8 +101,7 @@ pivot_to_baseline_target_columns <- function(data) {
 
 
 lag_scenario_productions <- function(data) {
-  
-  data <- data%>%
+  data <- data %>%
     dplyr::mutate(
       production_change_scenario_baseline = .data$production_scenario_baseline - dplyr::lag(.data$production_scenario_baseline),
       production_change_scenario_target = .data$production_scenario_shock - dplyr::lag(.data$production_scenario_shock)

@@ -16,8 +16,6 @@
 #'
 #' @return A tibble holding late_and_sudden_prices
 apply_scenario_prices <- function(data, start_year, shock_year) {
-
-
   # Part 1: Process for years <= shock_year
   before_shock <- data %>%
     dplyr::filter(.data$year <= shock_year) %>%
@@ -25,16 +23,16 @@ apply_scenario_prices <- function(data, start_year, shock_year) {
 
   # Part 2: Process for years > shock_year
   after_shock <- data %>%
-    dplyr::filter(.data$year > shock_year-1) %>%
+    dplyr::filter(.data$year > shock_year - 1) %>%
     dplyr::group_by(.data$company_id, .data$ald_business_unit) %>%
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
     dplyr::summarise(
       baseline_price_at_shock = dplyr::first(.data$price_baseline),
       target_price_end_shockperiod = dplyr::last(.data$price_shock),
-      first_year = min(.data$year)+1,
-      last_year=max(.data$year)
+      first_year = min(.data$year) + 1,
+      last_year = max(.data$year)
     ) %>%
-    dplyr::ungroup()%>%
+    dplyr::ungroup() %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
       # Create a sequence of years from first_year to last_year
@@ -56,13 +54,13 @@ apply_scenario_prices <- function(data, start_year, shock_year) {
 
 
 
-    # Combine both parts
-    final_result <- dplyr::bind_rows(before_shock, after_shock) %>%
-      dplyr::select(.data$company_id, .data$ald_business_unit, .data$year, .data$ls_price)
+  # Combine both parts
+  final_result <- dplyr::bind_rows(before_shock, after_shock) %>%
+    dplyr::select(.data$company_id, .data$ald_business_unit, .data$year, .data$ls_price)
 
 
-  data  <- data%>%
-    dplyr::inner_join(final_result, by=c("company_id", "ald_business_unit", "year"))
+  data <- data %>%
+    dplyr::inner_join(final_result, by = c("company_id", "ald_business_unit", "year"))
 
 
   return(data)

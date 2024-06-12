@@ -1,5 +1,3 @@
-
-
 join_price_data <- function(df, df_prices) {
   # Joins price data by sector, ald_business_unit, year
   # scenario_geography NOT YET INCLUDED!
