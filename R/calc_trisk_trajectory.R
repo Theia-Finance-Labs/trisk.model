@@ -30,6 +30,19 @@ calculate_trajectories <- function(input_data_list,
       shock_year = shock_year
     )
 
+
+  price_data <- input_data_list$df_price %>%
+    calc_scenario_prices(
+      baseline_scenario = baseline_scenario,
+      target_scenario = target_scenario,
+      start_year = start_year,
+      shock_year = shock_year,
+      duration_of_shock = end_year - shock_year + 1 # TODO REMOVE
+    )
+  trisk_trajectory %>%
+    join_price_data(df_prices = price_data)
+
+
   return(trajectories)
 }
 
@@ -165,7 +178,7 @@ set_trisk_trajectory <- function(data,
 
   data <- data %>%
     dplyr::ungroup() %>%
-    dplyr::inner_join(late_sudden_df, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography", "year"))
+    dplyr::left_join(late_sudden_df, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography", "year"))
 
 
   return(data)

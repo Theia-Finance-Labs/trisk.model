@@ -90,47 +90,40 @@ run_trisk_model <- function(input_data_list,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
                             market_passthrough = 0) {
-  outputs <- input_data_list %>%
-    st_process(
-      scenario_geography = scenario_geography,
-      baseline_scenario = baseline_scenario,
-      target_scenario = shock_scenario,
-      start_year = start_year,
-      carbon_price_model = carbon_price_model
+
+  cat("-- Processing inputs. \n")                              
+  # TODO remove MAX_POSSIBLE_YEAR
+  end_analysis <- get_end_year(data, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
+
+  end_analysis <- min(data$production_data$year)
+
+  assets_data <- process_assets_data(data=input_data_list, start_analysis = start_analysis, end_analysis = end_analysis)
+  scenarios_data <- process_scenarios_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
+
+  outputs <- process_trisk_input(
+      assets_data = assets_data, scenarios_data = scenarios_data,
+      target_scenario = target_scenario, start_analysis = start_analysis
     )
-  input_data_list <- outputs$input_data_list
+  trisk_model_data <- outputs$input_data_list
   end_year <- outputs$end_year
 
+  carbon_data <- process_carbon_data(
+    input_data_list$carbon_data,
+    start_year = start_year,
+    end_year = end_year,
+    carbon_price_model = carbon_price_model
+  )
 
-  cat("-- Calculating production trajectory under trisk shock. \n")
+  cat("-- Calculating baseline and shock trajectories. \n")
 
   trisk_trajectory <- calculate_trajectories(
-    input_data_list = input_data_list,
+    trisk_model_data = trisk_model_data,
     baseline_scenario = baseline_scenario,
     target_scenario = shock_scenario,
     start_year = start_year,
     shock_year = shock_year,
     end_year = end_year
   )
-
-
-  price_data <- input_data_list$df_price %>%
-    calc_scenario_prices(
-      baseline_scenario = baseline_scenario,
-      target_scenario = target_scenario,
-      start_year = start_year,
-      shock_year = shock_year,
-      duration_of_shock = end_year - shock_year + 1 # TODO REMOVE
-    )
-
-  full_trajectory <- trisk_trajectory %>%
-    dplyr::inner_join(
-      y = input_data_list$financial_data,
-      by = c("company_id")
-    )
-
-  input_data_list$full_trajectory <- full_trajectory %>%
-    join_price_data(df_prices = price_data)
 
 
   cat("-- Calculating net profits. \n")
