@@ -86,8 +86,8 @@ prepare_company_trajectories <- function(output_list) {
   company_trajectories <- output_list$company_trajectories %>%
     dplyr::rename(
       company_id = .data$company_id,
-      production_baseline_scenario = .data$baseline,
-      production_target_scenario = .data$scen_to_follow,
+      production_baseline_scenario = .data$production_scenario_baseline,
+      production_target_scenario = .data$production_scenario_shock,
       production_shock_scenario = .data$late_sudden,
       price_baseline = .data$price_baseline,
       price_shock_scenario = .data$late_sudden_price,

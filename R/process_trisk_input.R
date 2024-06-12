@@ -69,7 +69,7 @@ create_base_production_trajectories <- function(data) {
 
 
 pivot_to_baseline_target_columns <- function(data) {
-  index_cols <- c("company_id", "scenario_geography", "ald_sector", "ald_business_unit", "year")
+  index_cols <- c("company_id", "scenario_geography", "ald_sector", "ald_business_unit", "proximity_to_target", "year")
   to_pivot <- c("production_scenario", "price")
 
   # Filter baseline scenario

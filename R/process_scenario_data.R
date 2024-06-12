@@ -16,3 +16,16 @@ process_scenarios_data <- function(data, baseline_scenario, target_scenario, sce
 
   return(scenarios_data)
 }
+
+harmonise_cap_fac_geo_names <- function(data) {
+  data <- data %>%
+    # hardcoded adjustments are needed here for compatibility with P4I
+    dplyr::mutate(scenario_geography = gsub(" ", "", .data$scenario_geography, fixed = TRUE)) %>%
+    dplyr::mutate(scenario_geography = dplyr::case_when(
+      .data$scenario_geography == "EuropeanUnion" ~ "EU",
+      .data$scenario_geography == "Non-OECD" ~ "NonOECD",
+      .data$scenario_geography == "UnitedStates" ~ "US",
+      TRUE ~ .data$scenario_geography
+    ))
+  return(data)
+}

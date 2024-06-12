@@ -19,7 +19,7 @@ apply_scenario_prices <- function(data, start_year, shock_year) {
   # Part 1: Process for years <= shock_year
   before_shock <- data %>%
     dplyr::filter(.data$year <= shock_year) %>%
-    dplyr::mutate(ls_price = .data$price_baseline)
+    dplyr::mutate(late_sudden_price = .data$price_baseline)
 
   # Part 2: Process for years > shock_year
   after_shock <- data %>%
@@ -47,16 +47,16 @@ apply_scenario_prices <- function(data, start_year, shock_year) {
         )
       ),
       # Remove the first value from ls_price_full
-      ls_price = list(tail(.data$ls_price_full, -1))
+      late_sudden_price = list(tail(.data$ls_price_full, -1))
     ) %>%
-    tidyr::unnest(c(.data$year, .data$ls_price)) %>%
-    dplyr::select(.data$company_id, .data$ald_business_unit, .data$year, .data$ls_price)
+    tidyr::unnest(c(.data$year, .data$late_sudden_price)) %>%
+    dplyr::select(.data$company_id, .data$ald_business_unit, .data$year, .data$late_sudden_price)
 
 
 
   # Combine both parts
   final_result <- dplyr::bind_rows(before_shock, after_shock) %>%
-    dplyr::select(.data$company_id, .data$ald_business_unit, .data$year, .data$ls_price)
+    dplyr::select(.data$company_id, .data$ald_business_unit, .data$year, .data$late_sudden_price)
 
 
   data <- data %>%

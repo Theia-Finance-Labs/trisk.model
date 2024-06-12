@@ -1,39 +1,3 @@
-#' Process data of type indicated by function name
-#'
-#' @inheritParams process_production_data
-#'
-#' @return A tibble of data as indicated by function name.
-#' @noRd
-process_capacity_factors_power <- function(data,
-                                           scenarios_filter,
-                                           scenario_geography_filter,
-                                           technologies,
-                                           start_year,
-                                           end_year) {
-  data_processed <- data %>%
-    harmonise_cap_fac_geo_names() %>%
-    dplyr::filter(.data$scenario %in% .env$scenarios_filter) %>%
-    dplyr::filter(.data$scenario_geography %in% .env$scenario_geography_filter) %>%
-    dplyr::filter(.data$ald_business_unit %in% .env$technologies) %>%
-    dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
-    stop_if_empty(data_name = "Capacity Factors")
-
-  return(data_processed)
-}
-
-
-harmonise_cap_fac_geo_names <- function(data) {
-  data <- data %>%
-    # hardcoded adjustments are needed here for compatibility with P4I
-    dplyr::mutate(scenario_geography = gsub(" ", "", .data$scenario_geography, fixed = TRUE)) %>%
-    dplyr::mutate(scenario_geography = dplyr::case_when(
-      .data$scenario_geography == "EuropeanUnion" ~ "EU",
-      .data$scenario_geography == "Non-OECD" ~ "NonOECD",
-      .data$scenario_geography == "UnitedStates" ~ "US",
-      TRUE ~ .data$scenario_geography
-    ))
-  return(data)
-}
 
 
 #' Process data of type indicated by function name
@@ -184,6 +148,7 @@ run_trisk_model <- function(input_data_list,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
                             market_passthrough = 0) {
+                              
   cat("-- Processing inputs. \n")
   # TODO remove MAX_POSSIBLE_YEAR
   end_analysis <- get_end_year(input_data_list, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
@@ -199,18 +164,22 @@ run_trisk_model <- function(input_data_list,
 
   cat("-- Calculating baseline and shock trajectories. \n")
 
-  trisk_model_output <- extend_assets_trajectories(
+  trajectories <- extend_assets_trajectories(
     trisk_model_input = trisk_model_input,
-    baseline_scenario = baseline_scenario,
-    target_scenario = shock_scenario,
     start_year = start_year,
     shock_year = shock_year,
     end_year = end_analysis
   )
 
+  trisk_model_output <- trajectories %>% 
+    dplyr::left_join(
+      input_data_list$financial_data,
+      by=c("company_id"))  %>% 
+      dplyr::left_join(scenarios_data %>% dplyr::distinct(ald_business_unit , direction), by="ald_business_unit") %>%
+      dplyr::left_join(trisk_model_input %>% dplyr::distinct(company_id, ald_business_unit, proximity_to_target), by=c("company_id", "ald_business_unit"))
+
   cat("-- Calculating net profits. \n")
 
-  browser()
 
   carbon_data <- process_carbon_data(
     input_data_list$carbon_data,
@@ -232,7 +201,7 @@ run_trisk_model <- function(input_data_list,
   company_annual_profits <- calculate_annual_profits(
     data = company_net_profits,
     baseline_scenario = baseline_scenario,
-    shock_scenario = shock_scenario,
+    shock_scenario = target_scenario,
     end_year = end_analysis,
     discount_rate = discount_rate,
     growth_rate = growth_rate
