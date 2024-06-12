@@ -29,7 +29,7 @@ calculate_proximity_to_target <- function(data,
       .data$scenario_geography
     ) %>%
     dplyr::mutate(
-      required_change = .data$scen_tech_prod - .data$initial_technology_production,
+      required_change = .data$production_scenario - .data$initial_technology_production,
       realised_change = .data$plan_tech_prod - .data$initial_technology_production
     ) %>%
     dplyr::summarise(

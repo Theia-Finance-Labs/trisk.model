@@ -47,8 +47,7 @@ summarise_production_technology_forecasts <- function(data,
       # Initial value is identical between production and scenario target,
       # can thus be used for both
       initial_technology_production = dplyr::first(.data$plan_tech_prod),
-      final_technology_production = dplyr::last(.data$plan_tech_prod),
-      sum_production_forecast = sum(.data$plan_tech_prod, na.rm = TRUE)
+      final_technology_production = dplyr::last(.data$plan_tech_prod)
     ) %>%
     dplyr::ungroup()
 
@@ -86,4 +85,48 @@ summarise_production_sector_forecasts <- function(data) {
       initial_sector_production = dplyr::first(.data$plan_sec_prod)
     ) %>%
     dplyr::ungroup()
+}
+
+
+
+#' Extend the dataframe containing the production and production summaries to
+#' cover the whole timeframe of the analysis, filling variables downwards where
+#' applicable.
+#'
+#' @param data A data frame containing the production forecasts of companies,
+#'   the summaries fo their forecasts and the phase out indicator.
+#' @param start_analysis start of the analysis
+#' @param end_analysis end of the analysis
+#' @noRd
+extend_to_full_analysis_timeframe <- function(data,
+                                              start_analysis,
+                                              end_analysis) {
+  data <- data %>%
+    tidyr::complete(
+      year = seq(.env$start_analysis, .env$end_analysis),
+      tidyr::nesting(
+        !!!rlang::syms(
+          c(
+            "company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"
+          )
+        )
+      )
+    ) %>%
+    dplyr::arrange(
+      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
+      .data$scenario_geography, .data$year
+    ) %>%
+    tidyr::fill(
+      dplyr::all_of(c(
+        "initial_technology_production",
+        "final_technology_production",
+        "initial_sector_production",
+        "plan_emission_factor"
+      ))
+    ) %>%
+    dplyr::rename(
+      emission_factor = "plan_emission_factor"
+    )
+
+  return(data)
 }

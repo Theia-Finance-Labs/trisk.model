@@ -1,14 +1,24 @@
 process_trisk_input <- function(assets_data, scenarios_data,
                                 target_scenario, start_analysis) {
-                                  browser()
+                                  
   # add extend production data with scenario targets
-  trisk_model_input <- dplyr::inner_join(
+  assets_scenario_productions <- dplyr::inner_join(
     assets_data, scenarios_data,
     by = c("ald_sector", "ald_business_unit", "scenario_geography", "year")
   ) %>%
     create_base_production_trajectories() %>%
+    calculate_proximity_to_target( # TODO MOVE TO NPV COMPUTATION ?
+      start_analysis = start_analysis,
+      target_scenario = target_scenario
+    ) %>%
     pivot_to_baseline_target_columns() %>%
     lag_scenario_productions()
+  
+
+  trisk_model_input <- dplyr::inner_join(
+    assets_data, assets_scenario_productions,
+    by = c("company_id","ald_sector", "ald_business_unit", "scenario_geography", "year")
+  )
 
   return(trisk_model_input)
 }
@@ -41,73 +51,66 @@ create_base_production_trajectories <- function(data){
   data <- data %>%
     # 1. Apply tmsr / smsp
     dplyr::mutate(
-      scen_tech_prod = dplyr::if_else(
+      production_scenario = dplyr::if_else(
         .data$direction == "carbontech",
         .data$initial_technology_production * (1 + .data$fair_share_perc), # tmsr
         .data$initial_technology_production + (.data$initial_sector_production * .data$fair_share_perc) # smsp
       )
     ) %>%
     dplyr::mutate(
-      scen_tech_prod = ifelse(.data$scen_tech_prod < 0, 0, .data$scen_tech_prod)
+      production_scenario = ifelse(.data$production_scenario < 0, 0, .data$production_scenario)
     )%>%
     # 2. Apply capacity factors
     dplyr::mutate(
       plan_tech_prod = .data$plan_tech_prod * .data$capacity_factor * .env$hours_to_year,
-      scen_tech_prod = .data$scen_tech_prod * .data$capacity_factor * .env$hours_to_year
+      production_scenario = .data$production_scenario * .data$capacity_factor * .env$hours_to_year
     )
 }
 
 
-#' Extend the dataframe containing the production and production summaries to
-#' cover the whole timeframe of the analysis, filling variables downwards where
-#' applicable.
-#'
-#' @param data A data frame containing the production forecasts of companies,
-#'   the summaries fo their forecasts and the phase out indicator.
-#' @param start_analysis start of the analysis
-#' @param end_analysis end of the analysis
-#' @noRd
-extend_to_full_analysis_timeframe <- function(data,
-                                              start_analysis,
-                                              end_analysis) {
-  data <- data %>%
-    tidyr::complete(
-      year = seq(.env$start_analysis, .env$end_analysis),
-      tidyr::nesting(
-        !!!rlang::syms(
-          c(
-            "company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"
-          )
-        )
-      )
-    ) %>%
-    dplyr::arrange(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
-      .data$scenario_geography, .data$year
-    ) %>%
-    tidyr::fill(
-      dplyr::all_of(c(
-        "initial_technology_production",
-        "final_technology_production",
-        "plan_emission_factor"
-      ))
-    ) %>%
-    dplyr::rename(
-      emission_factor = "plan_emission_factor"
+
+
+pivot_to_baseline_target_columns <- function(data) {
+
+  index_cols <- c("company_id" ,"scenario_geography", "ald_sector", "ald_business_unit", "year")
+  to_pivot <- c("production_scenario", "price")
+
+  # Filter baseline scenario
+  baseline_data <- data %>%
+    dplyr::filter(.data$scenario_type == "baseline") %>%
+    tidyr::pivot_wider(
+      id_cols = dplyr::all_of(index_cols),
+      names_from = scenario_type,
+      values_from = to_pivot,
+      names_sep = "_"
     )
 
+  # Filter shock scenario
+  shock_data <- data %>%
+    dplyr::filter(.data$scenario_type == "shock") %>%
+    tidyr::pivot_wider(
+      id_cols = dplyr::all_of(index_cols),
+      names_from = scenario_type,
+      values_from = to_pivot,
+      names_sep = "_"
+    )
+
+  # Merge the pivoted data
+  data <- dplyr::inner_join(baseline_data, shock_data, by = index_cols)
   return(data)
 }
 
 
 
+
 lag_scenario_productions <- function(data) {
+  
   data <- data%>%
     dplyr::mutate(
-      baseline_scenario_change = .data$prod_baseline_scenario - dplyr::lag(.data$prod_baseline_scenario),
-      target_scenario_change = .data$prod_target_scenario - dplyr::lag(.data$prod_target_scenario)
+      production_change_scenario_baseline = .data$production_scenario_baseline - dplyr::lag(.data$production_scenario_baseline),
+      production_change_scenario_target = .data$production_scenario_shock - dplyr::lag(.data$production_scenario_shock)
     ) %>%
-    tidyr::replace_na(replace = list(baseline_scenario_change = 0, target_scenario_change = 0))
+    tidyr::replace_na(replace = list(production_change_scenario_baseline = 0, production_change_scenario_target = 0))
 
   return(data)
 }

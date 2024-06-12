@@ -200,13 +200,6 @@ run_trisk_model <- function(input_data_list,
       target_scenario = target_scenario, start_analysis = start_analysis
     )
 
-  carbon_data <- process_carbon_data(
-    input_data_list$carbon_data,
-    start_year = start_year,
-    end_year = end_analysis,
-    carbon_price_model = carbon_price_model
-  )
-
   cat("-- Calculating baseline and shock trajectories. \n")
 
   trisk_model_output <- extend_assets_trajectories(
@@ -220,18 +213,20 @@ run_trisk_model <- function(input_data_list,
 
   cat("-- Calculating net profits. \n")
 
-    # TODO MOVE TO NPV COMPUTATION
-  trisk_model_input <- trisk_model_input %>%
-    calculate_proximity_to_target(
-      start_analysis = start_analysis,
-      target_scenario = target_scenario
-    )
+  browser()
+
+  carbon_data <- process_carbon_data(
+    input_data_list$carbon_data,
+    start_year = start_year,
+    end_year = end_analysis,
+    carbon_price_model = carbon_price_model
+  )
 
 
   # calc net profits
   company_net_profits <- calculate_net_profits(
-    input_data_list$full_trajectory,
-    carbon_data = input_data_list$carbon_data,
+    trisk_model_output,
+    carbon_data = carbon_data,
     shock_year = shock_year,
     market_passthrough = market_passthrough
   )

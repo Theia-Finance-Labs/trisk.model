@@ -30,8 +30,7 @@ extend_assets_trajectories <- function(trisk_model_input,
     ) %>%
     apply_scenario_prices(
       start_year = start_year,
-      shock_year = shock_year,
-      duration_of_shock = end_year - shock_year + 1 # TODO REMOVE
+      shock_year = shock_year
     )
 
   return(trajectories)
@@ -71,10 +70,10 @@ set_baseline_trajectory <- function(data,
                                     baseline_scenario) {
   data <- data %>%
     dplyr::mutate(
-      prod_baseline_asset = .data$plan_tech_prod
+      production_asset_baseline = .data$plan_tech_prod
     ) %>%
     # Fill the baseline/input production with the latest non-NA value
-    tidyr::fill(.data$prod_baseline_asset, .direction = "down") %>%
+    tidyr::fill(.data$production_asset_baseline, .direction = "down") %>%
     dplyr::group_by(
       .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
       .data$scenario_geography
@@ -83,11 +82,11 @@ set_baseline_trajectory <- function(data,
       # compute per group the cumulative sum of the scenario change derivatives at each year
       # add the cumsum to the input production , so that the latest non-NA value is incremented
       # by the cumulative sum of all scenario change local derivative value
-      prod_baseline_asset = .data$prod_baseline_asset + cumsum(.data$baseline_scenario_change)
+      production_asset_baseline = .data$production_asset_baseline + cumsum(.data$production_change_scenario_baseline)
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      prod_baseline_asset = dplyr::if_else(.data$prod_baseline_asset < 0, 0, .data$prod_baseline_asset)
+      production_asset_baseline = dplyr::if_else(.data$production_asset_baseline < 0, 0, .data$production_asset_baseline)
     )
   return(data)
 }
@@ -146,29 +145,27 @@ set_trisk_trajectory <- function(data,
     dplyr::ungroup() %>%
     dplyr::left_join(late_sudden_df, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography", "year"))
 
-
   return(data)
 }
 
 calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIME_FRAME_BEGONE = 5) {
-  browser()
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
     dplyr::select_at(c(
       "company_id", "company_name", "year", "ald_sector", "ald_business_unit", "scenario_geography",
-      "plan_tech_prod", "prod_target_scenario", "target_scenario_change", "baseline_scenario_change"
+      "plan_tech_prod", "production_scenario_shock", "production_change_scenario_target", "production_change_scenario_baseline"
     )) %>%
     dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
     dplyr::arrange(year, .by_group = TRUE) %>%
     dplyr::mutate(
       overshoot_direction = ifelse(
-        dplyr::first(.data$prod_target_scenario) -
-         dplyr::last(.data$prod_target_scenario) > 0,
+        dplyr::first(.data$production_scenario_shock) -
+         dplyr::last(.data$production_scenario_shock) > 0,
           "Decreasing", 
           "Increasing"),
       # Compute cumulative sums for baseline and aligned scenario changes
-      scenario_change_baseline_cumsum = cumsum(baseline_scenario_change),
-      scenario_change_cumsum = cumsum(target_scenario_change),
+      scenario_change_baseline_cumsum = cumsum(production_change_scenario_baseline),
+      scenario_change_cumsum = cumsum(production_change_scenario_target),
       # Fill missing planned production values
       plan_tech_prod_filled = .data$plan_tech_prod,
     ) %>%
@@ -182,7 +179,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
     dplyr::filter(year > min(year), year <= min(year) + TIME_FRAME_BEGONE) %>% # TODO IS IT A BUG ??
     dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
     dplyr::summarise(
-      prod_to_follow = sum(.data$prod_target_scenario),
+      prod_to_follow = sum(.data$production_scenario_shock),
       real_prod = sum(.data$plan_tech_prod),
       requires_overshoot_correction = any(
         (.data$overshoot_direction == "Decreasing" & (prod_to_follow < real_prod)) |
@@ -220,20 +217,20 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
         .groups = "drop"
       )
 
-    prod_target_scenario_tot_to_compensate <- ls_data_to_compensate %>%
+    production_scenario_shock_tot_to_compensate <- ls_data_to_compensate %>%
       dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
       dplyr::summarize(
-        prod_target_scenario_total_sum = sum(prod_target_scenario),
+        production_scenario_shock_total_sum = sum(production_scenario_shock),
         n_shocked_years = dplyr::last(year) - year_of_shock + 1,
         .groups = "drop"
       )
 
-    x_integral_to_compensate <- dplyr::left_join(ls_pre_shock_to_compensate, prod_target_scenario_tot_to_compensate,
+    x_integral_to_compensate <- dplyr::left_join(ls_pre_shock_to_compensate, production_scenario_shock_tot_to_compensate,
       by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography")
     ) %>%
       dplyr::mutate(
         sum_1_to_n_shocked_years = .data$n_shocked_years * (.data$n_shocked_years + 1) / 2,
-        x = (.data$prod_target_scenario_total_sum - .data$late_sudden_pre_shock_tot - .data$n_shocked_years * .data$late_sudden_pre_shock_val) /
+        x = (.data$production_scenario_shock_total_sum - .data$late_sudden_pre_shock_tot - .data$n_shocked_years * .data$late_sudden_pre_shock_val) /
           (-sum_1_to_n_shocked_years)
       ) %>%
       dplyr::select(company_id, company_name, ald_sector, ald_business_unit, scenario_geography, x)

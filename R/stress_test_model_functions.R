@@ -1,23 +1,4 @@
-# FIXME: Add tests and documentation
 
-
-# LATE AND SUDDEN PRICES ----------------------------------------
-
-late_sudden_prices <- function(price_target,
-                               baseline_price,
-                               year_of_shock,
-                               start_year,
-                               duration_of_shock) {
-  position_shock_year <- year_of_shock - start_year + 1
-  ls_price <- baseline_price
-
-  baseline_price_at_shock <- baseline_price[0 + position_shock_year]
-  target_price_end_shockperiod <- price_target[duration_of_shock + position_shock_year - 1]
-
-  ls_price[position_shock_year:(position_shock_year + duration_of_shock - 1)] <- zoo::na.approx(c(baseline_price_at_shock, rep(NA, duration_of_shock - 2), target_price_end_shockperiod))
-
-  return(ls_price)
-}
 
 join_price_data <- function(df, df_prices) {
   # Joins price data by sector, ald_business_unit, year
@@ -27,14 +8,7 @@ join_price_data <- function(df, df_prices) {
 }
 
 
-# run basic portfolio data consistency checks that are required for further data processing
-check_portfolio_consistency <- function(df, start_year) {
-  # first year in data set must be the same as start year defined in parameters
-  if (min(df$year, na.rm = TRUE) != start_year) {
-    stop("Start year of the analysis and first year in the input portfolio do not match.")
-  }
-  return(df)
-}
+
 
 check_price_consistency <- function(df, start_year) {
   # the year of shock must be greater or equal to the start year of the analysis
