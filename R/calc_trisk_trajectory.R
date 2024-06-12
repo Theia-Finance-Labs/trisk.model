@@ -1,4 +1,4 @@
-#' Calculate transition shock trajectory
+#' Calculate baseline and transition shock trajectoroes
 #'
 #' @param input_data_list List with project agnostic and project specific input data
 #' @param baseline_scenario Character. A string that indicates which
@@ -7,19 +7,18 @@
 #' @param target_scenario Character. A string that indicates which
 #'   of the scenarios included in the analysis should be used to set the
 #'   late & sudden ald_business_unit trajectories.
-#' @param transition_scenario Tibble with 1 row holding at least variables
-#'   `year_of_shock` and `duration_of_shock`.
+#' @param shock_year year of transition from baseline scenario to target scenario
 #' @param start_year Numeric, holding start year of analysis.
 #' @param end_year Numeric, holding end year of analysis.
 #'
 #' @return A tibble holding annual profits
-calculate_trajectories <- function(input_data_list,
+extend_assets_trajectories <- function(trisk_model_input,
                                    baseline_scenario,
                                    target_scenario,
                                    shock_year,
                                    start_year,
                                    end_year) {
-  trajectories <- input_data_list$production_data %>%
+  trajectories <- trisk_model_input %>%
     set_baseline_trajectory(
       baseline_scenario = baseline_scenario
     ) %>%
@@ -28,20 +27,12 @@ calculate_trajectories <- function(input_data_list,
       start_year = start_year,
       end_year = end_year,
       shock_year = shock_year
-    )
-
-
-  price_data <- input_data_list$df_price %>%
-    calc_scenario_prices(
-      baseline_scenario = baseline_scenario,
-      target_scenario = target_scenario,
+    ) %>%
+    apply_scenario_prices(
       start_year = start_year,
       shock_year = shock_year,
       duration_of_shock = end_year - shock_year + 1 # TODO REMOVE
     )
-  trisk_trajectory %>%
-    join_price_data(df_prices = price_data)
-
 
   return(trajectories)
 }
@@ -78,6 +69,7 @@ calculate_trajectories <- function(input_data_list,
 #' @return dataframe.
 set_baseline_trajectory <- function(data,
                                     baseline_scenario) {
+  browser()
   data <- data %>%
     dplyr::mutate(
       scen_to_follow = !!rlang::sym(baseline_scenario),
@@ -151,6 +143,7 @@ set_trisk_trajectory <- function(data,
                                  shock_year,
                                  start_year,
                                  end_year) {
+browser()                                  
   year_of_shock <- shock_year
   duration_of_shock <- shock_year - start_year
 

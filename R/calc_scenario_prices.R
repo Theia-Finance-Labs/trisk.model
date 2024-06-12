@@ -15,9 +15,9 @@
 #' @param start_year Start_year of analysis
 #'
 #' @return A tibble holding late_and_sudden_prices
-calc_scenario_prices <- function(price_data, baseline_scenario, target_scenario, start_year, shock_year, duration_of_shock) {
+apply_scenario_prices <- function(data, start_year, shock_year, duration_of_shock) {
   browser()
-  data <- price_data %>%
+  data <- data %>%
     dplyr::group_by(.data$ald_sector, .data$ald_business_unit) %>%
     dplyr::mutate(
       late_sudden_price = late_sudden_prices(
