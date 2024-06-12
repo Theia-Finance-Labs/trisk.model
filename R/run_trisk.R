@@ -193,9 +193,8 @@ run_trisk_model <- function(input_data_list,
 
   start_analysis <- min(input_data_list$production_data$year)
 
-  assets_data <- process_assets_data(data=input_data_list, start_analysis = start_analysis, end_analysis = end_analysis)
+  assets_data <- process_assets_data(data=input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, scenario_geography=scenario_geography)
   scenarios_data <- process_scenarios_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
-
   trisk_model_input <- process_trisk_input(
       assets_data = assets_data, scenarios_data = scenarios_data,
       target_scenario = target_scenario, start_analysis = start_analysis

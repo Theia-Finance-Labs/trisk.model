@@ -14,5 +14,41 @@ process_scenarios_data <- function(data, baseline_scenario, target_scenario, sce
     tidyr::replace_na(list(capacity_factor = 1)) %>%
     dplyr::arrange(year, .by_group = TRUE)
 
+  scenarios_data  <- scenarios_data %>% 
+    pivot_to_baseline_target_columns()
+
   return(scenarios_data)
 }
+
+
+
+pivot_to_baseline_target_columns <- function(data) {
+
+  index_cols <- c("scenario_geography", "ald_sector", "ald_business_unit", "year")
+  to_pivot <- c("fair_share_perc", "capacity_factor", "price")
+
+  # Filter baseline scenario
+  baseline_data <- data %>%
+    dplyr::filter(.data$scenario_type == "baseline") %>%
+    tidyr::pivot_wider(
+      id_cols = dplyr::all_of(index_cols),
+      names_from = scenario_type,
+      values_from = to_pivot,
+      names_sep = "_"
+    )
+
+  # Filter shock scenario
+  shock_data <- data %>%
+    dplyr::filter(.data$scenario_type == "shock") %>%
+    tidyr::pivot_wider(
+      id_cols = dplyr::all_of(index_cols),
+      names_from = scenario_type,
+      values_from = to_pivot,
+      names_sep = "_"
+    )
+
+  # Merge the pivoted data
+  pivoted_scenarios_data <- dplyr::inner_join(baseline_data, shock_data, by = index_cols)
+  return(pivoted_scenarios_data)
+}
+

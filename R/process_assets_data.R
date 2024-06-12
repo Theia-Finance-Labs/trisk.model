@@ -1,5 +1,8 @@
-process_assets_data <- function(data, start_analysis, end_analysis) {
-  production_financial_data <- dplyr::inner_join(data$production_data, data$financial_data, by = "company_id")
+process_assets_data <- function(data, start_analysis, end_analysis, scenario_geography) {
+  production_financial_data <- dplyr::inner_join(
+    data$production_data, 
+    data$financial_data, by = "company_id") %>%
+    dplyr::filter(.data$scenario_geography == .env$scenario_geography)
 
   assets_data <- production_financial_data %>%
     summarise_production_technology_forecasts(

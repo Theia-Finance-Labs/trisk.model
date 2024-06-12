@@ -1,5 +1,6 @@
 process_trisk_input <- function(assets_data, scenarios_data,
                                 target_scenario, start_analysis) {
+                                  browser()
   # add extend production data with scenario targets
   trisk_model_input <- dplyr::inner_join(
     assets_data, scenarios_data,
@@ -11,11 +12,6 @@ process_trisk_input <- function(assets_data, scenarios_data,
 
   return(trisk_model_input)
 }
-
-
-
-
-
 
 
 
@@ -62,14 +58,6 @@ create_base_production_trajectories <- function(data){
 }
 
 
-
-
-
-
-
-
-
-
 #' Extend the dataframe containing the production and production summaries to
 #' cover the whole timeframe of the analysis, filling variables downwards where
 #' applicable.
@@ -113,9 +101,6 @@ extend_to_full_analysis_timeframe <- function(data,
 
 
 
-
-
-
 lag_scenario_productions <- function(data) {
   data <- data%>%
     dplyr::mutate(
@@ -126,45 +111,3 @@ lag_scenario_productions <- function(data) {
 
   return(data)
 }
-
-pivot_to_baseline_target_columns <- function(data) {
-  
-  id_columns <- setdiff(names(data), c("scenario", "scenario_type", "scen_tech_prod", "price"))
-  data <- data %>%
-    tidyr::pivot_wider(
-      id_cols = id_columns,
-      names_from = "scenario_type",
-      values_from = c("scen_tech_prod", "price"),
-      names_prefix="scenario_prod_"
-    ) %>%
-    dplyr::arrange(
-      .data$scenario_geography, .data$company_id, .data$ald_sector, .data$ald_business_unit, .data$year
-    ) %>%
-    dplyr::rename(
-      prod_baseline_scenario = .data$scen_tech_prod_scenario_prod_baseline,
-      prod_target_scenario = .data$scen_tech_prod_scenario_prod_shock,
-      price_baseline_scenario = .data$price_scenario_prod_baseline,
-      price_target_scenario = .data$price_scenario_prod_shock
-    ) 
-  return(data)
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
