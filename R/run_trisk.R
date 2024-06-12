@@ -209,7 +209,7 @@ run_trisk_model <- function(input_data_list,
   cat("-- Calculating market risk. \n")
 
   company_technology_npv <- company_annual_profits %>%
-    company_technology_asset_value_at_risk(
+    calculate_asset_value_at_risk(
       shock_year = shock_year,
       start_year = start_year,
       div_netprofit_prop_coef = div_netprofit_prop_coef,

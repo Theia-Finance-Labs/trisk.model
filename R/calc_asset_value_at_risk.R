@@ -10,7 +10,7 @@
 #'   if how strongly the DCF should propagate to value changes.
 #' @param crispy Boolean. Indicates if the output should be used for the CRISPY
 #'   database or for standard portfolio calculation (default).
-company_technology_asset_value_at_risk <- function(data,
+calculate_asset_value_at_risk <- function(data,
                                                    shock_year,
                                                    start_year,
                                                    div_netprofit_prop_coef = NULL,
