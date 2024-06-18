@@ -175,13 +175,17 @@ read_production_data <- function(path = NULL) {
         plan_emission_factor = "d",
         plan_sec_prod = "d"
       )
-    )
+    ) %>% 
+    dplyr::rename(
+      production_plan_company_technology = .data$plan_tech_prod,
+      emission_factor = "plan_emission_factor"
+    ) 
 
   validate_data_has_expected_cols(
     data = data,
     expected_columns = c(
       "company_id", "company_name", "scenario_geography", "year", "ald_sector",
-      "ald_business_unit", "plan_tech_prod", "plan_emission_factor", "plan_sec_prod"
+      "ald_business_unit", "production_plan_company_technology", "emission_factor", "plan_sec_prod"
     )
   )
 
@@ -209,6 +213,10 @@ read_scenario_data <- function(path) {
         direction = "c",
         fair_share_perc = "d"
       )
+    ) %>%
+    dplyr::mutate(
+      direction = ifelse(.data$direction == "declining", "carbontech", "greentech"),
+      scenario_type = ifelse(.data$scenario_type == "shock", "target", .data$scenario_type)
     )
 
   validate_data_has_expected_cols(
