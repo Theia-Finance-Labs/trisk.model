@@ -52,14 +52,6 @@ create_base_production_trajectories <- function(data) {
   
   hours_to_year <- 24 * 365
   data <- data %>%
-      # 2. Apply capacity factors
-    dplyr::mutate(
-      production_plan_company_technology = ifelse(.data$ald_sector == "Power", 
-        .data$production_plan_company_technology * .data$capacity_factor * .env$hours_to_year,
-        .data$production_plan_company_technology * .data$capacity_factor),
-      plan_sec_prod = ifelse(.data$ald_sector == "Power", 
-        .data$plan_sec_prod * .data$capacity_factor * .env$hours_to_year,
-        .data$plan_sec_prod * .data$capacity_factor)) %>%
     dplyr::group_by(
       .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
       .data$scenario_geography
@@ -82,7 +74,19 @@ create_base_production_trajectories <- function(data) {
     dplyr::ungroup() %>%
     dplyr::mutate(
       production_scenario = ifelse(.data$production_scenario < 0, 0, .data$production_scenario)
-    ) 
+    )  %>%
+      # 2. Apply capacity factors
+    dplyr::mutate(
+      production_plan_company_technology = ifelse(.data$ald_sector == "Power", 
+        .data$production_plan_company_technology * .data$capacity_factor * .env$hours_to_year,
+        .data$production_plan_company_technology * .data$capacity_factor),
+      production_scenario = ifelse(.data$ald_sector == "Power", 
+        .data$production_scenario * .data$capacity_factor * .env$hours_to_year,
+        .data$production_scenario * .data$capacity_factor)
+      # plan_sec_prod = ifelse(.data$ald_sector == "Power", 
+      #   .data$plan_sec_prod * .data$capacity_factor * .env$hours_to_year,
+      #   .data$plan_sec_prod * .data$capacity_factor)
+        )
     
     return(data)
 }
