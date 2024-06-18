@@ -17,7 +17,7 @@ extend_assets_trajectories <- function(trisk_model_input,
                                        start_year,
                                        end_year) {
 
-                                        
+                 
   trajectories <- trisk_model_input %>%
     set_baseline_trajectory(
     ) %>%

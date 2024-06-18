@@ -47,14 +47,12 @@ extend_to_full_analysis_timeframe <- function(data,
     ) %>%
     tidyr::fill(
       dplyr::all_of(c(
-        # "initial_technology_production",
-        # "final_technology_production",
-        # "initial_sector_production",
-        "plan_emission_factor"
+        "emission_factor",
+        "pd",
+        "net_profit_margin",
+        "debt_equity_ratio",
+        "volatility"
       ))
-    ) %>%
-    dplyr::rename(
-      emission_factor = "plan_emission_factor"
     )
 
   return(data)

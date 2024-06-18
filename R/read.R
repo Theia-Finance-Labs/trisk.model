@@ -177,14 +177,15 @@ read_production_data <- function(path = NULL) {
       )
     ) %>% 
     dplyr::rename(
-      production_plan_company_technology = .data$plan_tech_prod
-    )
+      production_plan_company_technology = .data$plan_tech_prod,
+      emission_factor = "plan_emission_factor"
+    ) 
 
   validate_data_has_expected_cols(
     data = data,
     expected_columns = c(
       "company_id", "company_name", "scenario_geography", "year", "ald_sector",
-      "ald_business_unit", "production_plan_company_technology", "plan_emission_factor", "plan_sec_prod"
+      "ald_business_unit", "production_plan_company_technology", "emission_factor", "plan_sec_prod"
     )
   )
 
