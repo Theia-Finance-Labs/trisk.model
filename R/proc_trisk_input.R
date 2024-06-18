@@ -83,13 +83,6 @@ create_base_production_trajectories <- function(data) {
     dplyr::mutate(
       production_scenario = ifelse(.data$production_scenario < 0, 0, .data$production_scenario)
     ) 
-    # %>%
-    # # 2. Apply capacity factors
-    # dplyr::mutate(
-    #   production_scenario = ifelse(.data$ald_sector == "Power", 
-    #     .data$production_scenario * .data$capacity_factor * .env$hours_to_year,
-    #     .data$production_scenario * .data$capacity_factor)
-    # ) 
     
     return(data)
 }
@@ -222,64 +215,3 @@ pivot_to_baseline_target_columns <- function(data) {
 }
 
 
-
-
-
-# #' Summarise the forecasts for company-tech level production within the five
-# #' year time frame
-# #'
-# #' @param data A data frame containing the production forecasts of companies
-# #'   (in the portfolio). Pre-processed to fit analysis parameters and after
-# #'   conversion of power capacity to generation.
-# #' @param start_analysis start of the analysis
-# #' @noRd
-# summarise_production_technology_forecasts <- function(data,
-#                                                       start_analysis) {
-#   time_frame <- 5
-#   data <- data %>%
-#     dplyr::select(
-#       dplyr::all_of(c(
-#         "company_id", "company_name", "ald_sector", "ald_business_unit",
-#         "scenario_geography", "year", "production_plan_company_technology", "plan_sec_prod",
-#         "plan_emission_factor"
-#       ))
-#     ) %>%
-#     dplyr::filter(.data$year <= .env$start_analysis + .env$time_frame) %>%
-#     dplyr::arrange(.data$year) %>%
-#      %>%
-#     dplyr::ungroup()
-
-#   return(data)
-# }
-
-# #' Summarise the forecasts for company-sector level production within the five
-# #' year time frame
-# #'
-# #' @param data A data frame containing the production forecasts of companies
-# #'   (in the portfolio). Pre-processed to fit analysis parameters and after
-# #'   conversion of power capacity to generation.
-# #' @noRd
-# summarise_production_sector_forecasts <- function(data) {
-#   data <- data %>%
-#     # dplyr::select(.data$company_id, .data$company_name, .data$ald_sector,
-#     #               .data$initial_technology_production,
-#     #               .data$ald_business_unit, .data$emission_factor,
-#     #              .data$scenario_geography, .data$year, .data$plan_sec_prod, .data$production_plan_company_technology) %>%
-#     # dplyr::group_by(
-#     #   .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
-#     #   .data$scenario_geography, .data$year
-#     # ) %>%
-#     # dplyr::mutate(plan_sec_prod = sum(.data$production_plan_company_technology, na.rm = TRUE)) %>%
-#     # tidyr::fill("plan_sec_prod", .direction="down") %>%
-#     # dplyr::ungroup() %>%
-#     dplyr::group_by(
-#       .data$company_id, .data$company_name, .data$ald_sector, .data$scenario_geography
-#     ) %>%
-#     dplyr::arrange(.data$year, by_group = TRUE) %>%
-#     dplyr::mutate(
-#       # first year plan and scenario values are equal by construction,
-#       # can thus be used for production and target
-#       initial_sector_production = dplyr::first(.data$plan_sec_prod)
-#     ) %>%
-#     dplyr::ungroup()
-# }
