@@ -55,8 +55,11 @@ create_base_production_trajectories <- function(data) {
       # 2. Apply capacity factors
     dplyr::mutate(
       production_plan_company_technology = ifelse(.data$ald_sector == "Power", 
-      .data$production_plan_company_technology * .data$capacity_factor * .env$hours_to_year,
-      .data$production_plan_company_technology * .data$capacity_factor))%>%
+        .data$production_plan_company_technology * .data$capacity_factor * .env$hours_to_year,
+        .data$production_plan_company_technology * .data$capacity_factor),
+      plan_sec_prod = ifelse(.data$ald_sector == "Power", 
+        .data$plan_sec_prod * .data$capacity_factor * .env$hours_to_year,
+        .data$plan_sec_prod * .data$capacity_factor)) %>%
     dplyr::group_by(
       .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
       .data$scenario_geography
@@ -107,7 +110,7 @@ lag_scenario_productions <- function(data) {
     # 4. set assets scenario production to NA when real asset production is known
     dplyr::mutate(
       production_change_scenario = ifelse(
-        is.na(.data$production_plan_company_technology), production_change_scenario, NA
+        !is.na(.data$production_plan_company_technology) | (.data$year == min(.data$year)), NA, production_change_scenario
       )
     )%>%
     dplyr::ungroup()%>%
@@ -115,6 +118,8 @@ lag_scenario_productions <- function(data) {
 
   return(data)
 }
+
+
 
 #' Calculate the ratio of the required change in ald_business_unit that each company
 #' has achieved per ald_business_unit at the end of the production forecast period.
