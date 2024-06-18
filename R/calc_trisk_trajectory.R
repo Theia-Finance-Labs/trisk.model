@@ -33,7 +33,7 @@ extend_assets_trajectories <- function(trisk_model_input,
     trajectories  <- trajectories %>%
       dplyr::select_at(c(
         "year", "company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography",
-        "plan_tech_prod",  "emission_factor", "production_scenario_baseline", "production_scenario_target",
+        "production_plan_company_technology",  "emission_factor", "production_scenario_baseline", "production_scenario_target",
         "production_change_scenario_baseline", "production_change_scenario_target", 
         "production_asset_baseline", "late_sudden", "overshoot_direction",
         "price_baseline", "price_target", "late_sudden_price"))
@@ -74,7 +74,7 @@ extend_assets_trajectories <- function(trisk_model_input,
 set_baseline_trajectory <- function(data) {
   data <- data %>%
     dplyr::mutate(
-      production_asset_baseline = .data$plan_tech_prod
+      production_asset_baseline = .data$production_plan_company_technology
     ) %>%
     # Fill the baseline/input production with the latest non-NA value
     tidyr::fill(.data$production_asset_baseline, .direction = "down") %>%
@@ -156,7 +156,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
   late_sudden_data <- data %>%
     dplyr::select_at(c(
       "company_id", "company_name", "year", "ald_sector", "ald_business_unit", "scenario_geography", 
-      "plan_tech_prod", "production_scenario_target", "production_change_scenario_target", "production_change_scenario_baseline"
+      "production_plan_company_technology", "production_scenario_target", "production_change_scenario_target", "production_change_scenario_baseline"
     )) %>%
     dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
     dplyr::arrange(year, .by_group = TRUE) %>%
@@ -171,9 +171,9 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
       scenario_change_baseline_cumsum = cumsum(production_change_scenario_baseline),
       scenario_change_cumsum = cumsum(production_change_scenario_target),
       # Fill missing planned production values
-      plan_tech_prod_filled = .data$plan_tech_prod,
+      production_plan_company_technology_filled = .data$production_plan_company_technology,
     ) %>%
-    tidyr::fill(plan_tech_prod_filled, .direction = "down") %>%
+    tidyr::fill(production_plan_company_technology_filled, .direction = "down") %>%
     dplyr::ungroup()
 
 
@@ -184,7 +184,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
     dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
     dplyr::summarise(
       prod_to_follow = sum(.data$production_scenario_target),
-      real_prod = sum(.data$plan_tech_prod),
+      real_prod = sum(.data$production_plan_company_technology),
       requires_overshoot_correction = any(
         (.data$overshoot_direction == "Decreasing" & (prod_to_follow < real_prod)) |
           (.data$overshoot_direction == "Increasing" & (prod_to_follow > real_prod))
@@ -209,7 +209,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
 
     ls_pre_clean_to_compensate <- ls_data_to_compensate %>%
       dplyr::mutate(
-        late_sudden = ifelse(year <= year_of_shock, plan_tech_prod_filled + scenario_change_baseline_cumsum, 0)
+        late_sudden = ifelse(year <= year_of_shock, production_plan_company_technology_filled + scenario_change_baseline_cumsum, 0)
       )
 
     ls_pre_shock_to_compensate <- ls_pre_clean_to_compensate %>%
@@ -272,7 +272,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
 
     ls_post_prod_not_compensated <- ls_data_to_not_compensate %>%
       dplyr::mutate(
-        late_sudden = plan_tech_prod_filled + scenario_change_cumsum
+        late_sudden = production_plan_company_technology_filled + scenario_change_cumsum
       ) %>%
       dplyr::select(company_id, company_name, ald_sector, ald_business_unit, scenario_geography, year, late_sudden)
   } else {

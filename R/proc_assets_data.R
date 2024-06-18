@@ -35,7 +35,7 @@ summarise_production_technology_forecasts <- function(data,
     dplyr::select(
       dplyr::all_of(c(
         "company_id", "company_name", "ald_sector", "ald_business_unit",
-        "scenario_geography", "year", "plan_tech_prod", "plan_sec_prod",
+        "scenario_geography", "year", "production_plan_company_technology", "plan_sec_prod",
         "plan_emission_factor"
       ))
     ) %>%
@@ -48,8 +48,8 @@ summarise_production_technology_forecasts <- function(data,
     dplyr::mutate(
       # Initial value is identical between production and scenario target,
       # can thus be used for both
-      initial_technology_production = dplyr::first(.data$plan_tech_prod),
-      final_technology_production = dplyr::last(.data$plan_tech_prod)
+      initial_technology_production = dplyr::first(.data$production_plan_company_technology),
+      final_technology_production = dplyr::last(.data$production_plan_company_technology)
     ) %>%
     dplyr::ungroup()
 
@@ -69,12 +69,12 @@ summarise_production_sector_forecasts <- function(data) {
     # dplyr::select(.data$company_id, .data$company_name, .data$ald_sector,
     #               .data$initial_technology_production,
     #               .data$ald_business_unit, .data$emission_factor,
-    #              .data$scenario_geography, .data$year, .data$plan_sec_prod, .data$plan_tech_prod) %>%
+    #              .data$scenario_geography, .data$year, .data$plan_sec_prod, .data$production_plan_company_technology) %>%
     # dplyr::group_by(
     #   .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
     #   .data$scenario_geography, .data$year
     # ) %>%
-    # dplyr::mutate(plan_sec_prod = sum(.data$plan_tech_prod, na.rm = TRUE)) %>%
+    # dplyr::mutate(plan_sec_prod = sum(.data$production_plan_company_technology, na.rm = TRUE)) %>%
     # tidyr::fill("plan_sec_prod", .direction="down") %>%
     # dplyr::ungroup() %>%
     dplyr::group_by(

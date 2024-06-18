@@ -122,7 +122,6 @@ traj_check <- function(traj) {
     )
 
   new_traj <- readr::read_csv(paste0(latest_output, "/company_trajectories.csv")) %>%
-    dplyr::rename(production_plan_company_technology = plan_tech_prod) %>%
     dplyr::select(
       company_id,
       company_name,

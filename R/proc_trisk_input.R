@@ -42,7 +42,7 @@ process_trisk_input <- function(assets_data, scenarios_data,
 #' [convert_cap_to_generation()] is used currently, which only distinguishes
 #' capacity factor by ald_business_unit and scenario_geography, whereas this function
 #' distinguishes further by year and scenario. Also note that for generation of
-#' variable `plan_tech_prod` (planned capacity) capacity factors from baseline
+#' variable `production_plan_company_technology` (planned capacity) capacity factors from baseline
 #' scenario are used.
 #'
 #' @param data A data frame containing the production forecasts of companies
@@ -65,9 +65,9 @@ create_base_production_trajectories <- function(data) {
     ) %>%
     # 2. Apply capacity factors
     dplyr::mutate(
-      plan_tech_prod = ifelse(.data$ald_sector == "Power", 
-      .data$plan_tech_prod * .data$capacity_factor * .env$hours_to_year,
-      .data$plan_tech_prod * .data$capacity_factor),
+      production_plan_company_technology = ifelse(.data$ald_sector == "Power", 
+      .data$production_plan_company_technology * .data$capacity_factor * .env$hours_to_year,
+      .data$production_plan_company_technology * .data$capacity_factor),
       production_scenario = ifelse(.data$ald_sector == "Power", 
         .data$production_scenario * .data$capacity_factor * .env$hours_to_year,
         .data$production_scenario * .data$capacity_factor)
@@ -81,7 +81,7 @@ create_base_production_trajectories <- function(data) {
     # 4. set assets scenario production to NA when real asset production is known
     dplyr::mutate(
       production_change_scenario = ifelse(
-        is.na(.data$plan_tech_prod), production_change_scenario, NA
+        is.na(.data$production_plan_company_technology), production_change_scenario, NA
       )
     )%>%
     dplyr::ungroup()%>%
@@ -143,12 +143,12 @@ lag_scenario_productions <- function(data) {
 
 
 # production_change_scenario_baseline = dplyr::if_else(
-#         !is.na(.data$plan_tech_prod),
+#         !is.na(.data$production_plan_company_technology),
 #         .data$production_scenario_baseline - dplyr::lag(.data$production_scenario_baseline, default = NA),
 #         NA
 #       ),
 #       production_change_scenario_target = dplyr::if_else(
-#         !is.na(.data$plan_tech_prod),
+#         !is.na(.data$production_plan_company_technology),
 #         .data$production_scenario_target - dplyr::lag(.data$production_scenario_target, default = NA),
 #         NA
 #       )
@@ -187,7 +187,7 @@ calculate_proximity_to_target <- function(data,
     ) %>%
     dplyr::mutate(
       required_change = .data$production_scenario - .data$initial_technology_production,
-      realised_change = .data$plan_tech_prod - .data$initial_technology_production
+      realised_change = .data$production_plan_company_technology - .data$initial_technology_production
     ) %>%
     dplyr::summarise(
       sum_required_change = sum(.data$required_change, na.rm = TRUE),

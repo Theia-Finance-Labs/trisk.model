@@ -99,7 +99,7 @@ prepare_company_trajectories <- function(output_list) {
     dplyr::select(
       .data$company_name, .data$year,
       .data$ald_sector, .data$ald_business_unit,
-      .data$plan_tech_prod, .data$production_baseline_scenario,
+      .data$production_plan_company_technology, .data$production_baseline_scenario,
       .data$production_target_scenario, .data$production_shock_scenario, .data$company_id,
       .data$pd, .data$net_profit_margin, .data$debt_equity_ratio,
       .data$volatility, .data$price_baseline, .data$price_shock_scenario,
