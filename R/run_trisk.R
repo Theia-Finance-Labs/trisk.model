@@ -162,7 +162,8 @@ run_trisk_model <- function(input_data_list,
   )
 
   cat("-- Calculating baseline and shock trajectories. \n")
-
+  
+  
   trajectories <- extend_assets_trajectories(
     trisk_model_input = trisk_model_input,
     start_year = start_year,
@@ -170,6 +171,7 @@ run_trisk_model <- function(input_data_list,
     end_year = end_analysis
   )
 
+# TODO THIS PART MUST GO
   trisk_model_output <- trajectories %>% 
     dplyr::left_join(
       input_data_list$financial_data,

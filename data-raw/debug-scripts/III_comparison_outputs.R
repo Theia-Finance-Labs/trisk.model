@@ -1,5 +1,5 @@
-OLD_CRISPY_PATH <- "workspace/st_outputs/2024_06_10_23_33_06_standard_NGFS2023MESSAGE_B2DS_Global_no_carbon_tax/crispy_output_standard_NGFS2023MESSAGE_B2DS_Global_no_carbon_tax.csv"
-OLD_TRAJ_PATH <- "workspace/st_outputs/2024_06_10_23_33_06_standard_NGFS2023MESSAGE_B2DS_Global_no_carbon_tax/company_trajectories_standard_NGFS2023MESSAGE_B2DS_Global_no_carbon_tax.csv"
+OLD_CRISPY_PATH <- "workspace/st_outputs/2024_06_16_20_56_19_standard_NGFS2023MESSAGE_B2DS_Global_no_carbon_tax/crispy_output_standard_NGFS2023MESSAGE_B2DS_Global_no_carbon_tax.csv"
+OLD_TRAJ_PATH <- "workspace/st_outputs/2024_06_16_20_56_19_standard_NGFS2023MESSAGE_B2DS_Global_no_carbon_tax/company_trajectories_standard_NGFS2023MESSAGE_B2DS_Global_no_carbon_tax.csv"
 
 library(scales)
 library(dplyr)
@@ -95,6 +95,13 @@ npv_check <- function() {
 
   print(plot_npv_bars())
 }
+
+
+
+
+
+
+
 
 # TRAJECTORIES COMPARISON ============================================================
 traj_check <- function(traj) {

@@ -28,7 +28,7 @@ apply_scenario_prices <- function(data, start_year, shock_year) {
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
     dplyr::summarise(
       baseline_price_at_shock = dplyr::first(.data$price_baseline),
-      target_price_end_shockperiod = dplyr::last(.data$price_shock),
+      target_price_end_shockperiod = dplyr::last(.data$price_target),
       first_year = min(.data$year) + 1,
       last_year = max(.data$year)
     ) %>%

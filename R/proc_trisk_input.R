@@ -1,21 +1,26 @@
 process_trisk_input <- function(assets_data, scenarios_data,
                                 target_scenario, start_analysis) {
   # add extend production data with scenario targets
-  assets_scenario_productions <- dplyr::inner_join(
+  assets_scenarios <- dplyr::inner_join(
     assets_data, scenarios_data,
     by = c("ald_sector", "ald_business_unit", "scenario_geography", "year")
-  ) %>%
-    create_base_production_trajectories() %>%
-    calculate_proximity_to_target( # TODO MOVE TO NPV COMPUTATION ?
+  ) 
+  
+  assets_scenarios_productions <- create_base_production_trajectories(data=assets_scenarios)
+  
+  assets_proximity_to_target <- calculate_proximity_to_target( # TODO MOVE TO NPV COMPUTATION ?
+    data=assets_scenarios_productions,
       start_analysis = start_analysis,
       target_scenario = target_scenario
-    ) %>%
-    pivot_to_baseline_target_columns() %>%
-    lag_scenario_productions()
+    )
+  
+  assets_scenarios_production_pivoted <- pivot_to_baseline_target_columns(data=assets_proximity_to_target) 
+  
+  # assets_scenarios_production_pivoted_and_change <- lag_scenario_productions(assets_scenarios_production_pivoted)
 
 
   trisk_model_input <- dplyr::inner_join(
-    assets_data, assets_scenario_productions,
+    assets_data, assets_scenarios_production_pivoted,
     by = c("company_id", "ald_sector", "ald_business_unit", "scenario_geography", "year")
   )
 
@@ -60,9 +65,29 @@ create_base_production_trajectories <- function(data) {
     ) %>%
     # 2. Apply capacity factors
     dplyr::mutate(
-      plan_tech_prod = .data$plan_tech_prod * .data$capacity_factor * .env$hours_to_year,
-      production_scenario = .data$production_scenario * .data$capacity_factor * .env$hours_to_year
-    )
+      plan_tech_prod = ifelse(.data$ald_sector == "Power", 
+      .data$plan_tech_prod * .data$capacity_factor * .env$hours_to_year,
+      .data$plan_tech_prod * .data$capacity_factor),
+      production_scenario = ifelse(.data$ald_sector == "Power", 
+        .data$production_scenario * .data$capacity_factor * .env$hours_to_year,
+        .data$production_scenario * .data$capacity_factor)
+    ) %>%
+    # 3. compute scenario changes
+    dplyr::group_by(scenario_type) %>%
+    dplyr::arrange(company_id, ald_sector, ald_business_unit, scenario_geography, year, .by_group=TRUE) %>%
+    dplyr::mutate(
+      production_change_scenario = .data$production_scenario - dplyr::lag(.data$production_scenario, default = NA)
+    ) %>%
+    # 4. set assets scenario production to NA when real asset production is known
+    dplyr::mutate(
+      production_change_scenario = ifelse(
+        is.na(.data$plan_tech_prod), production_change_scenario, NA
+      )
+    )%>%
+    dplyr::ungroup()%>%
+    tidyr::replace_na(replace = list(production_change_scenario = 0))
+
+    return(data)
 }
 
 
@@ -70,7 +95,7 @@ create_base_production_trajectories <- function(data) {
 
 pivot_to_baseline_target_columns <- function(data) {
   index_cols <- c("company_id", "scenario_geography", "ald_sector", "ald_business_unit", "proximity_to_target", "year")
-  to_pivot <- c("production_scenario", "price")
+  to_pivot <- c("production_scenario", "production_change_scenario", "price")
 
   # Filter baseline scenario
   baseline_data <- data %>%
@@ -82,18 +107,18 @@ pivot_to_baseline_target_columns <- function(data) {
       names_sep = "_"
     )
 
-  # Filter shock scenario
-  shock_data <- data %>%
-    dplyr::filter(.data$scenario_type == "shock") %>%
+  # Filter target scenario
+  target_data <- data %>%
+    dplyr::filter(.data$scenario_type == "target") %>%
     tidyr::pivot_wider(
       id_cols = dplyr::all_of(index_cols),
       names_from = scenario_type,
       values_from = to_pivot,
       names_sep = "_"
     )
-
+  
   # Merge the pivoted data
-  data <- dplyr::inner_join(baseline_data, shock_data, by = index_cols)
+  data <- dplyr::inner_join(baseline_data, target_data, by = index_cols)
   return(data)
 }
 
@@ -101,13 +126,32 @@ pivot_to_baseline_target_columns <- function(data) {
 
 
 lag_scenario_productions <- function(data) {
+  
   data <- data %>%
+    dplyr::arrange(company_id, ald_sector, ald_business_unit, scenario_geography, year) %>%
     dplyr::mutate(
-      production_change_scenario_baseline = .data$production_scenario_baseline - dplyr::lag(.data$production_scenario_baseline),
-      production_change_scenario_target = .data$production_scenario_shock - dplyr::lag(.data$production_scenario_shock)
+      production_change_scenario_baseline = .data$production_scenario_baseline - dplyr::lag(.data$production_scenario_baseline, default = NA),
+      production_change_scenario_target = .data$production_scenario_target - dplyr::lag(.data$production_scenario_target, default = NA)
     ) %>%
+    dplyr::group_by(company_id, ald_sector, ald_business_unit, scenario_geography) %>%
+      dplyr::mutate(
+      production_change_scenario_baseline = ifelse(.data$year == min(.data$year), NA, .data$production_change_scenario_baseline),
+      production_change_scenario_target = ifelse(.data$year == min(.data$year), NA, .data$production_change_scenario_target)
+    ) %>%
+    dplyr::ungroup()%>%
     tidyr::replace_na(replace = list(production_change_scenario_baseline = 0, production_change_scenario_target = 0))
 
+
+# production_change_scenario_baseline = dplyr::if_else(
+#         !is.na(.data$plan_tech_prod),
+#         .data$production_scenario_baseline - dplyr::lag(.data$production_scenario_baseline, default = NA),
+#         NA
+#       ),
+#       production_change_scenario_target = dplyr::if_else(
+#         !is.na(.data$plan_tech_prod),
+#         .data$production_scenario_target - dplyr::lag(.data$production_scenario_target, default = NA),
+#         NA
+#       )
   return(data)
 }
 

@@ -33,10 +33,10 @@ extend_assets_trajectories <- function(trisk_model_input,
     trajectories  <- trajectories %>%
       dplyr::select_at(c(
         "year", "company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography",
-        "plan_tech_prod",  "emission_factor", "production_scenario_baseline", "production_scenario_shock",
+        "plan_tech_prod",  "emission_factor", "production_scenario_baseline", "production_scenario_target",
         "production_change_scenario_baseline", "production_change_scenario_target", 
         "production_asset_baseline", "late_sudden", "overshoot_direction",
-        "price_baseline", "price_shock", "late_sudden_price"))
+        "price_baseline", "price_target", "late_sudden_price"))
 
   return(trajectories)
 }
@@ -151,18 +151,19 @@ set_trisk_trajectory <- function(data,
 }
 
 calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIME_FRAME_BEGONE = 5) {
+  
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
     dplyr::select_at(c(
       "company_id", "company_name", "year", "ald_sector", "ald_business_unit", "scenario_geography", 
-      "plan_tech_prod", "production_scenario_shock", "production_change_scenario_target", "production_change_scenario_baseline"
+      "plan_tech_prod", "production_scenario_target", "production_change_scenario_target", "production_change_scenario_baseline"
     )) %>%
     dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
     dplyr::arrange(year, .by_group = TRUE) %>%
     dplyr::mutate(
       overshoot_direction = ifelse(
-        dplyr::first(.data$production_scenario_shock) -
-          dplyr::last(.data$production_scenario_shock) > 0,
+        dplyr::first(.data$production_scenario_target) -
+          dplyr::last(.data$production_scenario_target) > 0,
         "Decreasing",
         "Increasing"
       ),
@@ -182,7 +183,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
     dplyr::filter(year > min(year), year <= min(year) + TIME_FRAME_BEGONE) %>% # TODO IS IT A BUG ??
     dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
     dplyr::summarise(
-      prod_to_follow = sum(.data$production_scenario_shock),
+      prod_to_follow = sum(.data$production_scenario_target),
       real_prod = sum(.data$plan_tech_prod),
       requires_overshoot_correction = any(
         (.data$overshoot_direction == "Decreasing" & (prod_to_follow < real_prod)) |
@@ -220,20 +221,20 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
         .groups = "drop"
       )
 
-    production_scenario_shock_tot_to_compensate <- ls_data_to_compensate %>%
+    production_scenario_target_tot_to_compensate <- ls_data_to_compensate %>%
       dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
       dplyr::summarize(
-        production_scenario_shock_total_sum = sum(production_scenario_shock),
+        production_scenario_target_total_sum = sum(production_scenario_target),
         n_shocked_years = dplyr::last(year) - year_of_shock + 1,
         .groups = "drop"
       )
 
-    x_integral_to_compensate <- dplyr::left_join(ls_pre_shock_to_compensate, production_scenario_shock_tot_to_compensate,
+    x_integral_to_compensate <- dplyr::left_join(ls_pre_shock_to_compensate, production_scenario_target_tot_to_compensate,
       by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography")
     ) %>%
       dplyr::mutate(
         sum_1_to_n_shocked_years = .data$n_shocked_years * (.data$n_shocked_years + 1) / 2,
-        x = (.data$production_scenario_shock_total_sum - .data$late_sudden_pre_shock_tot - .data$n_shocked_years * .data$late_sudden_pre_shock_val) /
+        x = (.data$production_scenario_target_total_sum - .data$late_sudden_pre_shock_tot - .data$n_shocked_years * .data$late_sudden_pre_shock_val) /
           (-sum_1_to_n_shocked_years)
       ) %>%
       dplyr::select(company_id, company_name, ald_sector, ald_business_unit, scenario_geography, x)
