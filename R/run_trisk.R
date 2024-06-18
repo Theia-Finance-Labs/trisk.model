@@ -95,8 +95,9 @@ run_trisk <- function(
     trisk_params <- process_params(fun = run_trisk_model, ...)
 
     write_results(output_list = output_list, output_path = output_path, trisk_params = trisk_params, show_params_cols = show_params_cols)
+  } else {
+    return(output_list) 
   }
-  return(output_list)
 }
 
 

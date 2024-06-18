@@ -8,19 +8,18 @@ process_trisk_input <- function(assets_data, scenarios_data,
   
   assets_scenarios_productions <- create_base_production_trajectories(data=assets_scenarios)
   
+  assets_scenarios_production_lagged <- lag_scenario_productions(data=assets_scenarios_productions)
+  assets_scenarios_production_pivoted <- pivot_to_baseline_target_columns(data=assets_scenarios_production_lagged) 
+  
   assets_proximity_to_target <- calculate_proximity_to_target( # TODO MOVE TO NPV COMPUTATION ?
-    data=assets_scenarios_productions,
+      data=assets_scenarios_productions,
       start_analysis = start_analysis,
       target_scenario = target_scenario
-    )
-  
-  assets_scenarios_production_pivoted <- pivot_to_baseline_target_columns(data=assets_proximity_to_target) 
-  
-  # assets_scenarios_production_pivoted_and_change <- lag_scenario_productions(assets_scenarios_production_pivoted)
+    ) %>% dplyr::distinct(scenario_geography, company_name, company_id, ald_sector, ald_business_unit, year, emission_factor, pd, net_profit_margin, debt_equity_ratio, volatility, direction, proximity_to_target)
 
 
   trisk_model_input <- dplyr::inner_join(
-    assets_data, assets_scenarios_production_pivoted,
+    assets_proximity_to_target, assets_scenarios_production_pivoted,
     by = c("company_id", "ald_sector", "ald_business_unit", "scenario_geography", "year")
   )
 
@@ -50,8 +49,25 @@ process_trisk_input <- function(assets_data, scenarios_data,
 #'   conversion of power capacity to generation.
 #' @noRd
 create_base_production_trajectories <- function(data) {
+  
   hours_to_year <- 24 * 365
   data <- data %>%
+      # 2. Apply capacity factors
+    dplyr::mutate(
+      production_plan_company_technology = ifelse(.data$ald_sector == "Power", 
+      .data$production_plan_company_technology * .data$capacity_factor * .env$hours_to_year,
+      .data$production_plan_company_technology * .data$capacity_factor))%>%
+    dplyr::group_by(
+      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
+      .data$scenario_geography
+    ) %>%
+    dplyr::mutate(
+      # Initial value is identical between production and scenario target,
+      # can thus be used for both
+      initial_technology_production = dplyr::first(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
+      final_technology_production = dplyr::last(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
+      initial_sector_production = dplyr::first(.data$plan_sec_prod[!is.na(.data$plan_sec_prod)]),
+    )%>%
     # 1. Apply tmsr / smsp
     dplyr::mutate(
       production_scenario = dplyr::if_else(
@@ -60,18 +76,28 @@ create_base_production_trajectories <- function(data) {
         .data$initial_technology_production + (.data$initial_sector_production * .data$fair_share_perc) # smsp
       )
     ) %>%
+    dplyr::ungroup() %>%
     dplyr::mutate(
       production_scenario = ifelse(.data$production_scenario < 0, 0, .data$production_scenario)
-    ) %>%
-    # 2. Apply capacity factors
-    dplyr::mutate(
-      production_plan_company_technology = ifelse(.data$ald_sector == "Power", 
-      .data$production_plan_company_technology * .data$capacity_factor * .env$hours_to_year,
-      .data$production_plan_company_technology * .data$capacity_factor),
-      production_scenario = ifelse(.data$ald_sector == "Power", 
-        .data$production_scenario * .data$capacity_factor * .env$hours_to_year,
-        .data$production_scenario * .data$capacity_factor)
-    ) %>%
+    ) 
+    # %>%
+    # # 2. Apply capacity factors
+    # dplyr::mutate(
+    #   production_scenario = ifelse(.data$ald_sector == "Power", 
+    #     .data$production_scenario * .data$capacity_factor * .env$hours_to_year,
+    #     .data$production_scenario * .data$capacity_factor)
+    # ) 
+    
+    return(data)
+}
+
+
+
+
+
+lag_scenario_productions <- function(data) {
+  
+  data <- data %>%
     # 3. compute scenario changes
     dplyr::group_by(scenario_type) %>%
     dplyr::arrange(company_id, ald_sector, ald_business_unit, scenario_geography, year, .by_group=TRUE) %>%
@@ -87,71 +113,6 @@ create_base_production_trajectories <- function(data) {
     dplyr::ungroup()%>%
     tidyr::replace_na(replace = list(production_change_scenario = 0))
 
-    return(data)
-}
-
-
-
-
-pivot_to_baseline_target_columns <- function(data) {
-  index_cols <- c("company_id", "scenario_geography", "ald_sector", "ald_business_unit", "proximity_to_target", "year")
-  to_pivot <- c("production_scenario", "production_change_scenario", "price")
-
-  # Filter baseline scenario
-  baseline_data <- data %>%
-    dplyr::filter(.data$scenario_type == "baseline") %>%
-    tidyr::pivot_wider(
-      id_cols = dplyr::all_of(index_cols),
-      names_from = scenario_type,
-      values_from = to_pivot,
-      names_sep = "_"
-    )
-
-  # Filter target scenario
-  target_data <- data %>%
-    dplyr::filter(.data$scenario_type == "target") %>%
-    tidyr::pivot_wider(
-      id_cols = dplyr::all_of(index_cols),
-      names_from = scenario_type,
-      values_from = to_pivot,
-      names_sep = "_"
-    )
-  
-  # Merge the pivoted data
-  data <- dplyr::inner_join(baseline_data, target_data, by = index_cols)
-  return(data)
-}
-
-
-
-
-lag_scenario_productions <- function(data) {
-  
-  data <- data %>%
-    dplyr::arrange(company_id, ald_sector, ald_business_unit, scenario_geography, year) %>%
-    dplyr::mutate(
-      production_change_scenario_baseline = .data$production_scenario_baseline - dplyr::lag(.data$production_scenario_baseline, default = NA),
-      production_change_scenario_target = .data$production_scenario_target - dplyr::lag(.data$production_scenario_target, default = NA)
-    ) %>%
-    dplyr::group_by(company_id, ald_sector, ald_business_unit, scenario_geography) %>%
-      dplyr::mutate(
-      production_change_scenario_baseline = ifelse(.data$year == min(.data$year), NA, .data$production_change_scenario_baseline),
-      production_change_scenario_target = ifelse(.data$year == min(.data$year), NA, .data$production_change_scenario_target)
-    ) %>%
-    dplyr::ungroup()%>%
-    tidyr::replace_na(replace = list(production_change_scenario_baseline = 0, production_change_scenario_target = 0))
-
-
-# production_change_scenario_baseline = dplyr::if_else(
-#         !is.na(.data$production_plan_company_technology),
-#         .data$production_scenario_baseline - dplyr::lag(.data$production_scenario_baseline, default = NA),
-#         NA
-#       ),
-#       production_change_scenario_target = dplyr::if_else(
-#         !is.na(.data$production_plan_company_technology),
-#         .data$production_scenario_target - dplyr::lag(.data$production_scenario_target, default = NA),
-#         NA
-#       )
   return(data)
 }
 
@@ -218,3 +179,102 @@ calculate_proximity_to_target <- function(data,
       )
     )
 }
+
+
+
+
+pivot_to_baseline_target_columns <- function(data) {
+  index_cols <- c("company_id", "scenario_geography", "ald_sector", "ald_business_unit", "year")
+  to_pivot <- c("production_scenario", "production_change_scenario", "price", "production_plan_company_technology")
+
+  # Filter baseline scenario
+  baseline_data <- data %>%
+    dplyr::filter(.data$scenario_type == "baseline") %>%
+    tidyr::pivot_wider(
+      id_cols = dplyr::all_of(index_cols),
+      names_from = scenario_type,
+      values_from = to_pivot,
+      names_sep = "_"
+    ) %>% dplyr::rename(
+      production_plan_company_technology = .data$production_plan_company_technology_baseline
+    )
+
+  # Filter target scenario
+  target_data <- data %>%
+    dplyr::filter(.data$scenario_type == "target") %>%
+    tidyr::pivot_wider(
+      id_cols = dplyr::all_of(index_cols),
+      names_from = scenario_type,
+      values_from = to_pivot,
+      names_sep = "_"
+    )%>% dplyr::select(
+      -c(.data$production_plan_company_technology_target)
+    )
+  
+  # Merge the pivoted data
+  data <- dplyr::inner_join(baseline_data, target_data, by = index_cols)
+  return(data)
+}
+
+
+
+
+
+# #' Summarise the forecasts for company-tech level production within the five
+# #' year time frame
+# #'
+# #' @param data A data frame containing the production forecasts of companies
+# #'   (in the portfolio). Pre-processed to fit analysis parameters and after
+# #'   conversion of power capacity to generation.
+# #' @param start_analysis start of the analysis
+# #' @noRd
+# summarise_production_technology_forecasts <- function(data,
+#                                                       start_analysis) {
+#   time_frame <- 5
+#   data <- data %>%
+#     dplyr::select(
+#       dplyr::all_of(c(
+#         "company_id", "company_name", "ald_sector", "ald_business_unit",
+#         "scenario_geography", "year", "production_plan_company_technology", "plan_sec_prod",
+#         "plan_emission_factor"
+#       ))
+#     ) %>%
+#     dplyr::filter(.data$year <= .env$start_analysis + .env$time_frame) %>%
+#     dplyr::arrange(.data$year) %>%
+#      %>%
+#     dplyr::ungroup()
+
+#   return(data)
+# }
+
+# #' Summarise the forecasts for company-sector level production within the five
+# #' year time frame
+# #'
+# #' @param data A data frame containing the production forecasts of companies
+# #'   (in the portfolio). Pre-processed to fit analysis parameters and after
+# #'   conversion of power capacity to generation.
+# #' @noRd
+# summarise_production_sector_forecasts <- function(data) {
+#   data <- data %>%
+#     # dplyr::select(.data$company_id, .data$company_name, .data$ald_sector,
+#     #               .data$initial_technology_production,
+#     #               .data$ald_business_unit, .data$emission_factor,
+#     #              .data$scenario_geography, .data$year, .data$plan_sec_prod, .data$production_plan_company_technology) %>%
+#     # dplyr::group_by(
+#     #   .data$company_id, .data$company_name, .data$ald_sector, .data$scenario,
+#     #   .data$scenario_geography, .data$year
+#     # ) %>%
+#     # dplyr::mutate(plan_sec_prod = sum(.data$production_plan_company_technology, na.rm = TRUE)) %>%
+#     # tidyr::fill("plan_sec_prod", .direction="down") %>%
+#     # dplyr::ungroup() %>%
+#     dplyr::group_by(
+#       .data$company_id, .data$company_name, .data$ald_sector, .data$scenario_geography
+#     ) %>%
+#     dplyr::arrange(.data$year, by_group = TRUE) %>%
+#     dplyr::mutate(
+#       # first year plan and scenario values are equal by construction,
+#       # can thus be used for production and target
+#       initial_sector_production = dplyr::first(.data$plan_sec_prod)
+#     ) %>%
+#     dplyr::ungroup()
+# }
