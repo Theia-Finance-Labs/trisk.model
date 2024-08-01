@@ -58,7 +58,7 @@ prepare_npv_results <- function(output_list) {
     dplyr::select(
       .data$company_id,
       .data$ald_sector,
-      .data$ald_business_unit,
+      .data$technology,
       .data$net_present_value_baseline,
       .data$net_present_value_shock,
     )
@@ -98,7 +98,7 @@ prepare_company_trajectories <- function(output_list) {
     ) %>%
     dplyr::select(
       .data$company_name, .data$year,
-      .data$ald_sector, .data$ald_business_unit,
+      .data$ald_sector, .data$technology,
       .data$production_plan_company_technology, .data$production_baseline_scenario,
       .data$production_target_scenario, .data$production_shock_scenario, .data$company_id,
       .data$pd, .data$net_profit_margin, .data$debt_equity_ratio,

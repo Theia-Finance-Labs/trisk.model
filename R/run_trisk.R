@@ -174,8 +174,8 @@ run_trisk_model <- function(input_data_list,
     dplyr::left_join(
       input_data_list$financial_data,
       by=c("company_id"))  %>% 
-      dplyr::left_join(scenarios_data %>% dplyr::distinct(ald_business_unit , technology_type), by="ald_business_unit") %>%
-      dplyr::left_join(trisk_model_input %>% dplyr::distinct(company_id, ald_business_unit, proximity_to_target), by=c("company_id", "ald_business_unit"))
+      dplyr::left_join(scenarios_data %>% dplyr::distinct(technology , technology_type), by="technology") %>%
+      dplyr::left_join(trisk_model_input %>% dplyr::distinct(company_id, technology, proximity_to_target), by=c("company_id", "technology"))
 
   cat("-- Calculating net profits. \n")
 

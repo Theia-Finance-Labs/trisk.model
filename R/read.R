@@ -33,7 +33,7 @@ read_capacity_factors_power <- function(path = NULL) {
   validate_data_has_expected_cols(
     data = data,
     expected_columns = c(
-      "scenario", "scenario_geography", "ald_business_unit", "year", "capacity_factor"
+      "scenario", "scenario_geography", "technology", "year", "capacity_factor"
     )
   )
 
@@ -132,7 +132,7 @@ read_price_data <- function(path) {
         year = "d",
         scenario = "c",
         scenario_geography = "c",
-        ald_business_unit = "c",
+        technology = "c",
         indicator = "c",
         unit = "c",
         price = "d"
@@ -142,13 +142,13 @@ read_price_data <- function(path) {
   validate_data_has_expected_cols(
     data = data,
     expected_columns = c(
-      "year", "scenario", "scenario_geography", "ald_business_unit",
+      "year", "scenario", "scenario_geography", "technology",
       "indicator", "unit", "price"
     )
   )
 
   data <- data %>%
-    dplyr::select_at(c("year", "scenario", "ald_sector", "ald_business_unit", "price"))
+    dplyr::select_at(c("year", "scenario", "ald_sector", "technology", "price"))
 
   return(data)
 }
@@ -170,7 +170,7 @@ read_production_data <- function(path = NULL) {
         scenario_geography = "c",
         year = "d",
         ald_sector = "c",
-        ald_business_unit = "c",
+        technology = "c",
         plan_tech_prod = "d",
         plan_emission_factor = "d",
         plan_sec_prod = "d"
@@ -185,7 +185,7 @@ read_production_data <- function(path = NULL) {
     data = data,
     expected_columns = c(
       "company_id", "company_name", "scenario_geography", "year", "ald_sector",
-      "ald_business_unit", "production_plan_company_technology", "emission_factor", "plan_sec_prod"
+      "technology", "production_plan_company_technology", "emission_factor", "plan_sec_prod"
     )
   )
 
@@ -208,7 +208,7 @@ read_scenario_data <- function(path) {
         scenario_type = "c",
         ald_sector = "c",
         units = "c",
-        ald_business_unit = "c",
+        technology = "c",
         year = "d",
         technology_type = "c",
         fair_share_perc = "d"
@@ -223,7 +223,7 @@ read_scenario_data <- function(path) {
     data = scenario_data,
     expected_columns = c(
       "scenario_geography", "scenario", "scenario_type",
-      "ald_sector", "units", "ald_business_unit", "year",
+      "ald_sector", "units", "technology", "year",
       "technology_type", "fair_share_perc"
     )
   )

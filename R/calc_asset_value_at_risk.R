@@ -1,5 +1,5 @@
 #' Calculate percentage value change between scenarios for equity (and
-#' temporarily other asset types) on the company-ald_business_unit level
+#' temporarily other asset types) on the company-technology level
 #'
 #' @param data A dataframe containing the (discounted) annual profits
 #' @param shock_scenario A dataframe containing the specification of the
@@ -23,7 +23,7 @@ calculate_asset_value_at_risk <- function(data,
       !is.na(.data$discounted_net_profit_baseline)
     ) %>%
     dplyr::group_by(
-      .data$company_id, .data$ald_sector, .data$ald_business_unit,
+      .data$company_id, .data$ald_sector, .data$technology,
       .data$scenario_geography
     ) %>%
     dplyr::summarise(

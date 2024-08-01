@@ -49,13 +49,13 @@ extend_to_full_analysis_timeframe <- function(data,
       tidyr::nesting(
         !!!rlang::syms(
           c(
-            "company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"
+            "company_id", "company_name", "ald_sector", "technology", "scenario_geography"
           )
         )
       )
     ) %>%
     dplyr::arrange(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
+      .data$company_id, .data$company_name, .data$ald_sector, .data$technology,
       .data$scenario_geography, .data$year
     ) %>%
     tidyr::fill(
