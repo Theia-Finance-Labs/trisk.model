@@ -1,3 +1,16 @@
+process_scenarios_data <- function(data, baseline_scenario, target_scenario, scenario_geography, start_analysis, end_analysis) {
+  scenarios_data <- data$scenario_data
+
+  scenarios_data <- scenarios_data %>%
+    dplyr::filter(.data$scenario %in% c(baseline_scenario, target_scenario)) %>%
+    dplyr::filter(.data$scenario_geography %in% .env$scenario_geography) %>%
+    dplyr::filter(dplyr::between(.data$year, .env$start_analysis, .env$end_analysis)) %>%
+    tidyr::replace_na(list(capacity_factor = 1)) %>%
+    dplyr::arrange(year, .by_group = TRUE)
+
+  return(scenarios_data)
+}
+
 process_assets_data <- function(data, start_analysis, end_analysis, scenario_geography) {
   production_financial_data <- dplyr::inner_join(
     data$production_data,

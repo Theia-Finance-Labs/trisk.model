@@ -210,12 +210,12 @@ read_scenario_data <- function(path) {
         units = "c",
         ald_business_unit = "c",
         year = "d",
-        direction = "c",
+        technology_type = "c",
         fair_share_perc = "d"
       )
     ) %>%
     dplyr::mutate(
-      direction = ifelse(.data$direction == "declining", "carbontech", "greentech"),
+      technology_type = ifelse(.data$technology_type == "declining", "carbontech", "greentech"),
       scenario_type = ifelse(.data$scenario_type == "shock", "target", .data$scenario_type)
     )
 
@@ -224,7 +224,7 @@ read_scenario_data <- function(path) {
     expected_columns = c(
       "scenario_geography", "scenario", "scenario_type",
       "ald_sector", "units", "ald_business_unit", "year",
-      "direction", "fair_share_perc"
+      "technology_type", "fair_share_perc"
     )
   )
 

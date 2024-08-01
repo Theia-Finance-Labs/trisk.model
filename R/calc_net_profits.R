@@ -36,12 +36,12 @@ calculate_net_profits <- function(data,
     )
 
   shock_increasing_technologies <- calculate_net_profits_shock_increasing_technologies(
-    data = data %>% dplyr::filter(.data$direction == "greentech"),
+    data = data %>% dplyr::filter(.data$technology_type == "greentech"),
     shock_year = shock_year
   )
 
   shock_declining_technologies <- calculate_net_profits_shock_declining_technologies_carbon_tax(
-    data = data %>% dplyr::filter(.data$direction == "carbontech"),
+    data = data %>% dplyr::filter(.data$technology_type == "carbontech"),
     carbon_data = carbon_data,
     shock_year = shock_year,
     market_passthrough = market_passthrough

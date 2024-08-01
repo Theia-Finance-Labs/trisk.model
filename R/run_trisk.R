@@ -164,12 +164,9 @@ run_trisk_model <- function(input_data_list,
 
   cat("-- Calculating baseline and shock trajectories. \n")
   
-  
   trajectories <- extend_assets_trajectories(
     trisk_model_input = trisk_model_input,
-    start_year = start_year,
-    shock_year = shock_year,
-    end_year = end_analysis
+    shock_year = shock_year
   )
 
 # TODO THIS PART MUST GO
@@ -177,7 +174,7 @@ run_trisk_model <- function(input_data_list,
     dplyr::left_join(
       input_data_list$financial_data,
       by=c("company_id"))  %>% 
-      dplyr::left_join(scenarios_data %>% dplyr::distinct(ald_business_unit , direction), by="ald_business_unit") %>%
+      dplyr::left_join(scenarios_data %>% dplyr::distinct(ald_business_unit , technology_type), by="ald_business_unit") %>%
       dplyr::left_join(trisk_model_input %>% dplyr::distinct(company_id, ald_business_unit, proximity_to_target), by=c("company_id", "ald_business_unit"))
 
   cat("-- Calculating net profits. \n")

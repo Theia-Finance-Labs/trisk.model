@@ -15,7 +15,7 @@ process_trisk_input <- function(assets_data, scenarios_data,
       data=assets_scenarios_productions,
       start_analysis = start_analysis,
       target_scenario = target_scenario
-    ) %>% dplyr::distinct(scenario_geography, company_name, company_id, ald_sector, ald_business_unit, year, emission_factor, pd, net_profit_margin, debt_equity_ratio, volatility, direction, proximity_to_target)
+    ) %>% dplyr::distinct(scenario_geography, company_name, company_id, ald_sector, ald_business_unit, year, emission_factor, pd, net_profit_margin, debt_equity_ratio, volatility, technology_type, proximity_to_target)
 
 
   trisk_model_input <- dplyr::inner_join(
@@ -49,7 +49,7 @@ process_trisk_input <- function(assets_data, scenarios_data,
 #'   conversion of power capacity to generation.
 #' @noRd
 create_base_production_trajectories <- function(data) {
-  
+  browser()
   hours_to_year <- 24 * 365
   data <- data %>%
     dplyr::group_by(
@@ -66,7 +66,7 @@ create_base_production_trajectories <- function(data) {
     # 1. Apply tmsr / smsp
     dplyr::mutate(
       production_scenario = dplyr::if_else(
-        .data$direction == "carbontech",
+        .data$technology_type == "carbontech",
         .data$initial_technology_production * (1 + .data$fair_share_perc), # tmsr
         .data$initial_technology_production + (.data$initial_sector_production * .data$fair_share_perc) # smsp
       )
@@ -94,7 +94,11 @@ create_base_production_trajectories <- function(data) {
 
 
 
-
+#' Apply a lag on scenarios matched to the companies. 
+#' Later used to compute the shock trajectory.
+#' @param data A data frame containing the production forecasts of companies
+#'   merged with their respective scenario pthways.
+#' @noRd
 lag_scenario_productions <- function(data) {
   
   data <- data %>%

@@ -8,14 +8,10 @@
 #'
 #'
 #' @param price_data A tibble holding price data.
-#' @param baseline_scenario String holding name of the baseline scenario.
-#' @param target_scenario String holding name of the target scenario.
-#' @param transition_scenario Tibble with 1 row holding at least variables
-#'   `year_of_shock` and `duration_of_shock`.
-#' @param start_year Start_year of analysis
+#' @param shock_year Year of shock.
 #'
 #' @return A tibble holding late_and_sudden_prices
-apply_scenario_prices <- function(data, start_year, shock_year) {
+apply_scenario_prices <- function(data, shock_year) {
   # Part 1: Process for years <= shock_year
   before_shock <- data %>%
     dplyr::filter(.data$year <= shock_year) %>%
@@ -51,8 +47,6 @@ apply_scenario_prices <- function(data, start_year, shock_year) {
     ) %>%
     tidyr::unnest(c(.data$year, .data$late_sudden_price)) %>%
     dplyr::select(.data$company_id, .data$ald_business_unit, .data$year, .data$late_sudden_price)
-
-
 
   # Combine both parts
   final_result <- dplyr::bind_rows(before_shock, after_shock) %>%

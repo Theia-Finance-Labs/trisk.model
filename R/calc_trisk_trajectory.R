@@ -13,21 +13,16 @@
 #'
 #' @return A tibble holding annual profits
 extend_assets_trajectories <- function(trisk_model_input,
-                                       shock_year,
-                                       start_year,
-                                       end_year) {
+                                       shock_year) {
 
                  
   trajectories <- trisk_model_input %>%
     set_baseline_trajectory(
     ) %>%
     set_trisk_trajectory(
-      start_year = start_year,
-      end_year = end_year,
       shock_year = shock_year
     ) %>%
     apply_scenario_prices(
-      start_year = start_year,
       shock_year = shock_year
     )
 
@@ -133,15 +128,11 @@ set_baseline_trajectory <- function(data) {
 #'
 #' @return data frame
 set_trisk_trajectory <- function(data,
-                                 shock_year,
-                                 start_year,
-                                 end_year) {
+                                 shock_year) {
   year_of_shock <- shock_year
   duration_of_shock <- shock_year - start_year
 
   late_sudden_df <- calc_late_sudden_traj(data,
-    start_year = start_year,
-    end_year = end_year,
     year_of_shock = year_of_shock
   )
 
@@ -152,7 +143,7 @@ set_trisk_trajectory <- function(data,
   return(data)
 }
 
-calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIME_FRAME_BEGONE = 5) {
+calc_late_sudden_traj <- function(data, year_of_shock, TIME_FRAME_BEGONE = 5) {
   
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
