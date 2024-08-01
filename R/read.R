@@ -1,14 +1,10 @@
-st_read_agnostic <- function(
-    dir,
-    capacity_factor_file = "prewrangled_capacity_factors.csv",
-    price_data_file = "price_data_long.csv",
-    scenario_data_file = "Scenarios_AnalysisInput.csv",
-    financial_data_file = "prewrangled_financial_data_stress_test.csv",
-    production_data_file = "abcd_stress_test_input.csv",
-    carbon_price_data_file = "ngfs_carbon_price.csv") {
+st_read_agnostic <- function(dir) {
+  scenario_data_file = "scenario_data.csv"
+  financial_data_file = "prewrangled_financial_data_stress_test.csv"
+  production_data_file = "abcd_stress_test_input.csv"
+  carbon_price_data_file = "ngfs_carbon_price.csv"
+
   out <- list(
-    capacity_factors_power = read_capacity_factors_power(file.path(dir, capacity_factor_file)),
-    df_price = read_price_data(file.path(dir, price_data_file)),
     scenario_data = read_scenario_data(file.path(dir, scenario_data_file)),
     financial_data = read_financial_data(file.path(dir, financial_data_file)),
     production_data = read_production_data(file.path(dir, production_data_file)),
@@ -17,28 +13,6 @@ st_read_agnostic <- function(
   return(out)
 }
 
-
-#' Read in power capacity factors from csv and check that all expected columns
-#' are given.
-#'
-#' @param path A string that points to the location of the file containing the
-#'   capacity factors.
-#' @family import functions
-read_capacity_factors_power <- function(path = NULL) {
-  path %||% stop("Must provide 'path'")
-
-  data <- validate_file_exists(path) %>%
-    readr::read_csv(col_types = readr::cols())
-
-  validate_data_has_expected_cols(
-    data = data,
-    expected_columns = c(
-      "scenario", "scenario_geography", "technology", "year", "capacity_factor"
-    )
-  )
-
-  return(data)
-}
 
 #' Read in carbon price data from ngfs data
 #'
@@ -92,30 +66,6 @@ read_financial_data <- function(path = NULL) {
 }
 
 
-#' Check if values in financial data are plausible
-#'
-#' Checks that numeric columns hold values in acceptable ranges.
-#'
-#'
-#' @return NULL
-check_valid_financial_data_values <- function(financial_data) {
-  if (any(financial_data$pd < 0 | financial_data$pd >= 1)) {
-    stop("Implausibe value(s) < 0 or >= 1 for pd detected. Please check.")
-  }
-
-  if (any(financial_data$net_profit_margin <= 0 | financial_data$net_profit_margin > 1)) {
-    stop("Implausibe value(s) <= 0 or > 1 for net_profit_margin detected. Please check.")
-  }
-
-
-  if (any(financial_data$debt_equity_ratio < 0)) {
-    stop("Implausibe value(s) < 0 for debt_equity_ratio detected. Please check.")
-  }
-
-  if (any(financial_data$volatility < 0)) {
-    stop("Implausibe value(s) < 0 for volatility detected. Please check.")
-  }
-}
 
 #' Read in price data
 #'
@@ -211,7 +161,11 @@ read_scenario_data <- function(path) {
         technology = "c",
         year = "d",
         technology_type = "c",
-        fair_share_perc = "d"
+        fair_share_perc = "d",
+        indicator = "c",
+        unit = "c",
+        price = "d",
+        capacity_factor="d"
       )
     ) %>%
     dplyr::mutate(
@@ -224,7 +178,7 @@ read_scenario_data <- function(path) {
     expected_columns = c(
       "scenario_geography", "scenario", "scenario_type",
       "ald_sector", "units", "technology", "year",
-      "technology_type", "fair_share_perc"
+      "technology_type", "fair_share_perc", "indicator", "unit", "price"
     )
   )
 
@@ -281,4 +235,30 @@ validate_data_has_expected_cols <- function(data,
     ))
   }
   invisible()
+}
+
+
+#' Check if values in financial data are plausible
+#'
+#' Checks that numeric columns hold values in acceptable ranges.
+#'
+#'
+#' @return NULL
+check_valid_financial_data_values <- function(financial_data) {
+  if (any(financial_data$pd < 0 | financial_data$pd >= 1)) {
+    stop("Implausibe value(s) < 0 or >= 1 for pd detected. Please check.")
+  }
+
+  if (any(financial_data$net_profit_margin <= 0 | financial_data$net_profit_margin > 1)) {
+    stop("Implausibe value(s) <= 0 or > 1 for net_profit_margin detected. Please check.")
+  }
+
+
+  if (any(financial_data$debt_equity_ratio < 0)) {
+    stop("Implausibe value(s) < 0 for debt_equity_ratio detected. Please check.")
+  }
+
+  if (any(financial_data$volatility < 0)) {
+    stop("Implausibe value(s) < 0 for volatility detected. Please check.")
+  }
 }

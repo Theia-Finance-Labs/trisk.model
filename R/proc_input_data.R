@@ -1,6 +1,6 @@
 process_scenarios_data <- function(data, baseline_scenario, target_scenario, scenario_geography, start_analysis, end_analysis) {
   scenarios_data <- data$scenario_data
-
+  
   scenarios_data <- scenarios_data %>%
     dplyr::filter(.data$scenario %in% c(baseline_scenario, target_scenario)) %>%
     dplyr::filter(.data$scenario_geography %in% .env$scenario_geography) %>%

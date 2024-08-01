@@ -13,6 +13,7 @@
 #'
 #' @return A tibble holding annual profits
 extend_assets_trajectories <- function(trisk_model_input,
+start_year,
                                        shock_year) {
 
                  
@@ -20,6 +21,7 @@ extend_assets_trajectories <- function(trisk_model_input,
     set_baseline_trajectory(
     ) %>%
     set_trisk_trajectory(
+      start_year=start_year,
       shock_year = shock_year
     ) %>%
     apply_scenario_prices(
@@ -128,6 +130,7 @@ set_baseline_trajectory <- function(data) {
 #'
 #' @return data frame
 set_trisk_trajectory <- function(data,
+                                  start_year,
                                  shock_year) {
   year_of_shock <- shock_year
   duration_of_shock <- shock_year - start_year

@@ -5,10 +5,10 @@
 #' @param data data frame containing the full trajectory company data
 #' @param baseline_scenario Character. A string that indicates which
 #'   of the scenarios included in the analysis should be used to set the
-#'   baseline ald_business_unit trajectories.
+#'   baseline technology trajectories.
 #' @param shock_scenario Character. A string that indicates which
 #'   of the scenarios included in the analysis should be used to set the
-#'   late & sudden ald_business_unit trajectories.
+#'   late & sudden technology trajectories.
 #' @param end_year Numeric, holding end year of analysis.
 #' @param growth_rate Numeric, that holds the terminal growth rate of profits
 #'   beyond the `end_year` in the DCF.
@@ -39,13 +39,13 @@ calculate_annual_profits <- function(data,
 #' Calculates discounted net profits based on a dividends discount model
 #'
 #' @param data A data frame containing the annual net profits on company
-#'   ald_business_unit level
+#'   technology level
 #' @param discount_rate Numeric, that holds the discount rate of dividends per
 #'   year in the DCF.
 dividend_discount_model <- function(data, discount_rate) {
   data <- data %>%
     dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
+      .data$company_id, .data$company_name, .data$ald_sector, .data$technology,
       .data$scenario_geography
     ) %>%
     dplyr::mutate(
@@ -100,7 +100,7 @@ calculate_terminal_value <- function(data,
     dplyr::bind_rows(terminal_value) %>%
     dplyr::arrange(
       .data$company_id, .data$scenario_geography, .data$company_name, .data$ald_sector,
-      .data$ald_business_unit, .data$year
+      .data$technology, .data$year
     )
 
   return(data)

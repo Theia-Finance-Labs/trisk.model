@@ -30,26 +30,14 @@ process_carbon_data <- function(data, start_year, end_year, carbon_price_model) 
 #'
 #' @return the end year
 get_end_year <- function(data, scenarios_filter, MAX_POSSIBLE_YEAR = 2050) {
-  available_min_of_max_years <- dplyr::bind_rows(
-    data$df_price %>%
+  max_scenario_year <- data$scenario_data %>%
       dplyr::distinct(.data$year, .data$scenario) %>%
       dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year = max(.data$year)),
-    data$capacity_factors_power %>%
-      dplyr::distinct(.data$year, .data$scenario) %>%
-      dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year = max(.data$year)),
-    data$scenario_data %>%
-      dplyr::distinct(.data$year, .data$scenario) %>%
-      dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year = max(.data$year))
-  ) %>%
-    dplyr::group_by(.data$scenario) %>%
-    dplyr::summarise(year = min(.data$year)) %>%
+      dplyr::summarise(year = max(.data$year)) %>%
     dplyr::filter(.data$scenario %in% scenarios_filter) %>%
     dplyr::pull(.data$year)
 
-  end_year <- min(MAX_POSSIBLE_YEAR, min(available_min_of_max_years))
+  end_year <- min(MAX_POSSIBLE_YEAR, max_scenario_year)
 
   return(end_year)
 }
@@ -148,7 +136,7 @@ run_trisk_model <- function(input_data_list,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
                             market_passthrough = 0) {
-                              
+
   cat("-- Processing inputs. \n")
   # TODO remove MAX_POSSIBLE_YEAR
   end_analysis <- get_end_year(input_data_list, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
@@ -166,6 +154,7 @@ run_trisk_model <- function(input_data_list,
   
   trajectories <- extend_assets_trajectories(
     trisk_model_input = trisk_model_input,
+    start_year=start_year,
     shock_year = shock_year
   )
 

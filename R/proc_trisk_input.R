@@ -49,7 +49,6 @@ process_trisk_input <- function(assets_data, scenarios_data,
 #'   conversion of power capacity to generation.
 #' @noRd
 create_base_production_trajectories <- function(data) {
-  browser()
   hours_to_year <- 24 * 365
   data <- data %>%
     dplyr::group_by(
