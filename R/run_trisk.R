@@ -1,48 +1,3 @@
-
-
-#' Process data of type indicated by function name
-#'
-#' @inheritParams process_production_data
-#'
-#' @return A tibble of data as indicated by function name.
-#' @noRd
-process_carbon_data <- function(data, start_year, end_year, carbon_price_model) {
-  data_processed <- data
-
-  ## dataframe will be NULL for lrisk this is the case as lrisk does not read in and use carbon prices
-  if (is.null(data_processed)) {
-    data_processed <- NULL
-  } else {
-    data_processed <- data_processed %>%
-      dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
-      dplyr::select(-c(scenario_geography)) %>%
-      dplyr::filter(.data$scenario %in% .env$carbon_price_model)
-  }
-
-  return(data_processed)
-}
-
-
-#' Get End year from data
-#'
-#' @param data data
-#' @param scenarios_filter scenarios to use
-#'
-#' @return the end year
-get_end_year <- function(data, scenarios_filter, MAX_POSSIBLE_YEAR = 2050) {
-  max_scenario_year <- data$scenario_data %>%
-      dplyr::distinct(.data$year, .data$scenario) %>%
-      dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year = max(.data$year)) %>%
-    dplyr::filter(.data$scenario %in% scenarios_filter) %>%
-    dplyr::pull(.data$year)
-
-  end_year <- min(MAX_POSSIBLE_YEAR, max_scenario_year)
-
-  return(end_year)
-}
-
-
 #' Run stress testing for provided asset type.
 #'
 #' This function runs the transition risk stress test. It can be desirable to
@@ -136,7 +91,7 @@ run_trisk_model <- function(input_data_list,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
                             market_passthrough = 0) {
-
+browser()
   cat("-- Processing inputs. \n")
   # TODO remove MAX_POSSIBLE_YEAR
   end_analysis <- get_end_year(input_data_list, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
@@ -151,14 +106,14 @@ run_trisk_model <- function(input_data_list,
   )
 
   cat("-- Calculating baseline and shock trajectories. \n")
-  
+  browser()
   trajectories <- extend_assets_trajectories(
     trisk_model_input = trisk_model_input,
     start_year=start_year,
     shock_year = shock_year
   )
 
-# TODO THIS PART MUST GO
+  # TODO THIS PART MUST GO
   trisk_model_output <- trajectories %>% 
     dplyr::left_join(
       input_data_list$financial_data,
@@ -221,4 +176,49 @@ run_trisk_model <- function(input_data_list,
       company_technology_npv = company_technology_npv
     )
   )
+}
+
+
+
+
+#' Process data of type indicated by function name
+#'
+#' @inheritParams process_production_data
+#'
+#' @return A tibble of data as indicated by function name.
+#' @noRd
+process_carbon_data <- function(data, start_year, end_year, carbon_price_model) {
+  data_processed <- data
+
+  ## dataframe will be NULL for lrisk this is the case as lrisk does not read in and use carbon prices
+  if (is.null(data_processed)) {
+    data_processed <- NULL
+  } else {
+    data_processed <- data_processed %>%
+      dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
+      dplyr::select(-c(scenario_geography)) %>%
+      dplyr::filter(.data$scenario %in% .env$carbon_price_model)
+  }
+
+  return(data_processed)
+}
+
+
+#' Get End year from data
+#'
+#' @param data data
+#' @param scenarios_filter scenarios to use
+#'
+#' @return the end year
+get_end_year <- function(data, scenarios_filter, MAX_POSSIBLE_YEAR = 2050) {
+  max_scenario_year <- data$scenario_data %>%
+      dplyr::distinct(.data$year, .data$scenario) %>%
+      dplyr::group_by(.data$scenario) %>%
+      dplyr::summarise(year = max(.data$year)) %>%
+    dplyr::filter(.data$scenario %in% scenarios_filter) %>%
+    dplyr::pull(.data$year)
+
+  end_year <- min(MAX_POSSIBLE_YEAR, max_scenario_year)
+
+  return(end_year)
 }

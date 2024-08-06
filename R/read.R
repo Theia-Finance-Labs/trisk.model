@@ -1,9 +1,9 @@
 st_read_agnostic <- function(dir) {
-  scenario_data_file = "scenario_data.csv"
-  financial_data_file = "prewrangled_financial_data_stress_test.csv"
-  production_data_file = "abcd_stress_test_input.csv"
+  scenario_data_file = "scenarios_data.csv"
+  financial_data_file = "financial_data.csv"
+  production_data_file = "assets_data.csv"
   carbon_price_data_file = "ngfs_carbon_price.csv"
-
+browser()
   out <- list(
     scenario_data = read_scenario_data(file.path(dir, scenario_data_file)),
     financial_data = read_financial_data(file.path(dir, financial_data_file)),
@@ -53,7 +53,7 @@ read_financial_data <- function(path = NULL) {
   data <- validate_file_exists(file.path(path)) %>%
     readr::read_csv(
       col_types = readr::cols_only(
-        company_id = "d",
+        company_id = "c",
         pd = "d",
         net_profit_margin = "d",
         debt_equity_ratio = "d",
@@ -65,43 +65,6 @@ read_financial_data <- function(path = NULL) {
   return(data)
 }
 
-
-
-#' Read in price data
-#'
-#' This function reads in price data using long file format. It is expected to
-#' work with data based on IEA WEO 2020.
-#'
-#' @param path A string that points to the location of the file containing the
-#'   price data
-#' @return A tibble holding price data in long format.
-read_price_data <- function(path) {
-  data <- validate_file_exists(path) %>%
-    readr::read_csv(
-      col_types = readr::cols(
-        year = "d",
-        scenario = "c",
-        scenario_geography = "c",
-        technology = "c",
-        indicator = "c",
-        unit = "c",
-        price = "d"
-      )
-    )
-
-  validate_data_has_expected_cols(
-    data = data,
-    expected_columns = c(
-      "year", "scenario", "scenario_geography", "technology",
-      "indicator", "unit", "price"
-    )
-  )
-
-  data <- data %>%
-    dplyr::select_at(c("year", "scenario", "ald_sector", "technology", "price"))
-
-  return(data)
-}
 
 #' Read in AR PAMS production data.
 #'
@@ -115,29 +78,23 @@ read_production_data <- function(path = NULL) {
   data <- validate_file_exists(path) %>%
     readr::read_csv(
       col_types = readr::cols_only(
-        company_id = "d",
+        asset_id = "c",
+        asset_name = "c",
+        company_id = "c",
         company_name = "c",
-        scenario_geography = "c",
-        year = "d",
-        ald_sector = "c",
+        country_iso2 = "c",
+        production_year = "d",
+        sector = "c",
         technology = "c",
-        plan_tech_prod = "d",
-        plan_emission_factor = "d",
-        plan_sec_prod = "d"
+        capacity = "d",
+        capacity_factor = "d",
+        emission_factor = "d"
       )
     ) %>% 
-    dplyr::rename(
-      production_plan_company_technology = .data$plan_tech_prod,
-      emission_factor = "plan_emission_factor"
+    dplyr::mutate(
+      production_plan_company_technology = .data$capacity * .data$capacity_factor
     ) 
 
-  validate_data_has_expected_cols(
-    data = data,
-    expected_columns = c(
-      "company_id", "company_name", "scenario_geography", "year", "ald_sector",
-      "technology", "production_plan_company_technology", "emission_factor", "plan_sec_prod"
-    )
-  )
 
   return(data)
 }
@@ -150,37 +107,28 @@ read_production_data <- function(path = NULL) {
 #'
 #' @return A tibble holding scenario data.
 read_scenario_data <- function(path) {
+
+  
   scenario_data <- validate_file_exists(path) %>%
     readr::read_csv(
       col_types = readr::cols(
         scenario_geography = "c",
         scenario = "c",
         scenario_type = "c",
-        ald_sector = "c",
-        units = "c",
+        sector = "c",
+        # pathway_unit = "c",
         technology = "c",
-        year = "d",
-        technology_type = "c",
-        fair_share_perc = "d",
-        indicator = "c",
-        unit = "c",
-        price = "d",
-        capacity_factor="d"
+        scenario_year = "d",
+        scenario_type = "c",
+        # price_unit = "c",
+        price_indicator = "c",
+        scenario_price = "d",
+        capacity_factor_unit="c",
+        scenario_capacity_factor="c",
+        fair_share_perc="d"
       )
-    ) %>%
-    dplyr::mutate(
-      technology_type = ifelse(.data$technology_type == "declining", "carbontech", "greentech"),
-      scenario_type = ifelse(.data$scenario_type == "shock", "target", .data$scenario_type)
-    )
+    ) 
 
-  validate_data_has_expected_cols(
-    data = scenario_data,
-    expected_columns = c(
-      "scenario_geography", "scenario", "scenario_type",
-      "ald_sector", "units", "technology", "year",
-      "technology_type", "fair_share_perc", "indicator", "unit", "price"
-    )
-  )
 
   return(scenario_data)
 }
