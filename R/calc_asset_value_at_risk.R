@@ -23,7 +23,7 @@ calculate_asset_value_at_risk <- function(data,
       !is.na(.data$discounted_net_profit_baseline)
     ) %>%
     dplyr::group_by(
-      .data$company_id, .data$ald_sector, .data$technology,
+      .data$company_id, .data$sector, .data$technology,
       .data$scenario_geography
     ) %>%
     dplyr::summarise(

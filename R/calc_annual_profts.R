@@ -45,7 +45,7 @@ calculate_annual_profits <- function(data,
 dividend_discount_model <- function(data, discount_rate) {
   data <- data %>%
     dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$technology,
+      .data$company_id, .data$company_name, .data$sector, .data$technology,
       .data$scenario_geography
     ) %>%
     dplyr::mutate(
@@ -91,7 +91,7 @@ calculate_terminal_value <- function(data,
       !!rlang::sym(shock_scenario) := NA_real_,
       baseline = NA_real_,
       late_sudden = NA_real_,
-      price_baseline = NA_real_,
+      scenario_price_baseline = NA_real_,
       late_sudden_price = NA_real_,
       production_compensation = NA_real_
     )
@@ -99,7 +99,7 @@ calculate_terminal_value <- function(data,
   data <- data %>%
     dplyr::bind_rows(terminal_value) %>%
     dplyr::arrange(
-      .data$company_id, .data$scenario_geography, .data$company_name, .data$ald_sector,
+      .data$company_id, .data$scenario_geography, .data$company_name, .data$sector,
       .data$technology, .data$year
     )
 

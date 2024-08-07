@@ -12,10 +12,11 @@
 #'
 #' @return A tibble holding late_and_sudden_prices
 apply_scenario_prices <- function(data, shock_year) {
+  browser()
   # Part 1: Process for years <= shock_year
   before_shock <- data %>%
     dplyr::filter(.data$year <= shock_year) %>%
-    dplyr::mutate(late_sudden_price = .data$price_baseline)
+    dplyr::mutate(late_sudden_price = .data$scenario_price_baseline)
 
   # Part 2: Process for years > shock_year
   after_shock <- data %>%
@@ -23,8 +24,8 @@ apply_scenario_prices <- function(data, shock_year) {
     dplyr::group_by(.data$company_id, .data$technology) %>%
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
     dplyr::summarise(
-      baseline_price_at_shock = dplyr::first(.data$price_baseline),
-      target_price_end_shockperiod = dplyr::last(.data$price_target),
+      baseline_price_at_shock = dplyr::first(.data$scenario_price_baseline),
+      target_price_end_shockperiod = dplyr::last(.data$scenario_price_target),
       first_year = min(.data$year) + 1,
       last_year = max(.data$year)
     ) %>%

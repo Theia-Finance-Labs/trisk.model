@@ -30,7 +30,7 @@ calculate_net_profits <- function(data,
       .data$company_id,
       .data$year,
       .data$scenario_geography,
-      .data$ald_sector,
+      .data$sector,
       .data$technology,
       .data$net_profits_baseline
     )
@@ -56,7 +56,7 @@ calculate_net_profits <- function(data,
       "company_id",
       "year",
       "scenario_geography",
-      "ald_sector",
+      "sector",
       "technology"
     )
   )
@@ -137,7 +137,7 @@ calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, 
 
 calculate_net_profits_baseline <- function(data) {
   data <- data %>%
-    dplyr::mutate(net_profits_baseline = .data$production_asset_baseline * .data$price_baseline * .data$net_profit_margin)
+    dplyr::mutate(net_profits_baseline = .data$production_asset_baseline * .data$scenario_price_baseline * .data$net_profit_margin)
 
   return(data)
 }
