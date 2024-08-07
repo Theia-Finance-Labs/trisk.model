@@ -57,6 +57,9 @@ prepare_npv_results <- function(output_list) {
     ) %>%
     dplyr::select(
       .data$company_id,
+      .data$asset_id,
+      .data$company_name,
+      .data$asset_name,
       .data$sector,
       .data$technology,
       .data$net_present_value_baseline,
@@ -73,6 +76,7 @@ prepare_pd_results <- function(output_list) {
     ) %>%
     dplyr::select(
       .data$company_id,
+      .data$company_name,
       .data$sector,
       .data$term,
       .data$pd_baseline,
@@ -85,7 +89,6 @@ prepare_pd_results <- function(output_list) {
 prepare_company_trajectories <- function(output_list) {
   company_trajectories <- output_list$company_trajectories %>%
     dplyr::rename(
-      company_id = .data$company_id,
       production_baseline_scenario = .data$production_asset_baseline,
       production_target_scenario = .data$production_scenario_target,
       production_shock_scenario = .data$late_sudden,
@@ -97,7 +100,7 @@ prepare_company_trajectories <- function(output_list) {
       discounted_net_profits_shock_scenario = .data$discounted_net_profit_ls
     ) %>%
     dplyr::select(
-      .data$company_name, .data$year,
+      .data$asset_id, .data$asset_name, .data$company_id, .data$company_name, .data$year,
       .data$sector, .data$technology,
       .data$production_plan_company_technology, .data$production_baseline_scenario,
       .data$production_target_scenario, .data$production_shock_scenario, .data$company_id,

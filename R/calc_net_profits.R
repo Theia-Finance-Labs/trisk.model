@@ -28,8 +28,8 @@ calculate_net_profits <- function(data,
   baseline <- calculate_net_profits_baseline(data) %>%
     dplyr::select(
       .data$company_id,
+      .data$asset_id,
       .data$year,
-      .data$scenario_geography,
       .data$sector,
       .data$technology,
       .data$net_profits_baseline
@@ -54,8 +54,8 @@ calculate_net_profits <- function(data,
     baseline,
     by = c(
       "company_id",
+      "asset_id",
       "year",
-      "scenario_geography",
       "sector",
       "technology"
     )
