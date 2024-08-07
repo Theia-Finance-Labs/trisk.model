@@ -29,12 +29,14 @@ extend_assets_trajectories <- function(
 
   trajectories <- trajectories %>%
     dplyr::select_at(c(
-      "year","asset_id", "asset_name","company_id", "company_name", "sector", "technology", "scenario_geography",
+      "year","asset_id", "asset_name","company_id", "company_name", "sector", "technology", 
       "production_plan_company_technology", "emission_factor", "production_scenario_baseline", "production_scenario_target",
       "production_change_scenario_baseline", "production_change_scenario_target",
       "production_asset_baseline", "late_sudden", "overshoot_direction",
       "scenario_price_baseline", "scenario_price_target", "late_sudden_price"
     ))
+
+
 
   return(trajectories)
 }
@@ -226,7 +228,7 @@ flagged_overshoot <- late_sudden_data %>%
       )
 
     production_scenario_target_tot_to_compensate <- ls_data_to_compensate %>%
-      dplyr::group_by(asset_id,company_id, sector, technology, scenario_geography) %>%
+      dplyr::group_by(asset_id,company_id, sector, technology) %>%
       dplyr::summarize(
         production_scenario_target_total_sum = sum(production_scenario_target),
         n_shocked_years = dplyr::last(year) - year_of_shock + 1,
