@@ -1,3 +1,16 @@
+merge_assets_and_scenarios_data <- function(assets_data, scenarios_data){
+    # add extend production data with scenario targets
+  assets_scenarios <- dplyr::left_join(
+    assets_data, scenarios_data,
+    by = c("sector", "technology", "scenario_geography", "production_year" = "scenario_year")
+  ) %>%
+    dplyr::rename(year = .data$production_year)
+
+
+  return(assets_scenarios)
+}
+
+
 process_trisk_input <- function(assets_scenarios,
                                 target_scenario, start_analysis) {
   assets_scenarios_productions <- create_base_production_trajectories(data = assets_scenarios)

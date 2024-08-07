@@ -12,7 +12,7 @@
 #'
 #' @return A tibble holding late_and_sudden_prices
 apply_scenario_prices <- function(data, shock_year) {
-  browser()
+  
   # Part 1: Process for years <= shock_year
   before_shock <- data %>%
     dplyr::filter(.data$year <= shock_year) %>%
@@ -21,7 +21,7 @@ apply_scenario_prices <- function(data, shock_year) {
   # Part 2: Process for years > shock_year
   after_shock <- data %>%
     dplyr::filter(.data$year > shock_year - 1) %>%
-    dplyr::group_by(.data$company_id, .data$technology) %>%
+    dplyr::group_by(.data$asset_id, .data$company_id, .data$technology) %>%
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
     dplyr::summarise(
       baseline_price_at_shock = dplyr::first(.data$scenario_price_baseline),
@@ -47,15 +47,15 @@ apply_scenario_prices <- function(data, shock_year) {
       late_sudden_price = list(tail(.data$ls_price_full, -1))
     ) %>%
     tidyr::unnest(c(.data$year, .data$late_sudden_price)) %>%
-    dplyr::select(.data$company_id, .data$technology, .data$year, .data$late_sudden_price)
+    dplyr::select(.data$asset_id, .data$company_id, .data$technology, .data$year, .data$late_sudden_price)
 
   # Combine both parts
   final_result <- dplyr::bind_rows(before_shock, after_shock) %>%
-    dplyr::select(.data$company_id, .data$technology, .data$year, .data$late_sudden_price)
+    dplyr::select(.data$asset_id, .data$company_id, .data$technology, .data$year, .data$late_sudden_price)
 
 
   data <- data %>%
-    dplyr::inner_join(final_result, by = c("company_id", "technology", "year"))
+    dplyr::inner_join(final_result, by = c("asset_id","company_id", "technology", "year"))
 
 
   return(data)

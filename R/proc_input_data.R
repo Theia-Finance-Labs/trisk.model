@@ -37,16 +37,16 @@ process_assets_data <- function(data, start_analysis, end_analysis, scenario_geo
 #' applicable.
 #'
 #' @param data A data frame containing the production forecasts of companies,
-#'   the summaries fo their forecasts and the phase out indicator.
-#' @param start_analysis start of the analysis
-#' @param end_analysis end of the analysis
+#'   the summaries of their forecasts, and the phase-out indicator.
+#' @param start_analysis Start of the analysis
+#' @param end_analysis End of the analysis
 #' @noRd
 extend_to_full_analysis_timeframe <- function(data,
                                               start_analysis,
                                               end_analysis) {
   data <- data %>%
     tidyr::complete(
-      production_year = seq(.env$start_analysis, .env$end_analysis),
+      production_year = seq(start_analysis, end_analysis),
       tidyr::nesting(
         !!!rlang::syms(
           c(
@@ -69,8 +69,22 @@ extend_to_full_analysis_timeframe <- function(data,
         "net_profit_margin",
         "debt_equity_ratio",
         "volatility"
-      ))
+      )),
+      .direction = "down"
     )
+  
+  # Fill down production_plan_company_technology only up to the start_analysis year
+  data_before_start_analysis <- data %>%
+    filter(production_year <= start_analysis) %>%
+    group_by(asset_id, company_id, sector, technology) %>%
+    arrange(production_year) %>%
+    tidyr::fill(production_plan_company_technology, .direction = "down") %>%
+    ungroup()
+  
+  # Combine filled data before start_analysis with the rest of the data
+  data <- data_before_start_analysis %>%
+    bind_rows(filter(data, production_year > start_analysis)) %>%
+    arrange(asset_id, company_id, sector, technology, production_year)
 
   return(data)
 }

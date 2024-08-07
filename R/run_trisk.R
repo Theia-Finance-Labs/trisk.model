@@ -94,17 +94,12 @@ run_trisk_model <- function(input_data_list,
   cat("-- Processing inputs. \n")
   # TODO remove MAX_POSSIBLE_YEAR
   end_analysis <- get_end_year(input_data_list, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
-  start_analysis <- min(input_data_list$production_data$production_year)
+  start_analysis <- get_scenario_start_year(input_data_list, c(baseline_scenario, target_scenario))
 
   assets_data <- process_assets_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, scenario_geography = scenario_geography)
   scenarios_data <- process_scenarios_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
 
-  # add extend production data with scenario targets
-  assets_scenarios <- dplyr::left_join(
-    assets_data, scenarios_data,
-    by = c("sector", "technology", "scenario_geography", "production_year" = "scenario_year")
-  ) %>%
-    dplyr::rename(year = .data$production_year)
+  assets_scenarios <- merge_assets_and_scenarios_data(assets_data=assets_data, scenarios_data=scenarios_data)
 
   trisk_model_input <- process_trisk_input(
     assets_scenarios = assets_scenarios,
@@ -113,20 +108,20 @@ run_trisk_model <- function(input_data_list,
 
   cat("-- Calculating baseline and shock trajectories. \n")
 
-  trajectories <- extend_assets_trajectories(
+  trisk_model_output <- extend_assets_trajectories(
     trisk_model_input = trisk_model_input,
     start_year = start_year,
     shock_year = shock_year
   )
 
-  # TODO THIS PART MUST GO
-  trisk_model_output <- trajectories %>%
-    dplyr::left_join(
-      input_data_list$financial_data,
-      by = c("company_id")
-    ) %>%
-    dplyr::left_join(scenarios_data %>% dplyr::distinct(technology, technology_type), by = "technology") %>%
-    dplyr::left_join(trisk_model_input %>% dplyr::distinct(company_id, technology, proximity_to_target), by = c("company_id", "technology"))
+  # # TODO THIS PART MUST GO
+  # trisk_model_output <- trajectories %>%
+  #   dplyr::left_join(
+  #     input_data_list$financial_data,
+  #     by = c("company_id")
+  #   ) %>%
+  #   dplyr::left_join(scenarios_data %>% dplyr::distinct(technology, technology_type), by = "technology") %>%
+  #   dplyr::left_join(trisk_model_input %>% dplyr::distinct(company_id, technology, proximity_to_target), by = c("company_id", "technology"))
 
   cat("-- Calculating net profits. \n")
 
@@ -228,4 +223,24 @@ get_end_year <- function(data, scenarios_filter, MAX_POSSIBLE_YEAR = 2050) {
   end_year <- min(MAX_POSSIBLE_YEAR, max_scenario_year)
 
   return(end_year)
+}
+
+
+#' Get End year from data
+#'
+#' @param data data
+#' @param scenarios_filter scenarios to use
+#'
+#' @return the end year
+get_scenario_start_year <- function(data, scenarios_filter) {
+  min_scenario_year <- data$scenario_data %>%
+    dplyr::distinct(.data$scenario_year, .data$scenario) %>%
+    dplyr::group_by(.data$scenario) %>%
+    dplyr::summarise(scenario_year = min(.data$scenario_year)) %>%
+    dplyr::filter(.data$scenario %in% scenarios_filter) %>%
+    dplyr::pull(.data$scenario_year)
+
+  min_scenario_year = min(min_scenario_year)
+
+  return(min_scenario_year)
 }
