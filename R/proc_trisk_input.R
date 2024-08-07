@@ -25,8 +25,6 @@ process_trisk_input <- function(assets_scenarios,
   )
 
 
-
-
   trisk_model_input <- dplyr::inner_join(
     assets_scenarios %>% distinct_at(c(
       "asset_name",

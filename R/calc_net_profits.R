@@ -25,6 +25,7 @@ calculate_net_profits <- function(data,
                                   carbon_data,
                                   shock_year,
                                   market_passthrough) {
+                                    
   baseline <- calculate_net_profits_baseline(data) %>%
     dplyr::select(
       .data$company_id,
@@ -92,7 +93,7 @@ calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, 
   )
 
   data <- data %>%
-    dplyr::inner_join(carbon_data, by = c("year"))
+    dplyr::left_join(carbon_data, by = c("year"))
 
   data_over_shoot_increasing <- data %>%
     dplyr::filter(.data$overshoot_direction == "Increasing") %>%

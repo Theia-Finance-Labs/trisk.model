@@ -23,7 +23,7 @@ calculate_asset_value_at_risk <- function(data,
       !is.na(.data$discounted_net_profit_baseline)
     ) %>%
     dplyr::group_by(
-      .data$company_id, .data$sector, .data$technology
+      .data$company_id, .data$asset_id, .data$company_name, .data$asset_name, .data$sector, .data$technology
     ) %>%
     dplyr::summarise(
       total_disc_npv_ls = sum(.data$discounted_net_profit_ls), # TODO delete

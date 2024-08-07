@@ -115,7 +115,7 @@ run_trisk_model <- function(input_data_list,
   )
 
 
-
+  
   # attach the necessary columns for the rest
   trisk_model_output <- trajectories %>%
     dplyr::left_join(
