@@ -1,8 +1,8 @@
 st_read_agnostic <- function(dir) {
-  scenario_data_file = "scenarios_data.csv"
-  financial_data_file = "financial_data.csv"
-  production_data_file = "assets_data.csv"
-  carbon_price_data_file = "ngfs_carbon_price.csv"
+  scenario_data_file <- "scenarios_data.csv"
+  financial_data_file <- "financial_data.csv"
+  production_data_file <- "assets_data.csv"
+  carbon_price_data_file <- "ngfs_carbon_price.csv"
 
   out <- list(
     scenario_data = read_scenario_data(file.path(dir, scenario_data_file)),
@@ -89,9 +89,9 @@ read_production_data <- function(path = NULL) {
         capacity = "d",
         capacity_factor = "d",
         emission_factor = "d",
-        scenario_geography="c"
+        scenario_geography = "c"
       )
-    ) %>% 
+    ) %>%
     dplyr::mutate(
       production_plan_company_technology = .data$capacity * .data$capacity_factor
     ) %>%
@@ -109,8 +109,6 @@ read_production_data <- function(path = NULL) {
 #'
 #' @return A tibble holding scenario data.
 read_scenario_data <- function(path) {
-
-  
   scenario_data <- validate_file_exists(path) %>%
     readr::read_csv(
       col_types = readr::cols(
@@ -125,11 +123,11 @@ read_scenario_data <- function(path) {
         # price_unit = "c",
         price_indicator = "c",
         scenario_price = "d",
-        capacity_factor_unit="c",
-        scenario_capacity_factor="d",
-        fair_share_perc="d"
+        capacity_factor_unit = "c",
+        scenario_capacity_factor = "d",
+        fair_share_perc = "d"
       )
-    ) 
+    )
 
 
   return(scenario_data)

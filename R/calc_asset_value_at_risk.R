@@ -11,11 +11,11 @@
 #' @param crispy Boolean. Indicates if the output should be used for the CRISPY
 #'   database or for standard portfolio calculation (default).
 calculate_asset_value_at_risk <- function(data,
-                                                   shock_year,
-                                                   start_year,
-                                                   div_netprofit_prop_coef = NULL,
-                                                   flat_multiplier = 1,
-                                                   crispy = FALSE) {
+                                          shock_year,
+                                          start_year,
+                                          div_netprofit_prop_coef = NULL,
+                                          flat_multiplier = 1,
+                                          crispy = FALSE) {
   data <- data %>%
     dplyr::filter(
       .data$year >= shock_year,

@@ -12,16 +12,14 @@
 #' @param end_year Numeric, holding end year of analysis.
 #'
 #' @return A tibble holding annual profits
-extend_assets_trajectories <- function(trisk_model_input,
-start_year,
-                                       shock_year) {
-
-                 
+extend_assets_trajectories <- function(
+    trisk_model_input,
+    start_year,
+    shock_year) {
   trajectories <- trisk_model_input %>%
-    set_baseline_trajectory(
-    ) %>%
+    set_baseline_trajectory() %>%
     set_trisk_trajectory(
-      start_year=start_year,
+      start_year = start_year,
       shock_year = shock_year
     ) %>%
     apply_scenario_prices(
@@ -29,13 +27,14 @@ start_year,
     )
 
 
-    trajectories  <- trajectories %>%
-      dplyr::select_at(c(
-        "year", "company_id", "company_name", "ald_sector", "technology", "scenario_geography",
-        "production_plan_company_technology",  "emission_factor", "production_scenario_baseline", "production_scenario_target",
-        "production_change_scenario_baseline", "production_change_scenario_target", 
-        "production_asset_baseline", "late_sudden", "overshoot_direction",
-        "price_baseline", "price_target", "late_sudden_price"))
+  trajectories <- trajectories %>%
+    dplyr::select_at(c(
+      "year", "company_id", "company_name", "ald_sector", "technology", "scenario_geography",
+      "production_plan_company_technology", "emission_factor", "production_scenario_baseline", "production_scenario_target",
+      "production_change_scenario_baseline", "production_change_scenario_target",
+      "production_asset_baseline", "late_sudden", "overshoot_direction",
+      "price_baseline", "price_target", "late_sudden_price"
+    ))
 
   return(trajectories)
 }
@@ -130,7 +129,7 @@ set_baseline_trajectory <- function(data) {
 #'
 #' @return data frame
 set_trisk_trajectory <- function(data,
-                                  start_year,
+                                 start_year,
                                  shock_year) {
   year_of_shock <- shock_year
   duration_of_shock <- shock_year - start_year
@@ -147,11 +146,10 @@ set_trisk_trajectory <- function(data,
 }
 
 calc_late_sudden_traj <- function(data, year_of_shock, TIME_FRAME_BEGONE = 5) {
-  
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
     dplyr::select_at(c(
-      "company_id", "company_name", "year", "ald_sector", "technology", "scenario_geography", 
+      "company_id", "company_name", "year", "ald_sector", "technology", "scenario_geography",
       "production_plan_company_technology", "production_scenario_target", "production_change_scenario_target", "production_change_scenario_baseline"
     )) %>%
     dplyr::group_by(company_id, company_name, ald_sector, technology, scenario_geography) %>%

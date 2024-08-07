@@ -1,6 +1,6 @@
 process_scenarios_data <- function(data, baseline_scenario, target_scenario, scenario_geography, start_analysis, end_analysis) {
   scenarios_data <- data$scenario_data
-  
+
   scenarios_data <- scenarios_data %>%
     dplyr::filter(.data$scenario %in% c(baseline_scenario, target_scenario)) %>%
     dplyr::filter(.data$scenario_geography %in% .env$scenario_geography) %>%
@@ -19,7 +19,7 @@ process_assets_data <- function(data, start_analysis, end_analysis, scenario_geo
     dplyr::filter(.data$scenario_geography == .env$scenario_geography)
 
   assets_data <- production_financial_data %>%
-    remove_sectors_with_missing_production_start_year()%>%
+    remove_sectors_with_missing_production_start_year() %>%
     extend_to_full_analysis_timeframe(
       start_analysis = start_analysis,
       end_analysis = end_analysis
@@ -50,7 +50,7 @@ extend_to_full_analysis_timeframe <- function(data,
       tidyr::nesting(
         !!!rlang::syms(
           c(
-            "asset_id","company_id", "sector", "technology"
+            "asset_id", "company_id", "sector", "technology"
           )
         )
       )
@@ -61,7 +61,7 @@ extend_to_full_analysis_timeframe <- function(data,
     tidyr::fill(
       dplyr::all_of(c(
         "asset_name",
-        "company_name", 
+        "company_name",
         "country_iso2",
         "scenario_geography",
         "emission_factor",
@@ -137,7 +137,7 @@ remove_sectors_with_missing_production_start_year <- function(data) {
 }
 
 
-compute_plan_sec_prod <- function(data){
+compute_plan_sec_prod <- function(data) {
   data <- data %>%
     dplyr::group_by(scenario_geography, company_id, sector, production_year) %>%
     dplyr::mutate(plan_sec_prod = sum(production_plan_company_technology, na.rm = TRUE)) %>%
