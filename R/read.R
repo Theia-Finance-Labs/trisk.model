@@ -3,7 +3,7 @@ st_read_agnostic <- function(dir) {
   financial_data_file = "financial_data.csv"
   production_data_file = "assets_data.csv"
   carbon_price_data_file = "ngfs_carbon_price.csv"
-browser()
+
   out <- list(
     scenario_data = read_scenario_data(file.path(dir, scenario_data_file)),
     financial_data = read_financial_data(file.path(dir, financial_data_file)),
@@ -88,12 +88,14 @@ read_production_data <- function(path = NULL) {
         technology = "c",
         capacity = "d",
         capacity_factor = "d",
-        emission_factor = "d"
+        emission_factor = "d",
+        scenario_geography="c"
       )
     ) %>% 
     dplyr::mutate(
       production_plan_company_technology = .data$capacity * .data$capacity_factor
-    ) 
+    ) %>%
+    dplyr::select(-c(.data$capacity, .data$capacity_factor))
 
 
   return(data)
@@ -124,7 +126,7 @@ read_scenario_data <- function(path) {
         price_indicator = "c",
         scenario_price = "d",
         capacity_factor_unit="c",
-        scenario_capacity_factor="c",
+        scenario_capacity_factor="d",
         fair_share_perc="d"
       )
     ) 

@@ -4,9 +4,8 @@ process_scenarios_data <- function(data, baseline_scenario, target_scenario, sce
   scenarios_data <- scenarios_data %>%
     dplyr::filter(.data$scenario %in% c(baseline_scenario, target_scenario)) %>%
     dplyr::filter(.data$scenario_geography %in% .env$scenario_geography) %>%
-    dplyr::filter(dplyr::between(.data$year, .env$start_analysis, .env$end_analysis)) %>%
-    tidyr::replace_na(list(capacity_factor = 1)) %>%
-    dplyr::arrange(year, .by_group = TRUE)
+    dplyr::filter(dplyr::between(.data$scenario_year, .env$start_analysis, .env$end_analysis)) %>%
+    dplyr::arrange(scenario_year, .by_group = TRUE)
 
   return(scenarios_data)
 }
@@ -24,7 +23,8 @@ process_assets_data <- function(data, start_analysis, end_analysis, scenario_geo
     extend_to_full_analysis_timeframe(
       start_analysis = start_analysis,
       end_analysis = end_analysis
-    )
+    ) %>%
+    compute_plan_sec_prod()
 
   return(assets_data)
 }
@@ -46,21 +46,24 @@ extend_to_full_analysis_timeframe <- function(data,
                                               end_analysis) {
   data <- data %>%
     tidyr::complete(
-      year = seq(.env$start_analysis, .env$end_analysis),
+      production_year = seq(.env$start_analysis, .env$end_analysis),
       tidyr::nesting(
         !!!rlang::syms(
           c(
-            "company_id", "company_name", "ald_sector", "technology", "scenario_geography"
+            "asset_id","company_id", "sector", "technology"
           )
         )
       )
     ) %>%
     dplyr::arrange(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$technology,
-      .data$scenario_geography, .data$year
+      .data$asset_id, .data$company_id, .data$sector, .data$technology, .data$production_year
     ) %>%
     tidyr::fill(
       dplyr::all_of(c(
+        "asset_name",
+        "company_name", 
+        "country_iso2",
+        "scenario_geography",
         "emission_factor",
         "pd",
         "net_profit_margin",
@@ -88,15 +91,13 @@ extend_to_full_analysis_timeframe <- function(data,
 #' @return A tibble of data without rows with no exposure info
 #' @noRd
 remove_sectors_with_missing_production_start_year <- function(data) {
-  n_companies_pre <- length(unique(data$company_name))
-
   companies_missing_sector_production_start_year <- data %>%
-    dplyr::filter(.data$year == min(.data$year)) %>%
+    dplyr::filter(.data$production_year == min(.data$production_year)) %>%
     dplyr::group_by(
-      .data$company_id, .data$ald_sector
+      .data$company_id, .data$sector
     ) %>%
     dplyr::summarise(
-      sector_prod = sum(.data$plan_tech_prod, na.rm = TRUE),
+      sector_prod = sum(.data$production_plan_company_technology, na.rm = TRUE),
       .groups = "drop"
     ) %>%
     dplyr::ungroup() %>%
@@ -105,7 +106,7 @@ remove_sectors_with_missing_production_start_year <- function(data) {
   data_filtered <- data %>%
     dplyr::anti_join(
       companies_missing_sector_production_start_year,
-      by = c("company_id", "ald_sector")
+      by = c("company_id", "sector")
     )
 
   # n_companies_post <- length(unique(data_filtered$company_name))
@@ -133,4 +134,13 @@ remove_sectors_with_missing_production_start_year <- function(data) {
 
 
   return(data_filtered)
+}
+
+
+compute_plan_sec_prod <- function(data){
+  data <- data %>%
+    dplyr::group_by(scenario_geography, company_id, sector, production_year) %>%
+    dplyr::mutate(plan_sec_prod = sum(production_plan_company_technology, na.rm = TRUE)) %>%
+    dplyr::ungroup()
+  return(data)
 }

@@ -91,22 +91,29 @@ run_trisk_model <- function(input_data_list,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
                             market_passthrough = 0) {
-browser()
+
   cat("-- Processing inputs. \n")
   # TODO remove MAX_POSSIBLE_YEAR
   end_analysis <- get_end_year(input_data_list, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
-
-  start_analysis <- min(input_data_list$production_data$year)
+  start_analysis <- min(input_data_list$production_data$production_year)
 
   assets_data <- process_assets_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, scenario_geography = scenario_geography)
   scenarios_data <- process_scenarios_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
+
+  # add extend production data with scenario targets
+  assets_scenarios <- dplyr::left_join(
+    assets_data, scenarios_data,
+    by = c("sector", "technology", "scenario_geography", "production_year"="scenario_year")
+  ) %>% 
+  dplyr::rename(year=.data$production_year)
+
   trisk_model_input <- process_trisk_input(
-    assets_data = assets_data, scenarios_data = scenarios_data,
+    assets_scenarios = assets_scenarios,
     target_scenario = target_scenario, start_analysis = start_analysis
   )
 
   cat("-- Calculating baseline and shock trajectories. \n")
-  browser()
+  
   trajectories <- extend_assets_trajectories(
     trisk_model_input = trisk_model_input,
     start_year=start_year,
@@ -212,11 +219,11 @@ process_carbon_data <- function(data, start_year, end_year, carbon_price_model) 
 #' @return the end year
 get_end_year <- function(data, scenarios_filter, MAX_POSSIBLE_YEAR = 2050) {
   max_scenario_year <- data$scenario_data %>%
-      dplyr::distinct(.data$year, .data$scenario) %>%
+      dplyr::distinct(.data$scenario_year, .data$scenario) %>%
       dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year = max(.data$year)) %>%
+      dplyr::summarise(scenario_year = max(.data$scenario_year)) %>%
     dplyr::filter(.data$scenario %in% scenarios_filter) %>%
-    dplyr::pull(.data$year)
+    dplyr::pull(.data$scenario_year)
 
   end_year <- min(MAX_POSSIBLE_YEAR, max_scenario_year)
 

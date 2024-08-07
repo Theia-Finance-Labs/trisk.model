@@ -1,10 +1,5 @@
-process_trisk_input <- function(assets_data, scenarios_data,
+process_trisk_input <- function(assets_scenarios,
                                 target_scenario, start_analysis) {
-  # add extend production data with scenario targets
-  assets_scenarios <- dplyr::inner_join(
-    assets_data, scenarios_data,
-    by = c("ald_sector", "technology", "scenario_geography", "year")
-  ) 
   
   assets_scenarios_productions <- create_base_production_trajectories(data=assets_scenarios)
   
@@ -15,13 +10,28 @@ process_trisk_input <- function(assets_data, scenarios_data,
       data=assets_scenarios_productions,
       start_analysis = start_analysis,
       target_scenario = target_scenario
-    ) %>% dplyr::distinct(scenario_geography, company_name, company_id, ald_sector, technology, year, emission_factor, pd, net_profit_margin, debt_equity_ratio, volatility, technology_type, proximity_to_target)
+    ) 
+
+
 
 
   trisk_model_input <- dplyr::inner_join(
-    assets_proximity_to_target, assets_scenarios_production_pivoted,
-    by = c("company_id", "ald_sector", "technology", "scenario_geography", "year")
-  )
+    assets_scenarios %>% distinct_at(c("asset_name",
+"company_name",
+"asset_id", "company_id",
+"sector", "technology",
+"technology_type",
+"debt_equity_ratio",
+"net_profit_margin",
+"pd",
+"scenario_geography",
+"year",
+"emission_factor",
+"volatility")),
+    dplyr::inner_join(
+    assets_scenarios_production_pivoted, assets_proximity_to_target,
+    by = c("asset_id", "company_id","sector", "technology")
+  ),by = c("asset_id", "company_id","sector", "technology", "year"))
 
   return(trisk_model_input)
 }
@@ -50,18 +60,19 @@ process_trisk_input <- function(assets_data, scenarios_data,
 #' @noRd
 create_base_production_trajectories <- function(data) {
   hours_to_year <- 24 * 365
+
   data <- data %>%
     dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$technology,
-      .data$scenario_geography
+      .data$asset_id, .data$company_id, .data$sector, .data$technology
     ) %>%
+    dplyr::arrange(.data$year, .by_group=TRUE) %>%
     dplyr::mutate(
       # Initial value is identical between production and scenario target,
       # can thus be used for both
       initial_technology_production = dplyr::first(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
       final_technology_production = dplyr::last(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
       initial_sector_production = dplyr::first(.data$plan_sec_prod[!is.na(.data$plan_sec_prod)]),
-    )%>%
+    ) %>%
     # 1. Apply tmsr / smsp
     dplyr::mutate(
       production_scenario = dplyr::if_else(
@@ -76,15 +87,12 @@ create_base_production_trajectories <- function(data) {
     )  %>%
       # 2. Apply capacity factors
     dplyr::mutate(
-      production_plan_company_technology = ifelse(.data$ald_sector == "Power", 
-        .data$production_plan_company_technology * .data$capacity_factor * .env$hours_to_year,
-        .data$production_plan_company_technology * .data$capacity_factor),
-      production_scenario = ifelse(.data$ald_sector == "Power", 
-        .data$production_scenario * .data$capacity_factor * .env$hours_to_year,
-        .data$production_scenario * .data$capacity_factor)
-      # plan_sec_prod = ifelse(.data$ald_sector == "Power", 
-      #   .data$plan_sec_prod * .data$capacity_factor * .env$hours_to_year,
-      #   .data$plan_sec_prod * .data$capacity_factor)
+      production_plan_company_technology = ifelse(.data$sector == "Power", 
+        .data$production_plan_company_technology * .data$scenario_capacity_factor * .env$hours_to_year,
+        .data$production_plan_company_technology * .data$scenario_capacity_factor),
+      production_scenario = ifelse(.data$sector == "Power", 
+        .data$production_scenario * .data$scenario_capacity_factor * .env$hours_to_year,
+        .data$production_scenario * .data$scenario_capacity_factor)
         )
     
     return(data)
@@ -103,7 +111,7 @@ lag_scenario_productions <- function(data) {
   data <- data %>%
     # 3. compute scenario changes
     dplyr::group_by(scenario_type) %>%
-    dplyr::arrange(company_id, ald_sector, technology, scenario_geography, year, .by_group=TRUE) %>%
+    dplyr::arrange(company_id, asset_id, sector, technology, year, .by_group=TRUE) %>%
     dplyr::mutate(
       production_change_scenario = .data$production_scenario - dplyr::lag(.data$production_scenario, default = NA)
     ) %>%
@@ -139,58 +147,52 @@ lag_scenario_productions <- function(data) {
 calculate_proximity_to_target <- function(data,
                                           start_analysis = 2022,
                                           target_scenario) {
-  time_frame <- 5
+
+                         
+  # Identify the position of the first non-NA value per group
+  first_non_na_positions <- data %>%
+    dplyr::group_by(asset_id, company_id, sector, technology) %>%
+    dplyr::summarise(first_non_na_year = min(year[!is.na(production_scenario)], na.rm = TRUE)) %>%
+    dplyr::ungroup()
+
+  # Filter the data based on the identified positions
   production_changes <- data %>%
-    dplyr::filter(
-      dplyr::between(
-        .data$year, .env$start_analysis, .env$start_analysis + .env$time_frame
-      ),
-      .data$scenario == .env$target_scenario
-    ) %>%
-    dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$technology,
-      .data$scenario_geography
-    ) %>%
+    dplyr::inner_join(first_non_na_positions, 
+                      by = c("asset_id", "company_id", "sector", "technology")) %>%
+    dplyr::filter(year >= first_non_na_year,
+                  scenario == .env$target_scenario) %>%
+    dplyr::group_by(asset_id, company_id, sector, technology) %>%
     dplyr::mutate(
-      required_change = .data$production_scenario - .data$initial_technology_production,
-      realised_change = .data$production_plan_company_technology - .data$initial_technology_production
+      required_change = production_scenario - initial_technology_production,
+      realised_change = production_plan_company_technology - initial_technology_production
     ) %>%
     dplyr::summarise(
-      sum_required_change = sum(.data$required_change, na.rm = TRUE),
-      sum_realised_change = sum(.data$realised_change, na.rm = TRUE),
+      sum_required_change = sum(required_change, na.rm = TRUE),
+      sum_realised_change = sum(realised_change, na.rm = TRUE),
       .groups = "drop"
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      ratio_realised_required = .data$sum_realised_change / .data$sum_required_change,
+      ratio_realised_required = sum_realised_change / sum_required_change,
       proximity_to_target = dplyr::case_when(
-        .data$ratio_realised_required < 0 ~ 0,
-        .data$ratio_realised_required > 1 ~ 1,
-        TRUE ~ .data$ratio_realised_required
+        ratio_realised_required < 0 ~ 0,
+        ratio_realised_required > 1 ~ 1,
+        TRUE ~ ratio_realised_required
       )
     ) %>%
     dplyr::select(
-      -dplyr::all_of(c(
-        "sum_required_change", "sum_realised_change",
-        "ratio_realised_required"
-      ))
+      -dplyr::all_of(c("sum_required_change", "sum_realised_change", "ratio_realised_required"))
     )
 
-  data <- data %>%
-    dplyr::inner_join(
-      production_changes,
-      by = c(
-        "company_id", "company_name", "ald_sector", "technology", "scenario_geography"
-      )
-    )
+  return(production_changes)
 }
 
 
 
 
 pivot_to_baseline_target_columns <- function(data) {
-  index_cols <- c("company_id", "scenario_geography", "ald_sector", "technology", "year")
-  to_pivot <- c("production_scenario", "production_change_scenario", "price", "production_plan_company_technology")
+  index_cols <- c("asset_id", "company_id", "sector", "technology", "year")
+  to_pivot <- c("production_scenario", "scenario_price", "production_plan_company_technology", "production_change_scenario")
 
   # Filter baseline scenario
   baseline_data <- data %>%
@@ -218,6 +220,7 @@ pivot_to_baseline_target_columns <- function(data) {
   
   # Merge the pivoted data
   data <- dplyr::inner_join(baseline_data, target_data, by = index_cols)
+
   return(data)
 }
 
