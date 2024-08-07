@@ -99,7 +99,7 @@ run_trisk_model <- function(input_data_list,
   assets_data <- process_assets_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, scenario_geography = scenario_geography)
   scenarios_data <- process_scenarios_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
 
-  assets_scenarios <- merge_assets_and_scenarios_data(assets_data=assets_data, scenarios_data=scenarios_data)
+  assets_scenarios <- merge_assets_and_scenarios_data(assets_data = assets_data, scenarios_data = scenarios_data)
 
   trisk_model_input <- process_trisk_input(
     assets_scenarios = assets_scenarios,
@@ -114,19 +114,20 @@ run_trisk_model <- function(input_data_list,
     shock_year = shock_year
   )
 
-  
+
 
   # attach the necessary columns for the rest
   trisk_model_output <- trajectories %>%
     dplyr::left_join(
-        trisk_model_input %>% 
-    dplyr::distinct(.data$asset_id, .data$company_id, .data$sector, .data$technology, .data$technology_type,
-    .data$proximity_to_target,
-     .data$scenario_geography, .data$year, .data$emission_factor, .data$debt_equity_ratio,
-      .data$net_profit_margin, .data$pd, .data$volatility)
-  ,
-      by = c("asset_id"  ,    "company_id" ,   "sector", "technology", "year")
-    ) 
+      trisk_model_input %>%
+        dplyr::distinct(
+          .data$asset_id, .data$company_id, .data$sector, .data$technology, .data$technology_type,
+          .data$proximity_to_target,
+          .data$scenario_geography, .data$year, .data$emission_factor, .data$debt_equity_ratio,
+          .data$net_profit_margin, .data$pd, .data$volatility
+        ),
+      by = c("asset_id", "company_id", "sector", "technology", "year")
+    )
 
   cat("-- Calculating net profits. \n")
 
@@ -245,7 +246,7 @@ get_scenario_start_year <- function(data, scenarios_filter) {
     dplyr::filter(.data$scenario %in% scenarios_filter) %>%
     dplyr::pull(.data$scenario_year)
 
-  min_scenario_year = min(min_scenario_year)
+  min_scenario_year <- min(min_scenario_year)
 
   return(min_scenario_year)
 }

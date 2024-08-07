@@ -1,5 +1,5 @@
-merge_assets_and_scenarios_data <- function(assets_data, scenarios_data){
-    # add extend production data with scenario targets
+merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
+  # add extend production data with scenario targets
   assets_scenarios <- dplyr::left_join(
     assets_data, scenarios_data,
     by = c("sector", "technology", "scenario_geography", "production_year" = "scenario_year")

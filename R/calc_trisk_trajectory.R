@@ -29,7 +29,7 @@ extend_assets_trajectories <- function(
 
   trajectories <- trajectories %>%
     dplyr::select_at(c(
-      "year","asset_id", "asset_name","company_id", "company_name", "sector", "technology", 
+      "year", "asset_id", "asset_name", "company_id", "company_name", "sector", "technology",
       "production_plan_company_technology", "emission_factor", "production_scenario_baseline", "production_scenario_target",
       "production_change_scenario_baseline", "production_change_scenario_target",
       "production_asset_baseline", "late_sudden", "overshoot_direction",
@@ -72,7 +72,6 @@ extend_assets_trajectories <- function(
 #'
 #' @return dataframe.
 set_baseline_trajectory <- function(data) {
-  
   data <- data %>%
     dplyr::mutate(
       production_asset_baseline = .data$production_plan_company_technology
@@ -148,11 +147,10 @@ set_trisk_trajectory <- function(data,
 }
 
 calc_late_sudden_traj <- function(data, year_of_shock) {
-  
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
     dplyr::select_at(c(
-      "asset_id","company_id",  "year", "sector", "technology", 
+      "asset_id", "company_id", "year", "sector", "technology",
       "production_plan_company_technology", "production_scenario_target", "production_change_scenario_target", "production_change_scenario_baseline"
     )) %>%
     dplyr::group_by(asset_id, company_id, sector, technology) %>%
@@ -174,31 +172,31 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
     dplyr::ungroup()
 
 
-# Apply the function to get the last non-NA year for each group
-last_non_na_positions <-   late_sudden_data %>%
+  # Apply the function to get the last non-NA year for each group
+  last_non_na_positions <- late_sudden_data %>%
     group_by(asset_id, company_id, sector, technology) %>%
     summarise(
       last_non_na_year = max(year[!is.na(production_plan_company_technology)]),
-      .groups = 'drop'
+      .groups = "drop"
     )
 
-# Flag groups who need to be applied the overshoot compensation method.
-# Group will be applied the compensation if at least 1 year matches the condition.
-flagged_overshoot <- late_sudden_data %>%
-  inner_join(last_non_na_positions, by = c("asset_id", "company_id", "sector", "technology")) %>%
-  group_by(asset_id, company_id, sector, technology) %>%
-  filter(year > min(year), year <= last_non_na_year) %>%
-  summarise(
-    prod_to_follow = sum(.data$production_scenario_target, na.rm = TRUE),
-    real_prod = sum(.data$production_plan_company_technology, na.rm = TRUE),
-    requires_overshoot_correction = any(
-      (.data$overshoot_direction == "Decreasing" & (prod_to_follow < real_prod)) |
-        (.data$overshoot_direction == "Increasing" & (prod_to_follow > real_prod))
-    ),
-    overshoot_direction = dplyr::first(overshoot_direction),
-    .groups = "drop"
-  )
-  
+  # Flag groups who need to be applied the overshoot compensation method.
+  # Group will be applied the compensation if at least 1 year matches the condition.
+  flagged_overshoot <- late_sudden_data %>%
+    inner_join(last_non_na_positions, by = c("asset_id", "company_id", "sector", "technology")) %>%
+    group_by(asset_id, company_id, sector, technology) %>%
+    filter(year > min(year), year <= last_non_na_year) %>%
+    summarise(
+      prod_to_follow = sum(.data$production_scenario_target, na.rm = TRUE),
+      real_prod = sum(.data$production_plan_company_technology, na.rm = TRUE),
+      requires_overshoot_correction = any(
+        (.data$overshoot_direction == "Decreasing" & (prod_to_follow < real_prod)) |
+          (.data$overshoot_direction == "Increasing" & (prod_to_follow > real_prod))
+      ),
+      overshoot_direction = dplyr::first(overshoot_direction),
+      .groups = "drop"
+    )
+
   # Separate companies into those needing and not needing overshoot compensation
   to_compensate <- flagged_overshoot %>%
     dplyr::filter(requires_overshoot_correction) %>%
@@ -211,7 +209,7 @@ flagged_overshoot <- late_sudden_data %>%
   # Process companies requiring overshoot compensation
   if (nrow(to_compensate) > 0) {
     ls_data_to_compensate <- late_sudden_data %>%
-      dplyr::inner_join(to_compensate, by = c("asset_id","company_id","sector", "technology"))
+      dplyr::inner_join(to_compensate, by = c("asset_id", "company_id", "sector", "technology"))
 
     ls_pre_clean_to_compensate <- ls_data_to_compensate %>%
       dplyr::mutate(
@@ -220,7 +218,7 @@ flagged_overshoot <- late_sudden_data %>%
 
     ls_pre_shock_to_compensate <- ls_pre_clean_to_compensate %>%
       dplyr::filter(year <= year_of_shock - 1) %>%
-      dplyr::group_by(asset_id,company_id, sector, technology) %>%
+      dplyr::group_by(asset_id, company_id, sector, technology) %>%
       dplyr::summarize(
         late_sudden_pre_shock_val = dplyr::last(late_sudden),
         late_sudden_pre_shock_tot = sum(late_sudden),
@@ -228,7 +226,7 @@ flagged_overshoot <- late_sudden_data %>%
       )
 
     production_scenario_target_tot_to_compensate <- ls_data_to_compensate %>%
-      dplyr::group_by(asset_id,company_id, sector, technology) %>%
+      dplyr::group_by(asset_id, company_id, sector, technology) %>%
       dplyr::summarize(
         production_scenario_target_total_sum = sum(production_scenario_target),
         n_shocked_years = dplyr::last(year) - year_of_shock + 1,
@@ -236,14 +234,14 @@ flagged_overshoot <- late_sudden_data %>%
       )
 
     x_integral_to_compensate <- dplyr::left_join(ls_pre_shock_to_compensate, production_scenario_target_tot_to_compensate,
-      by = c("asset_id","company_id", "sector", "technology")
+      by = c("asset_id", "company_id", "sector", "technology")
     ) %>%
       dplyr::mutate(
         sum_1_to_n_shocked_years = .data$n_shocked_years * (.data$n_shocked_years + 1) / 2,
         x = (.data$production_scenario_target_total_sum - .data$late_sudden_pre_shock_tot - .data$n_shocked_years * .data$late_sudden_pre_shock_val) /
           (-sum_1_to_n_shocked_years)
       ) %>%
-      dplyr::select(asset_id,company_id, sector, technology, x)
+      dplyr::select(asset_id, company_id, sector, technology, x)
 
     ls_overshoot_compensated <-
       dplyr::bind_rows(
@@ -251,8 +249,8 @@ flagged_overshoot <- late_sudden_data %>%
           dplyr::filter(.data$year < year_of_shock),
         ls_pre_clean_to_compensate %>%
           dplyr::filter(year >= year_of_shock) %>%
-          dplyr::left_join(ls_pre_shock_to_compensate, by = c("asset_id","company_id", "sector", "technology")) %>%
-          dplyr::left_join(x_integral_to_compensate, by = c("asset_id","company_id", "sector", "technology")) %>%
+          dplyr::left_join(ls_pre_shock_to_compensate, by = c("asset_id", "company_id", "sector", "technology")) %>%
+          dplyr::left_join(x_integral_to_compensate, by = c("asset_id", "company_id", "sector", "technology")) %>%
           dplyr::mutate(
             year_diff = year - year_of_shock + 1,
             late_sudden = late_sudden_pre_shock_val - pmax(year_diff, 0) * x
@@ -273,13 +271,13 @@ flagged_overshoot <- late_sudden_data %>%
   # Process companies not requiring overshoot compensation
   if (nrow(to_not_compensate) > 0) {
     ls_data_to_not_compensate <- late_sudden_data %>%
-      dplyr::inner_join(to_not_compensate, by = c("asset_id","company_id", "sector", "technology"))
+      dplyr::inner_join(to_not_compensate, by = c("asset_id", "company_id", "sector", "technology"))
 
     ls_post_prod_not_compensated <- ls_data_to_not_compensate %>%
       dplyr::mutate(
         late_sudden = production_plan_company_technology_filled + scenario_change_cumsum
       ) %>%
-      dplyr::select(asset_id,company_id, sector, technology, year, late_sudden)
+      dplyr::select(asset_id, company_id, sector, technology, year, late_sudden)
   } else {
     ls_post_prod_not_compensated <- dplyr::tibble(
       company_id = character(),
@@ -293,13 +291,13 @@ flagged_overshoot <- late_sudden_data %>%
 
   # Combine results
   late_sudden_df <- dplyr::bind_rows(ls_overshoot_compensated, ls_post_prod_not_compensated) %>%
-    dplyr::select_at(c("asset_id","company_id", "sector", "technology", "year", "late_sudden"))
+    dplyr::select_at(c("asset_id", "company_id", "sector", "technology", "year", "late_sudden"))
   late_sudden_df <- late_sudden_df %>%
     dplyr::left_join(
       flagged_overshoot %>%
         dplyr::select(-requires_overshoot_correction) %>%
-        dplyr::distinct_at(c("asset_id","company_id", "sector", "technology", "overshoot_direction")),
-      by = c("asset_id","company_id", "sector", "technology")
+        dplyr::distinct_at(c("asset_id", "company_id", "sector", "technology", "overshoot_direction")),
+      by = c("asset_id", "company_id", "sector", "technology")
     )
 
   # filter_negative_late_and_sudden

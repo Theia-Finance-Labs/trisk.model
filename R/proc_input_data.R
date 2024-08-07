@@ -11,7 +11,6 @@ process_scenarios_data <- function(data, baseline_scenario, target_scenario, sce
 }
 
 process_assets_data <- function(data, start_analysis, end_analysis, scenario_geography) {
-  
   production_financial_data <- dplyr::inner_join(
     data$production_data,
     data$financial_data,
@@ -45,7 +44,6 @@ process_assets_data <- function(data, start_analysis, end_analysis, scenario_geo
 extend_to_full_analysis_timeframe <- function(data,
                                               start_analysis,
                                               end_analysis) {
-                                                
   data <- data %>%
     tidyr::complete(
       production_year = seq(start_analysis, end_analysis),
@@ -59,7 +57,8 @@ extend_to_full_analysis_timeframe <- function(data,
     ) %>%
     dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
     dplyr::arrange(
-      .data$production_year, .by_group = TRUE
+      .data$production_year,
+      .by_group = TRUE
     ) %>%
     tidyr::fill(
       dplyr::all_of(c(
@@ -74,7 +73,7 @@ extend_to_full_analysis_timeframe <- function(data,
         "volatility"
       )),
       .direction = "down"
-    )%>%
+    ) %>%
     tidyr::fill(
       c(
         "asset_name",
@@ -91,7 +90,7 @@ extend_to_full_analysis_timeframe <- function(data,
       .direction = "up"
     ) %>%
     ungroup()
-  
+
   # Fill down production_plan_company_technology only up to the start_analysis year
   data_before_start_analysis <- data %>%
     filter(production_year <= start_analysis) %>%
@@ -99,7 +98,7 @@ extend_to_full_analysis_timeframe <- function(data,
     arrange(production_year) %>%
     tidyr::fill(production_plan_company_technology, .direction = "down") %>%
     ungroup()
-  
+
   # Combine filled data before start_analysis with the rest of the data
   data <- data_before_start_analysis %>%
     bind_rows(filter(data, production_year > start_analysis)) %>%

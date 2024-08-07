@@ -12,7 +12,6 @@
 #'
 #' @return A tibble holding late_and_sudden_prices
 apply_scenario_prices <- function(data, shock_year) {
-  
   # Part 1: Process for years <= shock_year
   before_shock <- data %>%
     dplyr::filter(.data$year <= shock_year) %>%
@@ -55,7 +54,7 @@ apply_scenario_prices <- function(data, shock_year) {
 
 
   data <- data %>%
-    dplyr::inner_join(final_result, by = c("asset_id","company_id", "technology", "year"))
+    dplyr::inner_join(final_result, by = c("asset_id", "company_id", "technology", "year"))
 
 
   return(data)
