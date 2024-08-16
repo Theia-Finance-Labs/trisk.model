@@ -1,6 +1,6 @@
 merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
   # add extend production data with scenario targets
-  assets_scenarios <- dplyr::left_join(
+  assets_scenarios <- dplyr::inner_join(
     assets_data, scenarios_data,
     by = c("sector", "technology", "scenario_geography", "production_year" = "scenario_year")
   ) %>%
@@ -12,7 +12,8 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
 
 
 process_trisk_input <- function(assets_scenarios,
-                                target_scenario, start_analysis) {
+                                target_scenario, 
+                                start_analysis) {
   assets_scenarios_productions <- create_base_production_trajectories(data = assets_scenarios)
 
   assets_scenarios_production_lagged <- lag_scenario_productions(data = assets_scenarios_productions)
@@ -162,6 +163,7 @@ lag_scenario_productions <- function(data) {
 calculate_proximity_to_target <- function(data,
                                           start_analysis = 2022,
                                           target_scenario) {
+                                            
   # Identify the position of the first non-NA value per group
   first_non_na_positions <- data %>%
     dplyr::group_by(asset_id, company_id, sector, technology) %>%
