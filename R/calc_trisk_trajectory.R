@@ -73,6 +73,7 @@ extend_assets_trajectories <- function(
 #'
 #' @return dataframe.
 set_baseline_trajectory <- function(data) {
+  
   data <- data %>%
     dplyr::mutate(
       production_asset_baseline = .data$production_plan_company_technology

@@ -100,7 +100,7 @@ run_trisk_model <- function(input_data_list,
 
   trisk_model_input <- process_trisk_input(
     assets_scenarios = assets_scenarios,
-    target_scenario = target_scenario, 
+    target_scenario = target_scenario
   )
 
   cat("-- Calculating baseline and shock trajectories. \n")

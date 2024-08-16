@@ -14,7 +14,8 @@ process_scenarios_data <- function(data, baseline_scenario, target_scenario, sce
       max_scenario_year = max(.data$scenario_year)) %>%
     dplyr::ungroup() %>%
     dplyr::filter(dplyr::between(.data$scenario_year, min(min_scenario_year), min(max_scenario_year))) %>%
-    dplyr::arrange(.data$scenario_year)
+    dplyr::arrange(.data$scenario_year) %>%
+    dplyr::select(-c(.data$min_scenario_year, .data$max_scenario_year))
 
   stopifnot(nrow(scenarios_data) > 0)
 
