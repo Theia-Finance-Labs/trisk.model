@@ -92,18 +92,15 @@ run_trisk_model <- function(input_data_list,
                             shock_year = 2030,
                             market_passthrough = 0) {
   cat("-- Processing inputs. \n")
-  # TODO remove MAX_POSSIBLE_YEAR
-  end_analysis <- get_end_year(input_data_list, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
-  start_analysis <- get_scenario_start_year(input_data_list, c(baseline_scenario, target_scenario))
 
-  assets_data <- process_assets_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, scenario_geography = scenario_geography)
-  scenarios_data <- process_scenarios_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
+  assets_data <- process_assets_data(data = input_data_list, scenario_geography = scenario_geography)
+  scenarios_data <- process_scenarios_data(data = input_data_list, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
 
   assets_scenarios <- merge_assets_and_scenarios_data(assets_data = assets_data, scenarios_data = scenarios_data)
 
   trisk_model_input <- process_trisk_input(
     assets_scenarios = assets_scenarios,
-    target_scenario = target_scenario, start_analysis = start_analysis
+    target_scenario = target_scenario, 
   )
 
   cat("-- Calculating baseline and shock trajectories. \n")
@@ -132,18 +129,10 @@ run_trisk_model <- function(input_data_list,
   cat("-- Calculating net profits. \n")
 
 
-  carbon_data <- process_carbon_data(
-    input_data_list$carbon_data,
-    start_year = start_year,
-    end_year = end_analysis,
-    carbon_price_model = carbon_price_model
-  )
-
 
   # calc net profits
   company_net_profits <- calculate_net_profits(
     trisk_model_output,
-    carbon_data = carbon_data,
     shock_year = shock_year,
     market_passthrough = market_passthrough
   )
@@ -189,28 +178,6 @@ run_trisk_model <- function(input_data_list,
 
 
 
-#' Process data of type indicated by function name
-#'
-#' @inheritParams process_production_data
-#'
-#' @return A tibble of data as indicated by function name.
-#' @noRd
-process_carbon_data <- function(data, start_year, end_year, carbon_price_model) {
-  data_processed <- data
-
-  ## dataframe will be NULL for lrisk this is the case as lrisk does not read in and use carbon prices
-  if (is.null(data_processed)) {
-    data_processed <- NULL
-  } else {
-    data_processed <- data_processed %>%
-      dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
-      dplyr::select(-c(scenario_geography)) %>%
-      dplyr::filter(.data$scenario %in% .env$carbon_price_model)
-  }
-
-  return(data_processed)
-}
-
 
 #' Get End year from data
 #'
@@ -231,22 +198,3 @@ get_end_year <- function(data, scenarios_filter, MAX_POSSIBLE_YEAR = 2050) {
   return(end_year)
 }
 
-
-#' Get End year from data
-#'
-#' @param data data
-#' @param scenarios_filter scenarios to use
-#'
-#' @return the end year
-get_scenario_start_year <- function(data, scenarios_filter) {
-  min_scenario_year <- data$scenario_data %>%
-    dplyr::distinct(.data$scenario_year, .data$scenario) %>%
-    dplyr::group_by(.data$scenario) %>%
-    dplyr::summarise(scenario_year = min(.data$scenario_year)) %>%
-    dplyr::filter(.data$scenario %in% scenarios_filter) %>%
-    dplyr::pull(.data$scenario_year)
-
-  min_scenario_year <- min(min_scenario_year)
-
-  return(min_scenario_year)
-}

@@ -1,47 +1,16 @@
 st_read_agnostic <- function(dir) {
-  scenario_data_file <- "scenarios_data.csv"
-  financial_data_file <- "financial_data.csv"
-  production_data_file <- "assets_data.csv"
-  carbon_price_data_file <- "ngfs_carbon_price.csv"
+  scenario_data_file <- "scenarios.csv"
+  financial_data_file <- "financial_features.csv"
+  production_data_file <- "assets.csv"
 
   out <- list(
     scenario_data = read_scenario_data(file.path(dir, scenario_data_file)),
     financial_data = read_financial_data(file.path(dir, financial_data_file)),
-    production_data = read_production_data(file.path(dir, production_data_file)),
-    carbon_data = read_carbon_data(file.path(dir, carbon_price_data_file))
-  )
+    production_data = read_production_data(file.path(dir, production_data_file))
+      )
   return(out)
 }
 
-
-#' Read in carbon price data from ngfs data
-#'
-#'
-#' @param path A string that points to the location of the file containing the
-#'   carbon price data.
-#'
-#' @family import functions
-read_carbon_data <- function(path = NULL) {
-  path %||% stop("Must provide 'path'")
-  if (file.exists(file.path(path))){
-  data <- validate_file_exists(file.path(path)) %>%
-    readr::read_csv(
-      col_types = readr::cols_only(
-        year = "d",
-        model = "c",
-        scenario = "c",
-        scenario_geography = "c",
-        variable = "c",
-        unit = "c",
-        carbon_tax = "d"
-      )
-    )
-    }
-    else{
-      data <- NULL # TODO handle cases when carbon data is null
-    }
-  return(data)
-}
 
 #' Read in company financial data processed from eikon exports and AR master data
 #' that contain information on multiple credit risk inputs

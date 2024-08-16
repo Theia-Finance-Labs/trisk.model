@@ -44,7 +44,7 @@ get_latest_timestamped_folder <- function(path) {
 start_time <- Sys.time()
 
 run_trisk(
-  input_path = "workspace/st_inputs/new_inputs",
+  input_path = "workspace/st_inputs/st_inputs_v2",
   output_path = "workspace/st_outputs",
   baseline_scenario = "NGFS2023MESSAGE_NDC",
   target_scenario = "NGFS2023MESSAGE_B2DS",
@@ -80,14 +80,14 @@ npv_check <- function() {
 
   new_npv <- new_npv %>%
     dplyr::inner_join(old_npv, by = c(
-      "company_id", "ald_sector", "technology", "start_year", "carbon_price_model",
+      "company_id", "sector", "technology", "start_year", "carbon_price_model",
       "lgd", "risk_free_rate", "discount_rate", "growth_rate", "div_netprofit_prop_coef",
       "shock_year", "market_passthrough", "baseline_scenario",
-      "shock_scenario", "scenario_geography"
+      "target_scenario", "scenario_geography"
     )) 
 
   prepare_for_npv_barplot <- function() {
-    mix <- dplyr::inner_join(old_npv, new_npv, by = c("company_id", "ald_sector", "technology")) # , "term"))
+    mix <- dplyr::inner_join(old_npv, new_npv, by = c("company_id", "ald_sector"="sector", "technology")) # , "term"))
 
     # List of root names based on your data frame
     roots <- c("net_present_value_baseline", "net_present_value_shock") # , "pd_baseline", "pd_shock")
@@ -149,9 +149,6 @@ npv_check <- function() {
 
 
 
-
-
-
 # TRAJECTORIES COMPARISON ============================================================
 traj_check <- function(traj) {
 
@@ -168,13 +165,15 @@ traj_check <- function(traj) {
       production_target_scenario,
       production_shock_scenario
     ) %>% 
-    dplyr::rename(technology=ald_business_unit)
+    dplyr::rename(
+      sector=ald_sector,
+      technology=ald_business_unit)
 
   new_traj <- readr::read_csv(paste0(latest_output, "/company_trajectories.csv")) %>%
     dplyr::select(
       company_id,
       company_name,
-      ald_sector,
+      sector,
       technology,
       year,
       production_plan_company_technology,
@@ -185,12 +184,10 @@ traj_check <- function(traj) {
 
 
 
-
-
   mix <- dplyr::inner_join(old_traj, new_traj, by = dplyr::join_by(
     company_id,
     company_name,
-    ald_sector,
+    sector,
     technology,
     year
   ))
@@ -209,8 +206,8 @@ traj_check <- function(traj) {
 
     # Compute RMSE
     rmse <- mix %>%
-      select(company_id, company_name, ald_sector, technology, year, x_col, y_col) %>%
-      group_by(company_id, company_name, ald_sector, technology) %>%
+      select(company_id, company_name, sector, technology, year, x_col, y_col) %>%
+      group_by(company_id, company_name, sector, technology) %>%
       summarise(RMSE = compute_rmse(!!sym(x_col), !!sym(y_col)), .groups = "drop") %>%
       mutate(root = root)
 
@@ -222,16 +219,16 @@ traj_check <- function(traj) {
     # Join with original data to get values for plotting
     plot_data <- mix %>%
       pivot_longer(
-        cols = -c(company_id, company_name, ald_sector, technology, year),
+        cols = -c(company_id, company_name, sector, technology, year),
         names_to = c("root", "set"), names_pattern = "(.*)\\.(.*)"
       ) %>%
       filter(.data$root == root) %>%
-      inner_join(top_rmse, by = c("company_id", "company_name", "ald_sector", "technology", "root"))
+      inner_join(top_rmse, by = c("company_id", "company_name", "sector", "technology", "root"))
 
     # Plotting
     p <- ggplot(plot_data, aes(x = year, y = value, group = set, color = set)) +
       geom_line() +
-      facet_wrap(~ company_id + company_name + ald_sector + technology + root, scales = "free_y") +
+      facet_wrap(~ company_id + company_name + sector + technology + root, scales = "free_y") +
       labs(title = paste("Top 10 RMSE for", root, "- by Group"), x = "Year", y = "Value") +
       theme_minimal()
 

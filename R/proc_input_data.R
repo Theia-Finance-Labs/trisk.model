@@ -1,16 +1,28 @@
-process_scenarios_data <- function(data, baseline_scenario, target_scenario, scenario_geography, start_analysis, end_analysis) {
-  scenarios_data <- data$scenario_data
+process_scenarios_data <- function(data, baseline_scenario, target_scenario, scenario_geography) {
+  scenarios_data <- data$scenario_data %>%
+    dplyr::filter(
+      .data$scenario %in% c(baseline_scenario, target_scenario),
+      .data$scenario_geography %in% .env$scenario_geography
+    ) %>%
+    purrr::when(
+      nrow(.) > 0 ~ .,
+      ~ stop("Error in process_scenarios_data: The dataframe is empty after filtering for scenarios and geographies.")
+    ) %>%
+    dplyr::group_by(.data$scenario) %>%
+    dplyr::mutate(
+      min_scenario_year = min(.data$scenario_year),
+      max_scenario_year = max(.data$scenario_year)) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(dplyr::between(.data$scenario_year, min(min_scenario_year), min(max_scenario_year))) %>%
+    dplyr::arrange(.data$scenario_year)
 
-  scenarios_data <- scenarios_data %>%
-    dplyr::filter(.data$scenario %in% c(baseline_scenario, target_scenario)) %>%
-    dplyr::filter(.data$scenario_geography %in% .env$scenario_geography) %>%
-    dplyr::filter(dplyr::between(.data$scenario_year, .env$start_analysis, .env$end_analysis)) %>%
-    dplyr::arrange(scenario_year, .by_group = TRUE)
+  stopifnot(nrow(scenarios_data) > 0)
 
   return(scenarios_data)
 }
 
-process_assets_data <- function(data, start_analysis, end_analysis, scenario_geography) {
+
+process_assets_data <- function(data, scenario_geography) {
   production_financial_data <- dplyr::inner_join(
     data$production_data,
     data$financial_data,
@@ -20,92 +32,15 @@ process_assets_data <- function(data, start_analysis, end_analysis, scenario_geo
 
   assets_data <- production_financial_data %>%
     remove_sectors_with_missing_production_start_year() %>%
-    extend_to_full_analysis_timeframe(
-      start_analysis = start_analysis,
-      end_analysis = end_analysis
-    ) %>%
     compute_plan_sec_prod()
+
+  stopifnot(nrow(assets_data) > 0)
 
   return(assets_data)
 }
 
 
 
-
-#' Extend the dataframe containing the production and production summaries to
-#' cover the whole timeframe of the analysis, filling variables downwards where
-#' applicable.
-#'
-#' @param data A data frame containing the production forecasts of companies,
-#'   the summaries of their forecasts, and the phase-out indicator.
-#' @param start_analysis Start of the analysis
-#' @param end_analysis End of the analysis
-#' @noRd
-extend_to_full_analysis_timeframe <- function(data,
-                                              start_analysis,
-                                              end_analysis) {
-  data <- data %>%
-    tidyr::complete(
-      production_year = seq(start_analysis, end_analysis),
-      tidyr::nesting(
-        !!!rlang::syms(
-          c(
-            "asset_id", "company_id", "sector", "technology"
-          )
-        )
-      )
-    ) %>%
-    dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
-    dplyr::arrange(
-      .data$production_year,
-      .by_group = TRUE
-    ) %>%
-    tidyr::fill(
-      dplyr::all_of(c(
-        "asset_name",
-        "company_name",
-        "country_iso2",
-        "scenario_geography",
-        "emission_factor",
-        "pd",
-        "net_profit_margin",
-        "debt_equity_ratio",
-        "volatility"
-      )),
-      .direction = "down"
-    ) %>%
-    tidyr::fill(
-      c(
-        "asset_name",
-        "company_name",
-        "country_iso2",
-        "scenario_geography",
-        "emission_factor",
-        "pd",
-        "net_profit_margin",
-        "debt_equity_ratio",
-        "volatility",
-        "production_plan_company_technology"
-      ),
-      .direction = "up"
-    ) %>%
-    ungroup()
-
-  # Fill down production_plan_company_technology only up to the start_analysis year
-  data_before_start_analysis <- data %>%
-    filter(production_year <= start_analysis) %>%
-    group_by(asset_id, company_id, sector, technology) %>%
-    arrange(production_year) %>%
-    tidyr::fill(production_plan_company_technology, .direction = "down") %>%
-    ungroup()
-
-  # Combine filled data before start_analysis with the rest of the data
-  data <- data_before_start_analysis %>%
-    bind_rows(filter(data, production_year > start_analysis)) %>%
-    arrange(asset_id, company_id, sector, technology, production_year)
-
-  return(data)
-}
 
 
 
@@ -171,8 +106,8 @@ remove_sectors_with_missing_production_start_year <- function(data) {
 
 compute_plan_sec_prod <- function(data) {
   data <- data %>%
-    dplyr::group_by(scenario_geography, company_id, sector, production_year) %>%
-    dplyr::mutate(plan_sec_prod = sum(production_plan_company_technology, na.rm = TRUE)) %>%
+    dplyr::group_by(.data$scenario_geography, .data$company_id, .data$sector, .data$production_year) %>%
+    dplyr::mutate(plan_sec_prod = sum(.data$production_plan_company_technology, na.rm = TRUE)) %>%
     dplyr::ungroup()
   return(data)
 }
