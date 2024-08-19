@@ -36,7 +36,7 @@ calculate_fair_share_perc <- function(data){
         TRUE ~ NA_real_  # Use NA_real_ for numeric columns or NA_character_ for character columns
       )
     )
-
+  
   # replace nan fair_share_perc by 0. Nans appear when dividing per 0 in the tmsr computation
   data <- data %>%
     dplyr::mutate(fair_share_perc = dplyr::if_else(is.na(fair_share_perc), 0, fair_share_perc))

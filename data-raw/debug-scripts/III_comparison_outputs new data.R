@@ -1,6 +1,9 @@
 OLD_CRISPY_PATH <- "workspace/st_outputs/THEIA_main/crispy_output_standard_NGFS2023MESSAGE_B2DS_Global_no_carbon_tax.csv"
 OLD_TRAJ_PATH <- "workspace/st_outputs/THEIA_main/company_trajectories_standard_NGFS2023MESSAGE_B2DS_Global_no_carbon_tax.csv"
 
+# OLD_CRISPY_PATH <- "workspace/st_outputs/THEIA_main_WEO2023/crispy_output_standard_WEO2023_APS_Global_no_carbon_tax.csv"
+# OLD_TRAJ_PATH <- "workspace/st_outputs/THEIA_main_WEO2023/company_trajectories_standard_WEO2023_APS_Global_no_carbon_tax.csv"
+
 library(scales)
 library(dplyr)
 library(tidyr)

@@ -42,6 +42,9 @@ run_trisk(
   scenario_geography = "Global"
 )
 
+  # baseline_scenario = "WEO2023_STEPS",
+  # target_scenario = "WEO2023_APS",
+
 end_time <- Sys.time()
 time_taken <- end_time - start_time
 print(time_taken)
