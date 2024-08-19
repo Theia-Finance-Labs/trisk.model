@@ -128,6 +128,7 @@ read_scenario_data <- function(path) {
         scenario_price = "d",
         capacity_factor_unit = "c",
         scenario_capacity_factor = "d",
+        scenario_pathway = "d",
         fair_share_perc = "d"
       )
     )
