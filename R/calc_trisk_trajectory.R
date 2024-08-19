@@ -178,8 +178,8 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
 
   # Apply the function to get the last non-NA year for each group
   last_non_na_positions <- late_sudden_data %>%
-    group_by(asset_id, company_id, sector, technology) %>%
-    summarise(
+    dplyr::group_by(asset_id, company_id, sector, technology) %>%
+    dplyr::summarise(
       last_non_na_year = max(year[!is.na(production_plan_company_technology)]),
       .groups = "drop"
     )

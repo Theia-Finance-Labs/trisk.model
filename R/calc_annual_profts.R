@@ -17,14 +17,12 @@
 calculate_annual_profits <- function(data,
                                      baseline_scenario,
                                      shock_scenario,
-                                     end_year,
                                      discount_rate,
                                      growth_rate) {
   
   data <- data %>%
     dividend_discount_model(discount_rate = discount_rate) %>%
     calculate_terminal_value(
-      end_year = end_year,
       growth_rate = growth_rate,
       discount_rate = discount_rate,
       baseline_scenario = baseline_scenario,
@@ -66,7 +64,6 @@ dividend_discount_model <- function(data, discount_rate) {
 
 
 calculate_terminal_value <- function(data,
-                                     end_year,
                                      growth_rate,
                                      discount_rate,
                                      baseline_scenario,
@@ -74,9 +71,9 @@ calculate_terminal_value <- function(data,
   # the calculation follows the formula described in the 2DII paper "Limited
   # Visibility", available under https://2degrees-investing.org/resource/limited-visibility-the-current-state-of-corporate-disclosure-on-long-term-risks/
   terminal_value <- data %>%
-    dplyr::filter(.data$year == .env$end_year) %>%
+    dplyr::filter(.data$year == max(.data$year)) %>%
     dplyr::mutate(
-      year = .env$end_year + 1,
+      year = .data$year + 1,
       net_profits_baseline = .data$net_profits_baseline * (1 + .env$growth_rate),
       net_profits_ls = .data$net_profits_ls * (1 + .env$growth_rate),
       discounted_net_profit_baseline = .data$net_profits_baseline /

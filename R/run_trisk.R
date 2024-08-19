@@ -142,7 +142,6 @@ run_trisk_model <- function(input_data_list,
     data = company_net_profits,
     baseline_scenario = baseline_scenario,
     shock_scenario = target_scenario,
-    end_year = end_analysis,
     discount_rate = discount_rate,
     growth_rate = growth_rate
   )
@@ -162,7 +161,6 @@ run_trisk_model <- function(input_data_list,
   company_pd_changes_overall <- company_annual_profits %>%
     calculate_pd_change_overall(
       shock_year = shock_year,
-      end_of_analysis = end_analysis,
       risk_free_interest_rate = risk_free_rate
     )
 

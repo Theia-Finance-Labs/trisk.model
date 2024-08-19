@@ -16,9 +16,9 @@ if (!dir.exists(output_dir)) {
 
 # URLs of the files
 urls <- c(
-  "https://trisk-input-files.fra1.digitaloceanspaces.com/trisk-input-files//app/trisk2_inputs/csv/assets.csv",
-  "https://trisk-input-files.fra1.digitaloceanspaces.com/trisk-input-files//app/trisk2_inputs/csv/financial_features.csv",
-  "https://trisk-input-files.fra1.digitaloceanspaces.com/trisk-input-files//app/trisk2_inputs/csv/scenarios.csv"
+  "https://crispy-datamodels-bucket.fra1.cdn.digitaloceanspaces.com/crispy-datamodels-bucket//app/trisk2_inputs/csv/assets.csv",
+  "https://crispy-datamodels-bucket.fra1.cdn.digitaloceanspaces.com/crispy-datamodels-bucket//app/trisk2_inputs/csv/financial_features.csv",
+  "https://crispy-datamodels-bucket.fra1.cdn.digitaloceanspaces.com/crispy-datamodels-bucket//app/trisk2_inputs/csv/scenarios.csv"
 )
 
 # File names for saving the files
