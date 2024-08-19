@@ -1,4 +1,5 @@
 process_scenarios_data <- function(data, baseline_scenario, target_scenario, scenario_geography) {
+  
   scenarios_data <- data$scenario_data %>%
     dplyr::filter(
       .data$scenario %in% c(baseline_scenario, target_scenario),
@@ -18,6 +19,12 @@ process_scenarios_data <- function(data, baseline_scenario, target_scenario, sce
     dplyr::select(-c(.data$min_scenario_year, .data$max_scenario_year))
 
   stopifnot(nrow(scenarios_data) > 0)
+
+  # compute fair_share_perc, used to extend asset's trajectories
+  scenarios_data <- scenarios_data %>%
+    add_technology_fair_share_ratio() %>%
+    add_market_fair_share_percentage() %>%
+    calculate_fair_share_perc()
 
   return(scenarios_data)
 }

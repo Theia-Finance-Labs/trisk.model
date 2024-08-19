@@ -30,9 +30,10 @@ run_trisk <- function(
   output_list <- run_trisk_model(input_data_list = input_data_list, ...)
 
   if (save_and_check) {
+    # TODO
     check_results <- function(output_list) {
       TRUE
-    } # TODO
+    } 
     stopifnot(check_results(output_list))
 
     trisk_params <- process_params(fun = run_trisk_model, ...)
@@ -72,8 +73,6 @@ run_trisk <- function(
 #'   point from which production forecasts are compared against scenario targets.
 #'   Must be available in the production data and indicates the first year of
 #'   the scenario data.
-#' @param carbon_price_model Character vector, indicating which NGFS model is used in regards to
-#'   carbon prices. Default is no carbon tax.
 #' @param market_passthrough Firm's ability to pass carbon tax onto the consumer
 #'
 #' @return NULL
@@ -83,7 +82,6 @@ run_trisk_model <- function(input_data_list,
                             target_scenario,
                             scenario_geography,
                             start_year = 2022,
-                            carbon_price_model = "no_carbon_tax",
                             lgd = 0.45,
                             risk_free_rate = 0.02,
                             discount_rate = 0.07,
