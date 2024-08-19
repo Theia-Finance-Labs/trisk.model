@@ -1,7 +1,7 @@
 st_read_agnostic <- function(dir) {
-  scenario_data_file <- "scenarios_data.csv"
-  financial_data_file <- "financial_data.csv"
-  production_data_file <- "assets_data.csv"
+  scenario_data_file <- "scenarios.csv"
+  financial_data_file <- "financial_features.csv"
+  production_data_file <- "assets.csv"
   carbon_price_data_file <- "ngfs_carbon_price.csv"
 
   out <- list(
