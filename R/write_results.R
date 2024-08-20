@@ -30,7 +30,8 @@ write_results <- function(output_list, output_path, trisk_params, show_params_co
   }
 
   # Create output folder
-  output_path <- fs::path(output_path, run_id)
+  timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+  output_path <- fs::path(output_path, paste0(timestamp, "__", run_id))
   dir.create(output_path, recursive = TRUE)
 
   # Save results
@@ -56,8 +57,11 @@ prepare_npv_results <- function(output_list) {
     ) %>%
     dplyr::select(
       .data$company_id,
-      .data$ald_sector,
-      .data$ald_business_unit,
+      .data$asset_id,
+      .data$company_name,
+      .data$asset_name,
+      .data$sector,
+      .data$technology,
       .data$net_present_value_baseline,
       .data$net_present_value_shock,
     )
@@ -72,7 +76,8 @@ prepare_pd_results <- function(output_list) {
     ) %>%
     dplyr::select(
       .data$company_id,
-      .data$ald_sector,
+      .data$company_name,
+      .data$sector,
       .data$term,
       .data$pd_baseline,
       .data$pd_shock,
@@ -84,11 +89,10 @@ prepare_pd_results <- function(output_list) {
 prepare_company_trajectories <- function(output_list) {
   company_trajectories <- output_list$company_trajectories %>%
     dplyr::rename(
-      company_id = .data$company_id,
-      production_baseline_scenario = .data$baseline,
-      production_target_scenario = .data$scen_to_follow_aligned,
+      production_baseline_scenario = .data$production_asset_baseline,
+      production_target_scenario = .data$production_scenario_target,
       production_shock_scenario = .data$late_sudden,
-      price_baseline_scenario = .data$Baseline_price,
+      scenario_price_baseline = .data$scenario_price_baseline,
       price_shock_scenario = .data$late_sudden_price,
       net_profits_baseline_scenario = .data$net_profits_baseline,
       net_profits_shock_scenario = .data$net_profits_ls,
@@ -96,12 +100,12 @@ prepare_company_trajectories <- function(output_list) {
       discounted_net_profits_shock_scenario = .data$discounted_net_profit_ls
     ) %>%
     dplyr::select(
-      .data$company_name, .data$year,
-      .data$ald_sector, .data$ald_business_unit,
-      .data$plan_tech_prod, .data$phase_out, .data$production_baseline_scenario,
+      .data$asset_id, .data$asset_name, .data$company_id, .data$company_name, .data$year,
+      .data$sector, .data$technology,
+      .data$production_plan_company_technology, .data$production_baseline_scenario,
       .data$production_target_scenario, .data$production_shock_scenario, .data$company_id,
       .data$pd, .data$net_profit_margin, .data$debt_equity_ratio,
-      .data$volatility, .data$price_baseline_scenario, .data$price_shock_scenario,
+      .data$volatility, .data$scenario_price_baseline, .data$price_shock_scenario,
       .data$net_profits_baseline_scenario, .data$net_profits_shock_scenario,
       .data$discounted_net_profits_baseline_scenario, .data$discounted_net_profits_shock_scenario,
     )

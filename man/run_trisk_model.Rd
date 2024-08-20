@@ -7,24 +7,24 @@
 run_trisk_model(
   input_data_list,
   baseline_scenario,
-  shock_scenario,
+  target_scenario,
   scenario_geography,
-  start_year,
+  start_year = 2022,
+  carbon_price_model = "no_carbon_tax",
   lgd = 0.45,
   risk_free_rate = 0.02,
   discount_rate = 0.07,
   growth_rate = 0.03,
   div_netprofit_prop_coef = 1,
   shock_year = 2030,
-  market_passthrough = 0,
-  financial_stimulus = 1
+  market_passthrough = 0
 )
 }
 \arguments{
 \item{baseline_scenario}{Holds the name of the baseline scenario to be used
 in the stress test, for accepted value range check \code{stress_test_arguments}.}
 
-\item{shock_scenario}{Holds the name of the shock scenario to be used in the
+\item{target_scenario}{Holds the name of the shock scenario to be used in the
 stress test, for accepted value range check \code{stress_test_arguments}.}
 
 \item{scenario_geography}{Character vector, indicating which geographical
@@ -35,6 +35,9 @@ accepted values compare \code{stress_test_arguments}.}
 point from which production forecasts are compared against scenario targets.
 Must be available in the production data and indicates the first year of
 the scenario data.}
+
+\item{carbon_price_model}{Character vector, indicating which NGFS model is used in regards to
+carbon prices. Default is no carbon tax.}
 
 \item{lgd}{Numeric, holding the loss given default for accepted value range
 check \code{stress_test_arguments}.}
@@ -57,11 +60,6 @@ range compare \code{stress_test_arguments}.}
 range compare \code{stress_test_arguments}.}
 
 \item{market_passthrough}{Firm's ability to pass carbon tax onto the consumer}
-
-\item{financial_stimulus}{Additional support for low carbon companies.}
-
-\item{carbon_price_model}{Character vector, indicating which NGFS model is used in regards to
-carbon prices. Default is no carbon tax.}
 }
 \description{
 Run stress test model

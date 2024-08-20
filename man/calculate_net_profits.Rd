@@ -16,13 +16,7 @@ approximates the additional capital investment such a company would have to
 make in a short time, which leads to added costs. This ensures that late
 build out will not proportionally translate into increased profits.}
 \usage{
-calculate_net_profits(
-  data,
-  carbon_data,
-  shock_year,
-  market_passthrough,
-  financial_stimulus
-)
+calculate_net_profits(data, carbon_data, shock_year, market_passthrough)
 }
 \arguments{
 \item{data}{A data frame containing the production forecasts of companies
@@ -35,9 +29,7 @@ indication of the direction of the ald_business_unit.}
 \item{shock_year}{A numeric vector of length one that indicates in which year
 the policy shock strikes in a given scenario.}
 
-\item{market_passthrough}{A firm's ability to pass a carbon tax onto the consumer.}
-
-\item{financial_stimulus}{Additional channel through which the net profits of green
+\item{market_passthrough}{A firm's ability to pass a carbon tax onto the consumer.
 companies can be boosted under a shock scenario.}
 }
 \description{

@@ -1,44 +1,18 @@
-st_read_agnostic <- function(
-    dir,
-    capacity_factor_file = "prewrangled_capacity_factors.csv",
-    price_data_file = "price_data_long.csv",
-    scenario_data_file = "Scenarios_AnalysisInput.csv",
-    financial_data_file = "prewrangled_financial_data_stress_test.csv",
-    production_data_file = "abcd_stress_test_input.csv",
-    carbon_price_data_file = "ngfs_carbon_price.csv") {
+st_read_agnostic <- function(dir) {
+  scenarios_data_file <- "scenarios.csv"
+  financial_data_file <- "financial_features.csv"
+  assets_data_file <- "assets.csv"
+  carbon_price_data_file <- "ngfs_carbon_price.csv"
+
   out <- list(
-    capacity_factors_power = read_capacity_factors_power(file.path(dir, capacity_factor_file)),
-    df_price = read_price_data(file.path(dir, price_data_file)),
-    scenario_data = read_scenario_data(file.path(dir, scenario_data_file)),
+    scenarios_data = read_scenario_data(file.path(dir, scenarios_data_file)),
     financial_data = read_financial_data(file.path(dir, financial_data_file)),
-    production_data = read_production_data(file.path(dir, production_data_file)),
+    assets_data = read_production_data(file.path(dir, assets_data_file)),
     carbon_data = read_carbon_data(file.path(dir, carbon_price_data_file))
   )
   return(out)
 }
 
-
-#' Read in power capacity factors from csv and check that all expected columns
-#' are given.
-#'
-#' @param path A string that points to the location of the file containing the
-#'   capacity factors.
-#' @family import functions
-read_capacity_factors_power <- function(path = NULL) {
-  path %||% stop("Must provide 'path'")
-
-  data <- validate_file_exists(path) %>%
-    readr::read_csv(col_types = readr::cols())
-
-  validate_data_has_expected_cols(
-    data = data,
-    expected_columns = c(
-      "scenario", "scenario_geography", "ald_business_unit", "year", "capacity_factor"
-    )
-  )
-
-  return(data)
-}
 
 #' Read in carbon price data from ngfs data
 #'
@@ -49,7 +23,7 @@ read_capacity_factors_power <- function(path = NULL) {
 #' @family import functions
 read_carbon_data <- function(path = NULL) {
   path %||% stop("Must provide 'path'")
-
+  if (file.exists(file.path(path))){
   data <- validate_file_exists(file.path(path)) %>%
     readr::read_csv(
       col_types = readr::cols_only(
@@ -62,7 +36,10 @@ read_carbon_data <- function(path = NULL) {
         carbon_tax = "d"
       )
     )
-
+    }
+    else{
+      data <- NULL # TODO handle cases when carbon data is null
+    }
   return(data)
 }
 
@@ -79,7 +56,7 @@ read_financial_data <- function(path = NULL) {
   data <- validate_file_exists(file.path(path)) %>%
     readr::read_csv(
       col_types = readr::cols_only(
-        company_id = "d",
+        company_id = "c",
         pd = "d",
         net_profit_margin = "d",
         debt_equity_ratio = "d",
@@ -91,67 +68,6 @@ read_financial_data <- function(path = NULL) {
   return(data)
 }
 
-
-#' Check if values in financial data are plausible
-#'
-#' Checks that numeric columns hold values in acceptable ranges.
-#'
-#'
-#' @return NULL
-check_valid_financial_data_values <- function(financial_data) {
-  if (any(financial_data$pd < 0 | financial_data$pd >= 1)) {
-    stop("Implausibe value(s) < 0 or >= 1 for pd detected. Please check.")
-  }
-
-  if (any(financial_data$net_profit_margin <= 0 | financial_data$net_profit_margin > 1)) {
-    stop("Implausibe value(s) <= 0 or > 1 for net_profit_margin detected. Please check.")
-  }
-
-
-  if (any(financial_data$debt_equity_ratio < 0)) {
-    stop("Implausibe value(s) < 0 for debt_equity_ratio detected. Please check.")
-  }
-
-  if (any(financial_data$volatility < 0)) {
-    stop("Implausibe value(s) < 0 for volatility detected. Please check.")
-  }
-}
-
-#' Read in price data
-#'
-#' This function reads in price data using long file format. It is expected to
-#' work with data based on IEA WEO 2020.
-#'
-#' @param path A string that points to the location of the file containing the
-#'   price data
-#' @return A tibble holding price data in long format.
-read_price_data <- function(path) {
-  data <- validate_file_exists(path) %>%
-    readr::read_csv(
-      col_types = readr::cols(
-        year = "d",
-        scenario = "c",
-        scenario_geography = "c",
-        ald_business_unit = "c",
-        indicator = "c",
-        unit = "c",
-        price = "d"
-      )
-    )
-
-  validate_data_has_expected_cols(
-    data = data,
-    expected_columns = c(
-      "year", "scenario", "scenario_geography", "ald_business_unit",
-      "indicator", "unit", "price"
-    )
-  )
-
-  data <- data %>%
-    dplyr::select_at(c("year", "scenario", "ald_sector", "ald_business_unit", "price"))
-
-  return(data)
-}
 
 #' Read in AR PAMS production data.
 #'
@@ -165,25 +81,25 @@ read_production_data <- function(path = NULL) {
   data <- validate_file_exists(path) %>%
     readr::read_csv(
       col_types = readr::cols_only(
-        company_id = "d",
+        asset_id = "c",
+        asset_name = "c",
+        company_id = "c",
         company_name = "c",
-        scenario_geography = "c",
-        year = "d",
-        ald_sector = "c",
-        ald_business_unit = "c",
-        plan_tech_prod = "d",
-        plan_emission_factor = "d",
-        plan_sec_prod = "d"
+        country_iso2 = "c",
+        production_year = "d",
+        sector = "c",
+        technology = "c",
+        capacity = "d",
+        capacity_factor = "d",
+        emission_factor = "d",
+        scenario_geography = "c"
       )
-    )
+    ) %>%
+    dplyr::mutate(
+      production_plan_company_technology = .data$capacity * .data$capacity_factor
+    ) %>%
+    dplyr::select(-c(.data$capacity, .data$capacity_factor))
 
-  validate_data_has_expected_cols(
-    data = data,
-    expected_columns = c(
-      "company_id", "company_name", "scenario_geography", "year", "ald_sector",
-      "ald_business_unit", "plan_tech_prod", "plan_emission_factor", "plan_sec_prod"
-    )
-  )
 
   return(data)
 }
@@ -202,23 +118,21 @@ read_scenario_data <- function(path) {
         scenario_geography = "c",
         scenario = "c",
         scenario_type = "c",
-        ald_sector = "c",
-        units = "c",
-        ald_business_unit = "c",
-        year = "d",
-        direction = "c",
+        sector = "c",
+        # pathway_unit = "c",
+        technology = "c",
+        scenario_year = "d",
+        scenario_type = "c",
+        # price_unit = "c",
+        price_indicator = "c",
+        scenario_price = "d",
+        capacity_factor_unit = "c",
+        scenario_capacity_factor = "d",
+        scenario_pathway = "d",
         fair_share_perc = "d"
       )
     )
 
-  validate_data_has_expected_cols(
-    data = scenario_data,
-    expected_columns = c(
-      "scenario_geography", "scenario", "scenario_type",
-      "ald_sector", "units", "ald_business_unit", "year",
-      "direction", "fair_share_perc"
-    )
-  )
 
   return(scenario_data)
 }
@@ -273,4 +187,30 @@ validate_data_has_expected_cols <- function(data,
     ))
   }
   invisible()
+}
+
+
+#' Check if values in financial data are plausible
+#'
+#' Checks that numeric columns hold values in acceptable ranges.
+#'
+#'
+#' @return NULL
+check_valid_financial_data_values <- function(financial_data) {
+  if (any(financial_data$pd < 0 | financial_data$pd >= 1)) {
+    stop("Implausibe value(s) < 0 or >= 1 for pd detected. Please check.")
+  }
+
+  if (any(financial_data$net_profit_margin <= 0 | financial_data$net_profit_margin > 1)) {
+    stop("Implausibe value(s) <= 0 or > 1 for net_profit_margin detected. Please check.")
+  }
+
+
+  if (any(financial_data$debt_equity_ratio < 0)) {
+    stop("Implausibe value(s) < 0 for debt_equity_ratio detected. Please check.")
+  }
+
+  if (any(financial_data$volatility < 0)) {
+    stop("Implausibe value(s) < 0 for volatility detected. Please check.")
+  }
 }
