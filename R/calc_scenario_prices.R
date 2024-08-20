@@ -8,31 +8,54 @@
 #'
 #'
 #' @param price_data A tibble holding price data.
-#' @param baseline_scenario String holding name of the baseline scenario.
-#' @param target_scenario String holding name of the target scenario.
-#' @param transition_scenario Tibble with 1 row holding at least variables
-#'   `year_of_shock` and `duration_of_shock`.
-#' @param start_year Start_year of analysis
+#' @param shock_year Year of shock.
 #'
 #' @return A tibble holding late_and_sudden_prices
-calc_scenario_prices <- function(price_data, baseline_scenario, target_scenario,
-                                 transition_scenario, start_year) {
-  data <- price_data %>%
-    dplyr::mutate(Baseline_price = !!rlang::sym(paste0("price_", baseline_scenario))) %>%
-    # NOTE: deviating from lower snake case here due legacy functions
-    dplyr::mutate(target_price = !!rlang::sym(paste0("price_", target_scenario))) %>%
-    dplyr::group_by(.data$ald_sector, .data$ald_business_unit) %>%
-    dplyr::mutate(
-      late_sudden_price = late_sudden_prices(
-        target_price = .data$target_price,
-        baseline_price = .data$Baseline_price,
-        year_of_shock = transition_scenario$year_of_shock,
-        start_year = start_year,
-        duration_of_shock = transition_scenario$duration_of_shock
-      )
+apply_scenario_prices <- function(data, shock_year) {
+  # Part 1: Process for years <= shock_year
+  before_shock <- data %>%
+    dplyr::filter(.data$year <= shock_year) %>%
+    dplyr::mutate(late_sudden_price = .data$scenario_price_baseline)
+
+  # Part 2: Process for years > shock_year
+  after_shock <- data %>%
+    dplyr::filter(.data$year > shock_year - 1) %>%
+    dplyr::group_by(.data$asset_id, .data$company_id, .data$technology) %>%
+    dplyr::arrange(.data$year, .by_group = TRUE) %>%
+    dplyr::summarise(
+      baseline_price_at_shock = dplyr::first(.data$scenario_price_baseline),
+      target_price_end_shockperiod = dplyr::last(.data$scenario_price_target),
+      first_year = min(.data$year) + 1,
+      last_year = max(.data$year)
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(.data$year, .data$ald_sector, .data$ald_business_unit, .data$Baseline_price, .data$late_sudden_price)
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      # Create a sequence of years from first_year to last_year
+      year = list(seq(.data$first_year, .data$last_year)),
+      # Create a linear interpolation from baseline to target
+      ls_price_full = list(
+        zoo::na.approx(
+          c(baseline_price_at_shock, target_price_end_shockperiod),
+          x = c(.data$first_year - 1, .data$last_year),
+          xout = seq(.data$first_year - 1, .data$last_year),
+          na.rm = FALSE
+        )
+      ),
+      # Remove the first value from ls_price_full
+      late_sudden_price = list(tail(.data$ls_price_full, -1))
+    ) %>%
+    tidyr::unnest(c(.data$year, .data$late_sudden_price)) %>%
+    dplyr::select(.data$asset_id, .data$company_id, .data$technology, .data$year, .data$late_sudden_price)
+
+  # Combine both parts
+  final_result <- dplyr::bind_rows(before_shock, after_shock) %>%
+    dplyr::select(.data$asset_id, .data$company_id, .data$technology, .data$year, .data$late_sudden_price)
+
+
+  data <- data %>%
+    dplyr::inner_join(final_result, by = c("asset_id", "company_id", "technology", "year"))
+
 
   return(data)
 }
