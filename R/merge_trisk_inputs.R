@@ -12,8 +12,7 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
   end_analysis <- min(max(scenarios_data$scenario_year), MAX_POSSIBLE_YEAR)
 
   assets_data_full <- assets_data_filtered %>%
-      extend_to_full_analysis_timeframe(start_analysis=start_analysis, end_analysis=end_analysis) %>%
-      fill_production_plan()
+      extend_to_full_analysis_timeframe(start_analysis=start_analysis, end_analysis=end_analysis) 
     
   # add extend production data with scenario targets
   assets_scenarios <- dplyr::inner_join(
@@ -27,60 +26,79 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
 
 
 
+
 #' Extend the dataframe containing the production and production summaries to
 #' cover the whole timeframe of the analysis, filling variables downwards where
 #' applicable.
 #'
 #' @param data A data frame containing the production forecasts of companies,
 #'   the summaries of their forecasts, and the phase-out indicator.
-#' 
-extend_to_full_analysis_timeframe <- function(data, start_analysis, end_analysis) {
-  data_extended <- data %>%
-    dplyr::group_by(asset_id, company_id, sector, technology) %>%
-    # Identify the first available year for each group
-    dplyr::mutate(first_year = min(.data$production_year, na.rm = TRUE)) %>%
-    # Complete the data to include all years from the first year to end_analysis
-    tidyr::complete(production_year = tidyr::full_seq(c(.data$first_year, end_analysis), 1)) %>%
-    # Arrange the data by production year within each group
-    dplyr::arrange(.data$production_year) %>%
-    # Fill down all values from the first available year, except production_plan_company_technology
-    tidyr::fill(-.data$production_plan_company_technology, .direction = "down") %>%
-    # Ungroup to return a flat data structure
-    dplyr::ungroup() %>%
-    # Drop the helper columns
-    dplyr::select(-.data$first_year)
+#' @param start_analysis Start of the analysis
+#' @param end_analysis End of the analysis
+#' @noRd
+extend_to_full_analysis_timeframe <- function(data,
+                                              start_analysis,
+                                              end_analysis) {
+  data <- data %>%
+    tidyr::complete(
+      production_year = seq(start_analysis, end_analysis),
+      tidyr::nesting(
+        !!!rlang::syms(
+          c(
+            "asset_id", "company_id", "sector", "technology"
+          )
+        )
+      )
+    ) %>%
+    dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
+    dplyr::arrange(
+      .data$production_year,
+      .by_group = TRUE
+    ) %>%
+    tidyr::fill(
+      dplyr::all_of(c(
+        "asset_name",
+        "company_name",
+        "country_iso2",
+        "scenario_geography",
+        "emission_factor",
+        "pd",
+        "net_profit_margin",
+        "debt_equity_ratio",
+        "volatility"
+      )),
+      .direction = "down"
+    ) %>%
+    tidyr::fill(
+      c(
+        "asset_name",
+        "company_name",
+        "country_iso2",
+        "scenario_geography",
+        "emission_factor",
+        "pd",
+        "net_profit_margin",
+        "debt_equity_ratio",
+        "volatility",
+        "production_plan_company_technology"
+      ),
+      .direction = "up"
+    ) %>%
+    ungroup()
 
-  return(data_extended)
-}
+  # TODO CAREFULLY INTEGRATE
+  # Fill down production_plan_company_technology only up to the start_analysis year
+  # data_before_start_analysis <- data %>%
+  #   filter(production_year <= start_analysis) %>%
+  #   group_by(asset_id, company_id, sector, technology) %>%
+  #   arrange(production_year) %>%
+  #   tidyr::fill(production_plan_company_technology, .direction = "down") %>%
+  #   ungroup()
 
+  # # Combine filled data before start_analysis with the rest of the data
+  # data <- data_before_start_analysis %>%
+  #   bind_rows(filter(data, production_year > start_analysis)) %>%
+  #   arrange(asset_id, company_id, sector, technology, production_year)
 
-# Fill down production_plan_company_technology up to the last non-na year (over all assets) of production_plan_company_technology
-# This is so no matter when an asset production starts, all assets will get their productions extended by scenarios from the same year 
-# Meaning scenario pathways are consistently applied on all assets even ig they have end of forecast years
-#' @param data A data frame containing the production forecasts of companies,
-#'   the summaries of their forecasts, and the phase-out indicator.
-#' 
-fill_production_plan <- function(data) {
-  # Determine the last year where production_plan_company_technology is available
-  last_production_forecast_year <- data %>%
-    dplyr::filter(!is.na(.data$production_plan_company_technology)) %>%
-    dplyr::summarize(max_year = max(production_year, na.rm = TRUE)) %>%
-    dplyr::pull(max_year)
-
-  # Filter the data to include only years up to last_production_forecast_year and fill down
-  data_before_start_analysis <- data %>%
-    dplyr::filter(production_year <= last_production_forecast_year) %>%
-    dplyr::group_by(asset_id, company_id, sector, technology) %>%
-    tidyr::fill(.data$production_plan_company_technology, .direction = "down") %>%
-    dplyr::ungroup()
-
-  # Filter the data to include only years after last_production_forecast_year
-  data_after_forecast <- data %>%
-    dplyr::filter(production_year > last_production_forecast_year)
-
-  # Combine the filled data with the data after the forecast
-  data_filled <- dplyr::bind_rows(data_before_start_analysis, data_after_forecast) %>%
-    dplyr::arrange(asset_id, company_id, sector, technology, production_year)
-
-  return(data_filled)
+  return(data)
 }
