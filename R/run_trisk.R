@@ -119,7 +119,6 @@ run_trisk_model <- function(assets_data,
 
   start_year = min(trisk_model_input$year)
   end_analysis = max(trisk_model_input$year)
-  
 
   cat("-- Calculating baseline, target, and shock trajectories. \n")
 
@@ -131,8 +130,8 @@ run_trisk_model <- function(assets_data,
 
   cat("-- Calculating net profits. \n")
 
-  carbon_data <- process_carbon_data(
-    input_data_list$carbon_data,
+  processed_carbon_data <- process_carbon_data(
+    carbon_data,
     start_year = start_year,
     end_year = end_analysis,
     carbon_price_model = carbon_price_model
@@ -142,7 +141,7 @@ run_trisk_model <- function(assets_data,
   # calc net profits
   company_net_profits <- calculate_net_profits(
     trisk_model_output,
-    carbon_data = carbon_data,
+    carbon_data = processed_carbon_data,
     shock_year = shock_year,
     market_passthrough = market_passthrough
   )
