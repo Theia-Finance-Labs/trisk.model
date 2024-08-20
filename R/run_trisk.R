@@ -27,7 +27,12 @@ run_trisk <- function(
 
   input_data_list <- st_read_agnostic(input_path)
 
-  output_list <- run_trisk_model(input_data_list = input_data_list, ...)
+  output_list <- run_trisk_model(
+    assets_data = input_data_list$assets_data, 
+    scenarios_data = input_data_list$scenarios_data, 
+    financial_data=input_data_list$financial_data, 
+    carbon_data=input_data_list$carbon_data
+    , ...)
 
   if (save_and_check) {
     check_results <- function(output_list) {
@@ -38,17 +43,22 @@ run_trisk <- function(
     trisk_params <- process_params(fun = run_trisk_model, ...)
 
     write_results(output_list = output_list, output_path = output_path, trisk_params = trisk_params, show_params_cols = show_params_cols)
+  } else {
+    return(output_list)
   }
-  return(output_list)
 }
 
 
 
 #' Run stress test model
-#'
+#' 
+#' @param assets_data assets_data
+#' @param scenarios_data scenarios_data
+#' @param financial_data financial_data
+#' @param carbon_data carbon_data
 #' @param baseline_scenario Holds the name of the baseline scenario to be used
 #'   in the stress test, for accepted value range check `stress_test_arguments`.
-#' @param shock_scenario Holds the name of the shock scenario to be used in the
+#' @param target_scenario Holds the name of the shock scenario to be used in the
 #'   stress test, for accepted value range check `stress_test_arguments`.
 #' @param lgd Numeric, holding the loss given default for accepted value range
 #'   check `stress_test_arguments`.
@@ -74,13 +84,15 @@ run_trisk <- function(
 #' @param carbon_price_model Character vector, indicating which NGFS model is used in regards to
 #'   carbon prices. Default is no carbon tax.
 #' @param market_passthrough Firm's ability to pass carbon tax onto the consumer
-#' @param financial_stimulus Additional support for low carbon companies.
 #'
 #' @return NULL
 #' @export
-run_trisk_model <- function(input_data_list,
+run_trisk_model <- function(assets_data,
+                            scenarios_data,
+                            financial_data,
+                            carbon_data,
                             baseline_scenario,
-                            shock_scenario,
+                            target_scenario,
                             scenario_geography,
                             start_year = 2022,
                             carbon_price_model = "no_carbon_tax",
@@ -90,50 +102,56 @@ run_trisk_model <- function(input_data_list,
                             growth_rate = 0.03,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
-                            market_passthrough = 0,
-                            financial_stimulus = 1) {
+                            market_passthrough = 0) {
+  cat("-- Processing Assets and Scenarios. \n")
 
-  outputs <- input_data_list %>%
-    st_process(
-      scenario_geography = scenario_geography,
-      baseline_scenario = baseline_scenario,
-      shock_scenario = shock_scenario,
-      start_year = start_year,
-      carbon_price_model = carbon_price_model
-    )
-  input_data_list <- outputs$input_data_list
-  end_year <- outputs$end_year
+  processed_assets_data <- process_assets_data(assets_data = assets_data, financial_data=financial_data, scenario_geography = scenario_geography)
+  scenarios_data <- process_scenarios_data(scenarios_data = scenarios_data, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
 
+  cat("-- Transforming to Trisk model input. \n")
 
-  cat("-- Calculating production trajectory under trisk shock. \n")
+  assets_scenarios <- merge_assets_and_scenarios_data(assets_data = processed_assets_data, scenarios_data = scenarios_data)
 
+  trisk_model_input <- process_trisk_input(
+    assets_scenarios = assets_scenarios,
+    target_scenario = target_scenario
+  )
 
-  input_data_list$full_trajectory <- calculate_trisk_trajectory(
-    input_data_list = input_data_list,
-    baseline_scenario = baseline_scenario,
-    target_scenario = shock_scenario,
-    start_year = start_year,
-    shock_year = shock_year,
-    end_year = end_year
+  start_year = min(trisk_model_input$year)
+  end_analysis = max(trisk_model_input$year)
+
+  cat("-- Calculating baseline, target, and shock trajectories. \n")
+
+  trisk_model_output <- extend_assets_trajectories(
+    trisk_model_input = trisk_model_input,
+    start_year=start_year,
+    shock_year=shock_year
   )
 
   cat("-- Calculating net profits. \n")
 
+  processed_carbon_data <- process_carbon_data(
+    carbon_data,
+    start_year = start_year,
+    end_year = end_analysis,
+    carbon_price_model = carbon_price_model
+  )
+
+
   # calc net profits
   company_net_profits <- calculate_net_profits(
-    input_data_list$full_trajectory,
-    carbon_data = input_data_list$carbon_data,
+    trisk_model_output,
+    carbon_data = processed_carbon_data,
     shock_year = shock_year,
-    market_passthrough = market_passthrough,
-    financial_stimulus = financial_stimulus
+    market_passthrough = market_passthrough
   )
 
   # calc discounted net profits
   company_annual_profits <- calculate_annual_profits(
     data = company_net_profits,
     baseline_scenario = baseline_scenario,
-    shock_scenario = shock_scenario,
-    end_year = end_year,
+    shock_scenario = target_scenario,
+    end_year = end_analysis,
     discount_rate = discount_rate,
     growth_rate = growth_rate
   )
@@ -141,7 +159,7 @@ run_trisk_model <- function(input_data_list,
   cat("-- Calculating market risk. \n")
 
   company_technology_npv <- company_annual_profits %>%
-    company_technology_asset_value_at_risk(
+    calculate_asset_value_at_risk(
       shock_year = shock_year,
       start_year = start_year,
       div_netprofit_prop_coef = div_netprofit_prop_coef,
@@ -153,7 +171,7 @@ run_trisk_model <- function(input_data_list,
   company_pd_changes_overall <- company_annual_profits %>%
     calculate_pd_change_overall(
       shock_year = shock_year,
-      end_of_analysis = end_year,
+      end_of_analysis = end_analysis,
       risk_free_interest_rate = risk_free_rate
     )
 
@@ -165,3 +183,29 @@ run_trisk_model <- function(input_data_list,
     )
   )
 }
+
+
+
+
+#' Process data of type indicated by function name
+#'
+#' @inheritParams process_production_data
+#'
+#' @return A tibble of data as indicated by function name.
+#' @noRd
+process_carbon_data <- function(data, start_year, end_year, carbon_price_model) {
+  data_processed <- data
+
+  ## dataframe will be NULL for lrisk this is the case as lrisk does not read in and use carbon prices
+  if (is.null(data_processed)) {
+    data_processed <- NULL
+  } else {
+    data_processed <- data_processed %>%
+      dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
+      dplyr::select(-c(scenario_geography)) %>%
+      dplyr::filter(.data$scenario %in% .env$carbon_price_model)
+  }
+
+  return(data_processed)
+}
+

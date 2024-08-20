@@ -1,7 +1,7 @@
 test_that("calculate_net_profits penalizes companies for late build out of low
           carbon technologies if overshoot is increasing", {
   input_data <- tibble::tribble(
-    ~company_id, ~company_name, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~scenario_geography, ~year, ~emission_factor, ~ald_sector, ~ald_business_unit,
+    ~company_id, ~company_name, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~scenario_geography, ~year, ~emission_factor, ~ald_sector, ~technology,
     "1", "laggard_with_overshoot", 100, 150, 10, 10, 0.1, "increasing", "Increasing", 0.5, "Global", 2030, 1, "a_sector", "a_business_unit",
     "2", "laggard_with_no_overshoot", 100, 150, 10, 10, 0.1, "increasing", "Decreasing", 0.5, "Global", 2030, 1, "a_sector", "a_business_unit"
   )
@@ -54,7 +54,7 @@ test_that("calculate_net_profits penalizes companies for late build out of low
 
 test_that("calculate_net_profits does apply a carbon tax on high carbon technologies even with decreasing overshoot", {
   input_data <- tibble::tribble(
-    ~company_name, ~company_id, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~scenario_geography, ~year, ~emission_factor, ~ald_sector, ~ald_business_unit,
+    ~company_name, ~company_id, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~scenario_geography, ~year, ~emission_factor, ~ald_sector, ~technology,
     "laggard_low_carbon_technology", "1", 100, 50, 10, 10, 0.1, "increasing", "Decreasing", 0.5, "Global", 2030, 1, "a_sector", "a_business_unit",
     "laggard_high_carbon_technology", "2", 100, 50, 10, 10, 0.1, "declining", "Decreasing", 0.5, "Global", 2030, 1, "a_sector", "a_business_unit"
   )
@@ -108,8 +108,8 @@ test_that("calculate_net_profits does apply a carbon tax on high carbon technolo
 test_that("calculate_net_profits does not apply carbon tax on high
           carbon technologies before shock year", {
   input_data <- tibble::tribble(
-    ~company_id, ~company_name, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~year, ~emission_factor, ~ald_sector, ~ald_business_unit, ~scenario_geography,
-    "1", "high carbon ald_business_unit after shock year", 100, 50, 10, 10, 0.1, "declining", "Increasing", 0, 2030, 1, "a_sector", "a_business_unit", "a_geography"
+    ~company_id, ~company_name, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~year, ~emission_factor, ~ald_sector, ~technology, ~scenario_geography,
+    "1", "high carbon technology after shock year", 100, 50, 10, 10, 0.1, "declining", "Increasing", 0, 2030, 1, "a_sector", "a_business_unit", "a_geography"
   )
 
   carbon_data_test <- tibble::tribble(
@@ -197,8 +197,8 @@ test_that("calculate_net_profits penalizes companies for late build out of low
 
 test_that("a higher market passthrough has a weaker impact on a company's net profits", {
   input_data <- tibble::tribble(
-    ~company_id, ~company_name, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~year, ~emission_factor, ~ald_sector, ~ald_business_unit, ~scenario_geography,
-    "1", "high carbon ald_business_unit after shock year", 100, 50, 10, 10, 0.1, "declining", "Decreasing", 0, 2030, 1, "a_sector", "a_business_unit", "a_geography"
+    ~company_id, ~company_name, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~year, ~emission_factor, ~ald_sector, ~technology, ~scenario_geography,
+    "1", "high carbon technology after shock year", 100, 50, 10, 10, 0.1, "declining", "Decreasing", 0, 2030, 1, "a_sector", "a_business_unit", "a_geography"
   )
 
   carbon_data_test <- tibble::tribble(
@@ -244,7 +244,7 @@ test_that("a higher market passthrough has a weaker impact on a company's net pr
 
 test_that("calculate_net_profits does only apply a financial stimulus on low carbon technologies", {
   input_data <- tibble::tribble(
-    ~company_id, ~company_name, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~scenario_geography, ~year, ~emission_factor, ~ald_sector, ~ald_business_unit,
+    ~company_id, ~company_name, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~scenario_geography, ~year, ~emission_factor, ~ald_sector, ~technology,
     "1", "low_carbon_technology_company", 100, 50, 10, 10, 0.1, "increasing", "Decreasing", 0.5, "Global", 2030, 1, "a_sector", "a_business_unit",
     "2", "high_carbon_technology_company", 100, 50, 10, 10, 0.1, "declining", "Decreasing", 0.5, "Global", 2030, 1, "a_sector", "a_business_unit"
   )
@@ -297,7 +297,7 @@ test_that("calculate_net_profits does only apply a financial stimulus on low car
 
 test_that("calculate_net_profits supports a low carbon technology company more the higher the financial stimulus is", {
   input_data <- tibble::tribble(
-    ~company_id, ~company_name, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~scenario_geography, ~year, ~emission_factor, ~ald_sector, ~ald_business_unit,
+    ~company_id, ~company_name, ~baseline, ~late_sudden, ~Baseline_price, ~late_sudden_price, ~net_profit_margin, ~direction, ~overshoot_direction, ~proximity_to_target, ~scenario_geography, ~year, ~emission_factor, ~ald_sector, ~technology,
     "1", "low_carbon_technology_company", 100, 50, 10, 10, 0.1, "increasing", "Decreasing", 0.5, "Global", 2030, 1, "a_sector", "a_business_unit"
   )
 
