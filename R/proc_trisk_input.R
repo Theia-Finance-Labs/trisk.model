@@ -1,19 +1,8 @@
-merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
-  # add extend production data with scenario targets
-  assets_scenarios <- dplyr::inner_join(
-    assets_data, scenarios_data,
-    by = c("sector", "technology", "scenario_geography", "production_year" = "scenario_year")
-  ) %>%
-    dplyr::rename(year = .data$production_year)
-
-
-  return(assets_scenarios)
-}
 
 
 process_trisk_input <- function(assets_scenarios,
-                                target_scenario, 
-                                start_analysis) {
+                                target_scenario) {
+
   assets_scenarios_productions <- create_base_production_trajectories(data = assets_scenarios)
 
   assets_scenarios_production_lagged <- lag_scenario_productions(data = assets_scenarios_productions)
@@ -21,10 +10,8 @@ process_trisk_input <- function(assets_scenarios,
 
   assets_proximity_to_target <- calculate_proximity_to_target( # TODO MOVE TO NPV COMPUTATION ?
     data = assets_scenarios_productions,
-    start_analysis = start_analysis,
     target_scenario = target_scenario
   )
-
 
   trisk_model_input <- dplyr::inner_join(
     assets_scenarios %>% distinct_at(c(
@@ -110,7 +97,8 @@ create_base_production_trajectories <- function(data) {
         .data$production_scenario * .data$scenario_capacity_factor * .env$hours_to_year,
         .data$production_scenario * .data$scenario_capacity_factor
       )
-    )
+    ) %>% 
+    dplyr::select(-c(.data$plan_sec_prod))
 
   return(data)
 }
@@ -154,20 +142,18 @@ lag_scenario_productions <- function(data) {
 #' @param data A data frame containing the production forecasts of companies
 #'   (in the portfolio). Pre-processed to fit analysis parameters and after
 #'   conversion of power capacity to generation.
-#' @param start_analysis Numeric. A vector of length 1 indicating the start
-#'   year of the analysis.
 #' @param target_scenario Character. A vector of length 1 indicating target
 #'   scenario
 #'
 #' @noRd
 calculate_proximity_to_target <- function(data,
-                                          start_analysis = 2022,
                                           target_scenario) {
                                             
   # Identify the position of the first non-NA value per group
   first_non_na_positions <- data %>%
     dplyr::group_by(asset_id, company_id, sector, technology) %>%
-    dplyr::summarise(first_non_na_year = min(year[!is.na(production_scenario)], na.rm = TRUE)) %>%
+    dplyr::arrange(.data$year, .by_group = TRUE)
+    dplyr::summarise(last_non_na_year = max(year[!is.na(production_scenario)], na.rm = TRUE)) %>%
     dplyr::ungroup()
 
   # Filter the data based on the identified positions
@@ -176,14 +162,14 @@ calculate_proximity_to_target <- function(data,
       by = c("asset_id", "company_id", "sector", "technology")
     ) %>%
     dplyr::filter(
-      year >= first_non_na_year,
+      year <= last_non_na_year,
       scenario == .env$target_scenario
     ) %>%
-    dplyr::group_by(asset_id, company_id, sector, technology) %>%
     dplyr::mutate(
       required_change = production_scenario - initial_technology_production,
       realised_change = production_plan_company_technology - initial_technology_production
     ) %>%
+    dplyr::group_by(asset_id, company_id, sector, technology) %>%    
     dplyr::summarise(
       sum_required_change = sum(required_change, na.rm = TRUE),
       sum_realised_change = sum(realised_change, na.rm = TRUE),

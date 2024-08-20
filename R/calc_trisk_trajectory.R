@@ -38,8 +38,21 @@ extend_assets_trajectories <- function(
     ))
 
 
+  # attach the necessary columns for the rest
+  trisk_model_output <- trajectories %>%
+    dplyr::left_join(
+      trisk_model_input %>%
+        dplyr::distinct(
+          .data$asset_id, .data$company_id, .data$sector, .data$technology, .data$technology_type,
+          .data$proximity_to_target,
+          .data$scenario_geography, .data$year, .data$emission_factor, .data$debt_equity_ratio,
+          .data$net_profit_margin, .data$pd, .data$volatility
+        ),
+      by = c("asset_id", "company_id", "sector", "technology", "year")
+    )
 
-  return(trajectories)
+
+  return(trisk_model_output)
 }
 
 

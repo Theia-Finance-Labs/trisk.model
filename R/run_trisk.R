@@ -94,44 +94,30 @@ run_trisk_model <- function(input_data_list,
   cat("-- Processing inputs. \n")
   # TODO remove MAX_POSSIBLE_YEAR
   end_analysis <- get_end_year(input_data_list, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
-  start_analysis <- get_scenario_start_year(input_data_list, c(baseline_scenario, target_scenario))
+  start_year <- get_scenario_start_year(input_data_list, c(baseline_scenario, target_scenario))
 
-  assets_data <- process_assets_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, scenario_geography = scenario_geography)
-  scenarios_data <- process_scenarios_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
+  assets_data <- process_assets_data(data = input_data_list, scenario_geography = scenario_geography)
+  scenarios_data <- process_scenarios_data(data = input_data_list, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
+
+  cat("-- Preparing inputs. \n")
 
   assets_scenarios <- merge_assets_and_scenarios_data(assets_data = assets_data, scenarios_data = scenarios_data)
 
   trisk_model_input <- process_trisk_input(
     assets_scenarios = assets_scenarios,
-    target_scenario = target_scenario, start_analysis = start_analysis
+    target_scenario = target_scenario
   )
 
-  cat("-- Calculating baseline and shock trajectories. \n")
+  cat("-- Calculating baseline, target, and shock trajectories. \n")
 
-  trajectories <- extend_assets_trajectories(
-    trisk_model_input = trisk_model_input,
-    start_year = start_year,
-    shock_year = shock_year
+  trisk_model_output <- extend_assets_trajectories(
+    trisk_model_input = trisk_model_input
   )
-
-
-  
-  # attach the necessary columns for the rest
-  trisk_model_output <- trajectories %>%
-    dplyr::left_join(
-      trisk_model_input %>%
-        dplyr::distinct(
-          .data$asset_id, .data$company_id, .data$sector, .data$technology, .data$technology_type,
-          .data$proximity_to_target,
-          .data$scenario_geography, .data$year, .data$emission_factor, .data$debt_equity_ratio,
-          .data$net_profit_margin, .data$pd, .data$volatility
-        ),
-      by = c("asset_id", "company_id", "sector", "technology", "year")
-    )
 
   cat("-- Calculating net profits. \n")
 
-
+  start_year = min(trisk_model_output$year)
+  end_analysis = max(trisk_model_output$year)
   carbon_data <- process_carbon_data(
     input_data_list$carbon_data,
     start_year = start_year,
