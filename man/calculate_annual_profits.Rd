@@ -18,11 +18,11 @@ calculate_annual_profits(
 
 \item{baseline_scenario}{Character. A string that indicates which
 of the scenarios included in the analysis should be used to set the
-baseline ald_business_unit trajectories.}
+baseline technology trajectories.}
 
 \item{shock_scenario}{Character. A string that indicates which
 of the scenarios included in the analysis should be used to set the
-late & sudden ald_business_unit trajectories.}
+late & sudden technology trajectories.}
 
 \item{end_year}{Numeric, holding end year of analysis.}
 

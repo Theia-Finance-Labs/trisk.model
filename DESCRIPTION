@@ -1,6 +1,6 @@
 Package: trisk.model
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Version: 2.5
 Authors@R: c(
     person(given = "Jacob",
            family = "Kastl",
@@ -8,8 +8,12 @@ Authors@R: c(
            email = "jacob.kastl@gmail.com"),
     person(given = "Franziska",
            family = "Fischer",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "franziska@2degrees-investing.org"),
+    person(given = "Bertrand",
+           family = "Gallice",
+           role = c("aut", "cre"),
+           email = "bertrand@2degrees-investing.org"),           
     person(given = "Theia Finance Labs",
            role = c("cph", "fnd"),
            email = "1in1000@theiafinance.org"))

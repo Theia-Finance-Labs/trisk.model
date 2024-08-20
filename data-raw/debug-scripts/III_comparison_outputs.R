@@ -14,8 +14,8 @@ npv_check <- function() {
 
   # NPV COMPARISON ============================================================
 
-  new_npv <- readr::read_csv(paste0(latest_output, "/npv_results.csv"))%>% dplyr::rename(shock_scenario=target_scenario)
-  new_pd <- readr::read_csv(paste0(latest_output, "/pd_results.csv"))%>% dplyr::rename(shock_scenario=target_scenario)
+  new_npv <- readr::read_csv(paste0(latest_output, "/npv_results.csv")) %>% dplyr::rename(shock_scenario = target_scenario)
+  new_pd <- readr::read_csv(paste0(latest_output, "/pd_results.csv")) %>% dplyr::rename(shock_scenario = target_scenario)
 
 
   old <- readr::read_csv(OLD_CRISPY_PATH)
@@ -35,7 +35,7 @@ npv_check <- function() {
       "lgd", "risk_free_rate", "discount_rate", "growth_rate", "div_netprofit_prop_coef",
       "shock_year", "market_passthrough", "baseline_scenario",
       "shock_scenario", "scenario_geography"
-    )) 
+    ))
 
   prepare_for_npv_barplot <- function() {
     mix <- dplyr::inner_join(old_npv, new_npv, by = c("company_id", "ald_sector", "ald_business_unit")) # , "term"))

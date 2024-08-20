@@ -1,10 +1,9 @@
-
 merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
-
   assets_data_filtered <- assets_data %>%
     dplyr::inner_join(
-      scenarios_data %>% dplyr::distinct(.data$technology)
-      , by=c("technology"))
+      scenarios_data %>% dplyr::distinct(.data$technology),
+      by = c("technology")
+    )
 
   stopifnot(nrow(assets_data_filtered) > 0)
 
@@ -12,8 +11,8 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
   end_analysis <- min(max(scenarios_data$scenario_year), MAX_POSSIBLE_YEAR)
 
   assets_data_full <- assets_data_filtered %>%
-      extend_to_full_analysis_timeframe(start_analysis=start_analysis, end_analysis=end_analysis) 
-    
+    extend_to_full_analysis_timeframe(start_analysis = start_analysis, end_analysis = end_analysis)
+
   # add extend production data with scenario targets
   assets_scenarios <- dplyr::inner_join(
     assets_data_full, scenarios_data,

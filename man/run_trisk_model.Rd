@@ -5,7 +5,10 @@
 \title{Run stress test model}
 \usage{
 run_trisk_model(
-  input_data_list,
+  assets_data,
+  scenarios_data,
+  financial_data,
+  carbon_data,
   baseline_scenario,
   target_scenario,
   scenario_geography,
@@ -21,6 +24,14 @@ run_trisk_model(
 )
 }
 \arguments{
+\item{assets_data}{assets_data}
+
+\item{scenarios_data}{scenarios_data}
+
+\item{financial_data}{financial_data}
+
+\item{carbon_data}{carbon_data}
+
 \item{baseline_scenario}{Holds the name of the baseline scenario to be used
 in the stress test, for accepted value range check \code{stress_test_arguments}.}
 

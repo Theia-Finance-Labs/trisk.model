@@ -1,5 +1,4 @@
 process_scenarios_data <- function(scenarios_data, baseline_scenario, target_scenario, scenario_geography) {
-
   scenarios_data <- scenarios_data %>%
     dplyr::filter(.data$scenario %in% c(baseline_scenario, target_scenario)) %>%
     dplyr::filter(.data$scenario_geography %in% .env$scenario_geography) %>%
@@ -21,7 +20,7 @@ process_assets_data <- function(assets_data, financial_data, scenario_geography)
     dplyr::filter(.data$scenario_geography == .env$scenario_geography)
 
   assets_data <- production_financial_data %>%
-    remove_sectors_with_missing_production_start_year()  %>%
+    remove_sectors_with_missing_production_start_year() %>%
     compute_plan_sec_prod()
 
   return(assets_data)

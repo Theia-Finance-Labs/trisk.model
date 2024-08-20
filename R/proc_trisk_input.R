@@ -1,18 +1,17 @@
 process_trisk_input <- function(assets_scenarios,
                                 target_scenario) {
-
   assets_scenarios_productions <- create_base_production_trajectories(data = assets_scenarios)
 
   assets_scenarios_production_lagged <- lag_scenario_productions(data = assets_scenarios_productions)
   assets_scenarios_production_pivoted <- pivot_to_baseline_target_columns(data = assets_scenarios_production_lagged)
 
-  trisk_model_input <- assets_scenarios %>% 
+  trisk_model_input <- assets_scenarios %>%
     dplyr::distinct(
       .data$asset_name,
       .data$company_name,
-      .data$asset_id, 
+      .data$asset_id,
       .data$company_id,
-      .data$sector, 
+      .data$sector,
       .data$technology,
       .data$technology_type,
       .data$debt_equity_ratio,
@@ -24,9 +23,9 @@ process_trisk_input <- function(assets_scenarios,
       .data$volatility
     ) %>%
     dplyr::inner_join(
-    assets_scenarios_production_pivoted,
-    by = c("asset_id", "company_id", "sector", "technology", "year")
-  )
+      assets_scenarios_production_pivoted,
+      by = c("asset_id", "company_id", "sector", "technology", "year")
+    )
 
   return(trisk_model_input)
 }
@@ -90,7 +89,7 @@ create_base_production_trajectories <- function(data) {
         .data$production_scenario * .data$scenario_capacity_factor * .env$hours_to_year,
         .data$production_scenario * .data$scenario_capacity_factor
       )
-    ) %>% 
+    ) %>%
     dplyr::select(-c(.data$plan_sec_prod))
 
   return(data)

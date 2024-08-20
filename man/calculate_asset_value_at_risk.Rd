@@ -3,7 +3,7 @@
 \name{calculate_asset_value_at_risk}
 \alias{calculate_asset_value_at_risk}
 \title{Calculate percentage value change between scenarios for equity (and
-temporarily other asset types) on the company-ald_business_unit level}
+temporarily other asset types) on the company-technology level}
 \usage{
 calculate_asset_value_at_risk(
   data,
@@ -31,5 +31,5 @@ shock scenario at hand}
 }
 \description{
 Calculate percentage value change between scenarios for equity (and
-temporarily other asset types) on the company-ald_business_unit level
+temporarily other asset types) on the company-technology level
 }

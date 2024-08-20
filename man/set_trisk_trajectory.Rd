@@ -5,7 +5,7 @@
 \title{Defines which scenario values to use for the late & sudden trajectory in the
 stress test.}
 \usage{
-set_trisk_trajectory(data, shock_year, start_year, end_year)
+set_trisk_trajectory(data, start_year, shock_year)
 }
 \arguments{
 \item{data}{A dataframe that contains the scenario data prepared until the
@@ -14,16 +14,16 @@ step after the baseline trajectories are calculated.}
 \item{start_year}{Numeric. A numeric vector of length 1 that contains the
 start year of the analysis.}
 
-\item{end_year}{Numeric. A numeric vector of length 1 that contains the
-end year of the analysis.}
-
 \item{target_scenario}{Character. A string that indicates which
 of the scenarios included in the analysis should be used to set the
-late & sudden ald_business_unit trajectories.}
+late & sudden technology trajectories.}
 
 \item{shock_scenario}{A dataframe that contains information about the
 transition scenario, specifically the shock year and, duration of the
 shock and the name of the shock scenario}
+
+\item{end_year}{Numeric. A numeric vector of length 1 that contains the
+end year of the analysis.}
 }
 \value{
 data frame
@@ -41,9 +41,9 @@ shift of the original scenario values. If not included, the trajectories
 replicate externally provided scenario trajectories at least until the
 year of the policy shock.
 Trajectories are calculated for each company by sector, scenario_geography,
-ald_business_unit, year.
+technology, year.
 If no "company_id" or "company_name" are provided, the calculation switches to
-portfolio/ald_business_unit level.
+portfolio/technology level.
 }
 \seealso{
 Other scenario definition: 

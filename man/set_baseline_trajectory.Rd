@@ -8,14 +8,14 @@ stress test.}
 set_baseline_trajectory(data)
 }
 \arguments{
-\item{data}{A dataframe that contains scenario trajectories by ald_business_unit
+\item{data}{A dataframe that contains scenario trajectories by technology
 until 2040 for all the scenarios included in the analysis and
-production build out plans by ald_business_unit or company and ald_business_unit,
+production build out plans by technology or company and technology,
 usually for 5 years, based on PACTA results.}
 
 \item{baseline_scenario}{Character. A string that indicates which
 of the scenarios included in the analysis should be used to set the
-baseline ald_business_unit trajectories.}
+baseline technology trajectories.}
 }
 \value{
 dataframe.
@@ -32,7 +32,7 @@ externally provided scenario trajectories.
 Trajectories are furthermore differentiated by scenario_geography, if
 multiple are passed.
 If no "company_id" or "company_name" are provided, the calculation switches to
-portfolio/ald_business_unit level.
+portfolio/technology level.
 }
 \seealso{
 Other scenario definition: 
