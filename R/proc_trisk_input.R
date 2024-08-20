@@ -1,5 +1,3 @@
-
-
 process_trisk_input <- function(assets_scenarios,
                                 target_scenario) {
 
@@ -8,30 +6,23 @@ process_trisk_input <- function(assets_scenarios,
   assets_scenarios_production_lagged <- lag_scenario_productions(data = assets_scenarios_productions)
   assets_scenarios_production_pivoted <- pivot_to_baseline_target_columns(data = assets_scenarios_production_lagged)
 
-  assets_proximity_to_target <- calculate_proximity_to_target( # TODO MOVE TO NPV COMPUTATION ?
-    data = assets_scenarios_productions,
-    target_scenario = target_scenario
-  )
-
-  trisk_model_input <- dplyr::inner_join(
-    assets_scenarios %>% distinct_at(c(
-      "asset_name",
-      "company_name",
-      "asset_id", "company_id",
-      "sector", "technology",
-      "technology_type",
-      "debt_equity_ratio",
-      "net_profit_margin",
-      "pd",
-      "scenario_geography",
-      "year",
-      "emission_factor",
-      "volatility"
-    )),
+  trisk_model_input <- assets_scenarios %>% 
+    distinct(
+      .data$asset_name,
+      .data$company_name,
+      .data$asset_id, .data$company_id,
+      .data$sector, .data$technology,
+      .data$technology_type,
+      .data$debt_equity_ratio,
+      .data$net_profit_margin,
+      .data$pd,
+      .data$scenario_geography,
+      .data$year,
+      .data$emission_factor,
+      .data$volatility
+    ) %>%
     dplyr::inner_join(
-      assets_scenarios_production_pivoted, assets_proximity_to_target,
-      by = c("asset_id", "company_id", "sector", "technology")
-    ),
+    assets_scenarios_production_pivoted,
     by = c("asset_id", "company_id", "sector", "technology", "year")
   )
 
@@ -130,68 +121,6 @@ lag_scenario_productions <- function(data) {
 
   return(data)
 }
-
-
-
-#' Calculate the ratio of the required change in technology that each company
-#' has achieved per technology at the end of the production forecast period.
-#' This ratio will later serve to adjust the net profit margin for companies
-#' that have not built out enough production capacity in increasing technologies
-#' and hence need to scale up production to compensate for their lag in buildout.
-#'
-#' @param data A data frame containing the production forecasts of companies
-#'   (in the portfolio). Pre-processed to fit analysis parameters and after
-#'   conversion of power capacity to generation.
-#' @param target_scenario Character. A vector of length 1 indicating target
-#'   scenario
-#'
-#' @noRd
-calculate_proximity_to_target <- function(data,
-                                          target_scenario) {
-                                            
-  # Identify the position of the first non-NA value per group
-  first_non_na_positions <- data %>%
-    dplyr::group_by(asset_id, company_id, sector, technology) %>%
-    dplyr::arrange(.data$year, .by_group = TRUE)
-    dplyr::summarise(last_non_na_year = max(year[!is.na(production_scenario)], na.rm = TRUE)) %>%
-    dplyr::ungroup()
-
-  # Filter the data based on the identified positions
-  production_changes <- data %>%
-    dplyr::inner_join(first_non_na_positions,
-      by = c("asset_id", "company_id", "sector", "technology")
-    ) %>%
-    dplyr::filter(
-      year <= last_non_na_year,
-      scenario == .env$target_scenario
-    ) %>%
-    dplyr::mutate(
-      required_change = production_scenario - initial_technology_production,
-      realised_change = production_plan_company_technology - initial_technology_production
-    ) %>%
-    dplyr::group_by(asset_id, company_id, sector, technology) %>%    
-    dplyr::summarise(
-      sum_required_change = sum(required_change, na.rm = TRUE),
-      sum_realised_change = sum(realised_change, na.rm = TRUE),
-      .groups = "drop"
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(
-      ratio_realised_required = sum_realised_change / sum_required_change,
-      proximity_to_target = dplyr::case_when(
-        ratio_realised_required < 0 ~ 0,
-        ratio_realised_required > 1 ~ 1,
-        TRUE ~ ratio_realised_required
-      )
-    ) %>%
-    dplyr::select(
-      -dplyr::all_of(c("sum_required_change", "sum_realised_change", "ratio_realised_required"))
-    )
-
-  return(production_changes)
-}
-
-
 
 
 pivot_to_baseline_target_columns <- function(data) {

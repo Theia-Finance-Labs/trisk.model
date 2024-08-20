@@ -44,7 +44,6 @@ extend_assets_trajectories <- function(
       trisk_model_input %>%
         dplyr::distinct(
           .data$asset_id, .data$company_id, .data$sector, .data$technology, .data$technology_type,
-          .data$proximity_to_target,
           .data$scenario_geography, .data$year, .data$emission_factor, .data$debt_equity_ratio,
           .data$net_profit_margin, .data$pd, .data$volatility
         ),

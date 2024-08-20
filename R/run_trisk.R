@@ -108,16 +108,20 @@ run_trisk_model <- function(input_data_list,
     target_scenario = target_scenario
   )
 
+  start_year = min(trisk_model_input$year)
+  end_analysis = max(trisk_model_input$year)
+  
+
   cat("-- Calculating baseline, target, and shock trajectories. \n")
 
   trisk_model_output <- extend_assets_trajectories(
-    trisk_model_input = trisk_model_input
+    trisk_model_input = trisk_model_input,
+    start_year=start_year,
+    shock_year=shock_year
   )
 
   cat("-- Calculating net profits. \n")
 
-  start_year = min(trisk_model_output$year)
-  end_analysis = max(trisk_model_output$year)
   carbon_data <- process_carbon_data(
     input_data_list$carbon_data,
     start_year = start_year,

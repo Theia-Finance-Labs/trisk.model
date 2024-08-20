@@ -1,6 +1,3 @@
-
-
-
 add_technology_fair_share_ratio <- function(data) {
   data <- data %>%
     dplyr::ungroup() %>%
