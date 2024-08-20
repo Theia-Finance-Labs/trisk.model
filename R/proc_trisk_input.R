@@ -7,11 +7,13 @@ process_trisk_input <- function(assets_scenarios,
   assets_scenarios_production_pivoted <- pivot_to_baseline_target_columns(data = assets_scenarios_production_lagged)
 
   trisk_model_input <- assets_scenarios %>% 
-    distinct(
+    dplyr::distinct(
       .data$asset_name,
       .data$company_name,
-      .data$asset_id, .data$company_id,
-      .data$sector, .data$technology,
+      .data$asset_id, 
+      .data$company_id,
+      .data$sector, 
+      .data$technology,
       .data$technology_type,
       .data$debt_equity_ratio,
       .data$net_profit_margin,

@@ -38,17 +38,17 @@ extend_to_full_analysis_timeframe <- function(data, start_analysis, end_analysis
   data_extended <- data %>%
     dplyr::group_by(asset_id, company_id, sector, technology) %>%
     # Identify the first available year for each group
-    dplyr::mutate(first_year = min(production_year, na.rm = TRUE)) %>%
+    dplyr::mutate(first_year = min(.data$production_year, na.rm = TRUE)) %>%
     # Complete the data to include all years from the first year to end_analysis
-    tidyr::complete(production_year = full_seq(c(first_year, end_analysis), 1)) %>%
+    tidyr::complete(production_year = tidyr::full_seq(c(.data$first_year, end_analysis), 1)) %>%
     # Arrange the data by production year within each group
-    dplyr::arrange(production_year) %>%
+    dplyr::arrange(.data$production_year) %>%
     # Fill down all values from the first available year, except production_plan_company_technology
-    tidyr::fill(-production_plan_company_technology, .direction = "down") %>%
+    tidyr::fill(-.data$production_plan_company_technology, .direction = "down") %>%
     # Ungroup to return a flat data structure
     dplyr::ungroup() %>%
     # Drop the helper columns
-    dplyr::select(-first_year)
+    dplyr::select(-.data$first_year)
 
   return(data_extended)
 }
@@ -79,7 +79,7 @@ fill_production_plan <- function(data) {
     dplyr::filter(production_year > last_production_forecast_year)
 
   # Combine the filled data with the data after the forecast
-  data_filled <- bind_rows(data_before_start_analysis, data_after_forecast) %>%
+  data_filled <- dplyr::bind_rows(data_before_start_analysis, data_after_forecast) %>%
     dplyr::arrange(asset_id, company_id, sector, technology, production_year)
 
   return(data_filled)

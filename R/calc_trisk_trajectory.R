@@ -160,7 +160,7 @@ set_trisk_trajectory <- function(data,
 }
 
 calc_late_sudden_traj <- function(data, year_of_shock) {
-
+browser()
   
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%

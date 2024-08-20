@@ -1,5 +1,4 @@
-process_scenarios_data <- function(data, baseline_scenario, target_scenario, scenario_geography) {
-  scenarios_data <- data$scenario_data
+process_scenarios_data <- function(scenarios_data, baseline_scenario, target_scenario, scenario_geography) {
 
   scenarios_data <- scenarios_data %>%
     dplyr::filter(.data$scenario %in% c(baseline_scenario, target_scenario)) %>%
@@ -13,10 +12,10 @@ process_scenarios_data <- function(data, baseline_scenario, target_scenario, sce
   return(scenarios_data)
 }
 
-process_assets_data <- function(data, scenario_geography) {
+process_assets_data <- function(assets_data, financial_data, scenario_geography) {
   production_financial_data <- dplyr::inner_join(
-    data$production_data,
-    data$financial_data,
+    assets_data,
+    financial_data,
     by = "company_id"
   ) %>%
     dplyr::filter(.data$scenario_geography == .env$scenario_geography)
