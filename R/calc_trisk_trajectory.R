@@ -16,7 +16,6 @@ extend_assets_trajectories <- function(
     trisk_model_input,
     start_year,
     shock_year) {
-
   trajectories <- trisk_model_input %>%
     set_baseline_trajectory() %>%
     set_trisk_trajectory(
@@ -31,7 +30,7 @@ extend_assets_trajectories <- function(
   trajectories <- trajectories %>%
     dplyr::select_at(c(
       "year", "asset_id", "asset_name", "company_id", "company_name", "sector", "technology",
-      "production_plan_company_technology","production_scenario_baseline", "production_scenario_target",
+      "production_plan_company_technology", "production_scenario_baseline", "production_scenario_target",
       "production_change_scenario_baseline", "production_change_scenario_target",
       "production_asset_baseline", "late_sudden", "overshoot_direction",
       "scenario_price_baseline", "scenario_price_target", "late_sudden_price"
@@ -160,8 +159,6 @@ set_trisk_trajectory <- function(data,
 }
 
 calc_late_sudden_traj <- function(data, year_of_shock) {
-
-  
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
     dplyr::select_at(c(
@@ -200,7 +197,7 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
   flagged_overshoot <- late_sudden_data %>%
     dplyr::inner_join(last_non_na_positions, by = c("asset_id", "company_id", "sector", "technology")) %>%
     dplyr::group_by(asset_id, company_id, sector, technology) %>%
-    dplyr::filter(year > min(year), year <= last_non_na_year) %>% # TODO IS (year > min(year), and not (year >= min(year),  A BUG ?? 
+    dplyr::filter(year > min(year), year <= last_non_na_year) %>% # TODO IS (year > min(year), and not (year >= min(year),  A BUG ??
     dplyr::summarise(
       prod_to_follow = sum(.data$production_scenario_target, na.rm = TRUE),
       real_prod = sum(.data$production_plan_company_technology, na.rm = TRUE),
@@ -303,7 +300,7 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
       late_sudden = numeric()
     )
   }
-  
+
   # Combine results
   late_sudden_df <- dplyr::bind_rows(ls_overshoot_compensated, ls_post_prod_not_compensated) %>%
     dplyr::select_at(c("asset_id", "company_id", "sector", "technology", "year", "late_sudden"))

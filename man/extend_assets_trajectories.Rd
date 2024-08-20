@@ -4,24 +4,24 @@
 \alias{extend_assets_trajectories}
 \title{Calculate baseline and transition shock trajectoroes}
 \usage{
-extend_assets_trajectories(trisk_model_input, shock_year, start_year, end_year)
+extend_assets_trajectories(trisk_model_input, start_year, shock_year)
 }
 \arguments{
-\item{shock_year}{year of transition from baseline scenario to target scenario}
-
 \item{start_year}{Numeric, holding start year of analysis.}
 
-\item{end_year}{Numeric, holding end year of analysis.}
+\item{shock_year}{year of transition from baseline scenario to target scenario}
 
 \item{input_data_list}{List with project agnostic and project specific input data}
 
 \item{baseline_scenario}{Character. A string that indicates which
 of the scenarios included in the analysis should be used to set the
-baseline ald_business_unit trajectories.}
+baseline technology trajectories.}
 
 \item{target_scenario}{Character. A string that indicates which
 of the scenarios included in the analysis should be used to set the
-late & sudden ald_business_unit trajectories.}
+late & sudden technology trajectories.}
+
+\item{end_year}{Numeric, holding end year of analysis.}
 }
 \value{
 A tibble holding annual profits

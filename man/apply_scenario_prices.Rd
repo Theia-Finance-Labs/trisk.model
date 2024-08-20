@@ -4,19 +4,12 @@
 \alias{apply_scenario_prices}
 \title{Calculate scenario prices}
 \usage{
-apply_scenario_prices(data, start_year, shock_year)
+apply_scenario_prices(data, shock_year)
 }
 \arguments{
-\item{start_year}{Start_year of analysis}
+\item{shock_year}{Year of shock.}
 
 \item{price_data}{A tibble holding price data.}
-
-\item{baseline_scenario}{String holding name of the baseline scenario.}
-
-\item{target_scenario}{String holding name of the target scenario.}
-
-\item{transition_scenario}{Tibble with 1 row holding at least variables
-\code{year_of_shock} and \code{duration_of_shock}.}
 }
 \value{
 A tibble holding late_and_sudden_prices

@@ -23,8 +23,8 @@ npv_check <- function() {
 
   # NPV COMPARISON ============================================================
 
-  new_npv <- readr::read_csv(paste0(latest_output, "/npv_results.csv"))%>% dplyr::rename(shock_scenario=target_scenario)
-  new_pd <- readr::read_csv(paste0(latest_output, "/pd_results.csv"))%>% dplyr::rename(shock_scenario=target_scenario)
+  new_npv <- readr::read_csv(paste0(latest_output, "/npv_results.csv")) %>% dplyr::rename(shock_scenario = target_scenario)
+  new_pd <- readr::read_csv(paste0(latest_output, "/pd_results.csv")) %>% dplyr::rename(shock_scenario = target_scenario)
 
 
   old <- readr::read_csv(OLD_CRISPY_PATH)
@@ -36,8 +36,8 @@ npv_check <- function() {
       "lgd", "risk_free_rate", "discount_rate", "growth_rate", "div_netprofit_prop_coef",
       "shock_year", "market_passthrough", "baseline_scenario",
       "shock_scenario", "scenario_geography", "net_present_value_baseline", "net_present_value_shock"
-    )) %>% 
-    dplyr::rename(technology=ald_business_unit)
+    )) %>%
+    dplyr::rename(technology = ald_business_unit)
 
   new_npv <- new_npv %>%
     dplyr::inner_join(old_npv, by = c(
@@ -45,10 +45,10 @@ npv_check <- function() {
       "lgd", "risk_free_rate", "discount_rate", "growth_rate", "div_netprofit_prop_coef",
       "shock_year", "market_passthrough", "baseline_scenario",
       "target_scenario", "scenario_geography"
-    )) 
+    ))
 
   prepare_for_npv_barplot <- function() {
-    mix <- dplyr::inner_join(old_npv, new_npv, by = c("company_id", "ald_sector"="sector", "technology")) # , "term"))
+    mix <- dplyr::inner_join(old_npv, new_npv, by = c("company_id", "ald_sector" = "sector", "technology")) # , "term"))
 
     # List of root names based on your data frame
     roots <- c("net_present_value_baseline", "net_present_value_shock") # , "pd_baseline", "pd_shock")
@@ -125,10 +125,11 @@ traj_check <- function(traj) {
       production_baseline_scenario,
       production_target_scenario,
       production_shock_scenario
-    ) %>% 
+    ) %>%
     dplyr::rename(
-      sector=ald_sector,
-      technology=ald_business_unit)
+      sector = ald_sector,
+      technology = ald_business_unit
+    )
 
   new_traj <- readr::read_csv(paste0(latest_output, "/company_trajectories.csv")) %>%
     dplyr::select(

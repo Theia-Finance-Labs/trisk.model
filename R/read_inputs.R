@@ -23,23 +23,22 @@ st_read_agnostic <- function(dir) {
 #' @family import functions
 read_carbon_data <- function(path = NULL) {
   path %||% stop("Must provide 'path'")
-  if (file.exists(file.path(path))){
-  data <- validate_file_exists(file.path(path)) %>%
-    readr::read_csv(
-      col_types = readr::cols_only(
-        year = "d",
-        model = "c",
-        scenario = "c",
-        scenario_geography = "c",
-        variable = "c",
-        unit = "c",
-        carbon_tax = "d"
+  if (file.exists(file.path(path))) {
+    data <- validate_file_exists(file.path(path)) %>%
+      readr::read_csv(
+        col_types = readr::cols_only(
+          year = "d",
+          model = "c",
+          scenario = "c",
+          scenario_geography = "c",
+          variable = "c",
+          unit = "c",
+          carbon_tax = "d"
+        )
       )
-    )
-    }
-    else{
-      data <- NULL # TODO handle cases when carbon data is null
-    }
+  } else {
+    data <- NULL # TODO handle cases when carbon data is null
+  }
   return(data)
 }
 

@@ -16,6 +16,8 @@
 #' @param save_and_check Boolean, indicating if results shall be exported.
 #'
 #' @inheritParams run_trisk_model
+#' @export
+#' 
 run_trisk <- function(
     input_path,
     output_path = NULL,
@@ -28,11 +30,12 @@ run_trisk <- function(
   input_data_list <- st_read_agnostic(input_path)
 
   output_list <- run_trisk_model(
-    assets_data = input_data_list$assets_data, 
-    scenarios_data = input_data_list$scenarios_data, 
-    financial_data=input_data_list$financial_data, 
-    carbon_data=input_data_list$carbon_data
-    , ...)
+    assets_data = input_data_list$assets_data,
+    scenarios_data = input_data_list$scenarios_data,
+    financial_data = input_data_list$financial_data,
+    carbon_data = input_data_list$carbon_data,
+    ...
+  )
 
   if (save_and_check) {
     check_results <- function(output_list) {
@@ -51,7 +54,7 @@ run_trisk <- function(
 
 
 #' Run stress test model
-#' 
+#'
 #' @param assets_data assets_data
 #' @param scenarios_data scenarios_data
 #' @param financial_data financial_data
@@ -87,6 +90,7 @@ run_trisk <- function(
 #'
 #' @return NULL
 #' @export
+#' 
 run_trisk_model <- function(assets_data,
                             scenarios_data,
                             financial_data,
@@ -105,7 +109,7 @@ run_trisk_model <- function(assets_data,
                             market_passthrough = 0) {
   cat("-- Processing Assets and Scenarios. \n")
 
-  processed_assets_data <- process_assets_data(assets_data = assets_data, financial_data=financial_data, scenario_geography = scenario_geography)
+  processed_assets_data <- process_assets_data(assets_data = assets_data, financial_data = financial_data, scenario_geography = scenario_geography)
   scenarios_data <- process_scenarios_data(scenarios_data = scenarios_data, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
 
   cat("-- Transforming to Trisk model input. \n")
@@ -117,15 +121,15 @@ run_trisk_model <- function(assets_data,
     target_scenario = target_scenario
   )
 
-  start_year = min(trisk_model_input$year)
-  end_analysis = max(trisk_model_input$year)
+  start_year <- min(trisk_model_input$year)
+  end_analysis <- max(trisk_model_input$year)
 
   cat("-- Calculating baseline, target, and shock trajectories. \n")
 
   trisk_model_output <- extend_assets_trajectories(
     trisk_model_input = trisk_model_input,
-    start_year=start_year,
-    shock_year=shock_year
+    start_year = start_year,
+    shock_year = shock_year
   )
 
   cat("-- Calculating net profits. \n")
@@ -208,4 +212,3 @@ process_carbon_data <- function(data, start_year, end_year, carbon_price_model) 
 
   return(data_processed)
 }
-

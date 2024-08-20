@@ -25,8 +25,7 @@ calculate_net_profits <- function(data,
                                   carbon_data,
                                   shock_year,
                                   market_passthrough) {
-                                    
-  data <- data %>% 
+  data <- data %>%
     calculate_proximity_to_target()
 
   baseline <- calculate_net_profits_baseline(data) %>%
@@ -85,7 +84,6 @@ calculate_net_profits <- function(data,
 #'
 #' @noRd
 calculate_proximity_to_target <- function(data) {
-                                        
   # Identify the position of the first non-NA value per group
   first_non_na_positions <- data %>%
     dplyr::group_by(asset_id, company_id, sector, technology) %>%
@@ -111,7 +109,7 @@ calculate_proximity_to_target <- function(data) {
       realised_change = production_plan_company_technology - initial_technology_production
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::group_by(asset_id, company_id, sector, technology) %>%    
+    dplyr::group_by(asset_id, company_id, sector, technology) %>%
     dplyr::summarise(
       sum_required_change = sum(required_change, na.rm = TRUE),
       sum_realised_change = sum(realised_change, na.rm = TRUE),
@@ -130,8 +128,8 @@ calculate_proximity_to_target <- function(data) {
       -dplyr::all_of(c("sum_required_change", "sum_realised_change", "ratio_realised_required"))
     )
 
-  data  <-  data %>%
-    dplyr::inner_join(production_changes, by=c("asset_id", "company_id", "sector" ,"technology" ))
+  data <- data %>%
+    dplyr::inner_join(production_changes, by = c("asset_id", "company_id", "sector", "technology"))
 
   return(data)
 }

@@ -20,7 +20,7 @@ calculate_pd_change_overall <- function(data,
   data <- data %>%
     dplyr::filter(.data$year >= .env$shock_year) %>%
     dplyr::group_by(
-      .data$company_id,  .data$company_name, .data$sector, .data$debt_equity_ratio, .data$volatility
+      .data$company_id, .data$company_name, .data$sector, .data$debt_equity_ratio, .data$volatility
     ) %>%
     dplyr::summarise(
       equity_0_baseline = sum(.data$discounted_net_profit_baseline, na.rm = TRUE),

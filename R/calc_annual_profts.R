@@ -20,7 +20,6 @@ calculate_annual_profits <- function(data,
                                      end_year,
                                      discount_rate,
                                      growth_rate) {
-  
   data <- data %>%
     dividend_discount_model(discount_rate = discount_rate) %>%
     calculate_terminal_value(
@@ -47,7 +46,6 @@ dividend_discount_model <- function(data, discount_rate) {
   data <- data %>%
     dplyr::group_by(
       .data$asset_id, .data$company_id, .data$sector, .data$technology,
-      
     ) %>%
     dplyr::mutate(
       t_calc = seq(0, (dplyr::n() - 1)),

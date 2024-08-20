@@ -2,4 +2,4 @@
 #' @importFrom magrittr %>%
 NULL
 
-MAX_POSSIBLE_YEAR=2050
+MAX_POSSIBLE_YEAR <- 2050
