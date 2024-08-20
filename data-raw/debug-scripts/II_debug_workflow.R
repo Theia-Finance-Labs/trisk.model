@@ -37,11 +37,10 @@ start_time <- Sys.time()
 run_trisk(
   input_path = get_latest_timestamped_folder("workspace/st_inputs"),
   output_path = "workspace/st_outputs",
-  baseline_scenario = "NGFS2023MESSAGE_NDC",
-  target_scenario = "NGFS2023MESSAGE_B2DS",
+  baseline_scenario = "NGFS2023GCAM_CP",
+  target_scenario = "NGFS2023GCAM_NZ2050",
   scenario_geography = "Global"
 )
-
 end_time <- Sys.time()
 time_taken <- end_time - start_time
 print(time_taken)

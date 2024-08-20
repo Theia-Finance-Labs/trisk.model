@@ -3,44 +3,55 @@
 #' @param input_data_list List with project agnostic and project specific input data
 #' @param baseline_scenario Character. A string that indicates which
 #'   of the scenarios included in the analysis should be used to set the
-#'   baseline ald_business_unit trajectories.
+#'   baseline technology trajectories.
 #' @param target_scenario Character. A string that indicates which
 #'   of the scenarios included in the analysis should be used to set the
-#'   late & sudden ald_business_unit trajectories.
+#'   late & sudden technology trajectories.
 #' @param shock_year year of transition from baseline scenario to target scenario
 #' @param start_year Numeric, holding start year of analysis.
 #' @param end_year Numeric, holding end year of analysis.
 #'
 #' @return A tibble holding annual profits
-extend_assets_trajectories <- function(trisk_model_input,
-                                       shock_year,
-                                       start_year,
-                                       end_year) {
+extend_assets_trajectories <- function(
+    trisk_model_input,
+    start_year,
+    shock_year) {
 
-                 
   trajectories <- trisk_model_input %>%
-    set_baseline_trajectory(
-    ) %>%
+    set_baseline_trajectory() %>%
     set_trisk_trajectory(
       start_year = start_year,
-      end_year = end_year,
       shock_year = shock_year
     ) %>%
     apply_scenario_prices(
-      start_year = start_year,
       shock_year = shock_year
     )
 
 
-    trajectories  <- trajectories %>%
-      dplyr::select_at(c(
-        "year", "company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography",
-        "production_plan_company_technology",  "emission_factor", "production_scenario_baseline", "production_scenario_target",
-        "production_change_scenario_baseline", "production_change_scenario_target", 
-        "production_asset_baseline", "late_sudden", "overshoot_direction",
-        "price_baseline", "price_target", "late_sudden_price"))
+  trajectories <- trajectories %>%
+    dplyr::select_at(c(
+      "year", "asset_id", "asset_name", "company_id", "company_name", "sector", "technology",
+      "production_plan_company_technology","production_scenario_baseline", "production_scenario_target",
+      "production_change_scenario_baseline", "production_change_scenario_target",
+      "production_asset_baseline", "late_sudden", "overshoot_direction",
+      "scenario_price_baseline", "scenario_price_target", "late_sudden_price"
+    ))
 
-  return(trajectories)
+
+  # attach the necessary columns for the rest
+  trisk_model_output <- trajectories %>%
+    dplyr::left_join(
+      trisk_model_input %>%
+        dplyr::distinct(
+          .data$asset_id, .data$company_id, .data$sector, .data$technology, .data$technology_type,
+          .data$scenario_geography, .data$year, .data$emission_factor, .data$debt_equity_ratio,
+          .data$net_profit_margin, .data$pd, .data$volatility
+        ),
+      by = c("asset_id", "company_id", "sector", "technology", "year")
+    )
+
+
+  return(trisk_model_output)
 }
 
 
@@ -60,15 +71,15 @@ extend_assets_trajectories <- function(trisk_model_input,
 #' Trajectories are furthermore differentiated by scenario_geography, if
 #' multiple are passed.
 #' If no "company_id" or "company_name" are provided, the calculation switches to
-#' portfolio/ald_business_unit level.
+#' portfolio/technology level.
 #'
-#' @param data A dataframe that contains scenario trajectories by ald_business_unit
+#' @param data A dataframe that contains scenario trajectories by technology
 #'   until 2040 for all the scenarios included in the analysis and
-#'   production build out plans by ald_business_unit or company and ald_business_unit,
+#'   production build out plans by technology or company and technology,
 #'   usually for 5 years, based on PACTA results.
 #' @param baseline_scenario Character. A string that indicates which
 #'   of the scenarios included in the analysis should be used to set the
-#'   baseline ald_business_unit trajectories.
+#'   baseline technology trajectories.
 #'
 #' @family scenario definition
 #'
@@ -81,8 +92,7 @@ set_baseline_trajectory <- function(data) {
     # Fill the baseline/input production with the latest non-NA value
     tidyr::fill(.data$production_asset_baseline, .direction = "down") %>%
     dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
-      .data$scenario_geography
+      .data$company_id, .data$asset_id, .data$sector, .data$technology
     ) %>%
     dplyr::mutate(
       # compute per group the cumulative sum of the scenario change derivatives at each year
@@ -114,14 +124,14 @@ set_baseline_trajectory <- function(data) {
 #' replicate externally provided scenario trajectories at least until the
 #' year of the policy shock.
 #' Trajectories are calculated for each company by sector, scenario_geography,
-#' ald_business_unit, year.
+#' technology, year.
 #' If no "company_id" or "company_name" are provided, the calculation switches to
-#' portfolio/ald_business_unit level.
+#' portfolio/technology level.
 #' @param data A dataframe that contains the scenario data prepared until the
 #'   step after the baseline trajectories are calculated.
 #' @param target_scenario Character. A string that indicates which
 #'   of the scenarios included in the analysis should be used to set the
-#'   late & sudden ald_business_unit trajectories.
+#'   late & sudden technology trajectories.
 #' @param shock_scenario A dataframe that contains information about the
 #'   transition scenario, specifically the shock year and, duration of the
 #'   shock and the name of the shock scenario
@@ -133,34 +143,32 @@ set_baseline_trajectory <- function(data) {
 #'
 #' @return data frame
 set_trisk_trajectory <- function(data,
-                                 shock_year,
                                  start_year,
-                                 end_year) {
+                                 shock_year) {
   year_of_shock <- shock_year
   duration_of_shock <- shock_year - start_year
 
   late_sudden_df <- calc_late_sudden_traj(data,
-    start_year = start_year,
-    end_year = end_year,
     year_of_shock = year_of_shock
   )
 
   data <- data %>%
     dplyr::ungroup() %>%
-    dplyr::left_join(late_sudden_df, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography", "year"))
+    dplyr::left_join(late_sudden_df, by = c("company_id", "asset_id", "sector", "technology", "year"))
 
   return(data)
 }
 
-calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIME_FRAME_BEGONE = 5) {
+calc_late_sudden_traj <- function(data, year_of_shock) {
+
   
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
     dplyr::select_at(c(
-      "company_id", "company_name", "year", "ald_sector", "ald_business_unit", "scenario_geography", 
+      "asset_id", "company_id", "year", "sector", "technology",
       "production_plan_company_technology", "production_scenario_target", "production_change_scenario_target", "production_change_scenario_baseline"
     )) %>%
-    dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
+    dplyr::group_by(asset_id, company_id, sector, technology) %>%
     dplyr::arrange(year, .by_group = TRUE) %>%
     dplyr::mutate(
       overshoot_direction = ifelse(
@@ -179,14 +187,23 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
     dplyr::ungroup()
 
 
+  # Apply the function to get the last non-NA year for each group
+  last_non_na_positions <- late_sudden_data %>%
+    group_by(asset_id, company_id, sector, technology) %>%
+    summarise(
+      last_non_na_year = max(year[!is.na(production_plan_company_technology)]),
+      .groups = "drop"
+    )
+
   # Flag groups who need to be applied the overshoot compensation method.
   # Group will be applied the compensation if at least 1 year matches the condition.
   flagged_overshoot <- late_sudden_data %>%
-    dplyr::filter(year > min(year), year <= min(year) + TIME_FRAME_BEGONE) %>% # TODO IS IT A BUG ??
-    dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
+    dplyr::inner_join(last_non_na_positions, by = c("asset_id", "company_id", "sector", "technology")) %>%
+    dplyr::group_by(asset_id, company_id, sector, technology) %>%
+    dplyr::filter(year > min(year), year <= last_non_na_year) %>% # TODO IS (year > min(year), and not (year >= min(year),  A BUG ?? 
     dplyr::summarise(
-      prod_to_follow = sum(.data$production_scenario_target),
-      real_prod = sum(.data$production_plan_company_technology),
+      prod_to_follow = sum(.data$production_scenario_target, na.rm = TRUE),
+      real_prod = sum(.data$production_plan_company_technology, na.rm = TRUE),
       requires_overshoot_correction = any(
         (.data$overshoot_direction == "Decreasing" & (prod_to_follow < real_prod)) |
           (.data$overshoot_direction == "Increasing" & (prod_to_follow > real_prod))
@@ -207,7 +224,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
   # Process companies requiring overshoot compensation
   if (nrow(to_compensate) > 0) {
     ls_data_to_compensate <- late_sudden_data %>%
-      dplyr::inner_join(to_compensate, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"))
+      dplyr::inner_join(to_compensate, by = c("asset_id", "company_id", "sector", "technology"))
 
     ls_pre_clean_to_compensate <- ls_data_to_compensate %>%
       dplyr::mutate(
@@ -216,7 +233,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
 
     ls_pre_shock_to_compensate <- ls_pre_clean_to_compensate %>%
       dplyr::filter(year <= year_of_shock - 1) %>%
-      dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
+      dplyr::group_by(asset_id, company_id, sector, technology) %>%
       dplyr::summarize(
         late_sudden_pre_shock_val = dplyr::last(late_sudden),
         late_sudden_pre_shock_tot = sum(late_sudden),
@@ -224,7 +241,7 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
       )
 
     production_scenario_target_tot_to_compensate <- ls_data_to_compensate %>%
-      dplyr::group_by(company_id, company_name, ald_sector, ald_business_unit, scenario_geography) %>%
+      dplyr::group_by(asset_id, company_id, sector, technology) %>%
       dplyr::summarize(
         production_scenario_target_total_sum = sum(production_scenario_target),
         n_shocked_years = dplyr::last(year) - year_of_shock + 1,
@@ -232,14 +249,14 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
       )
 
     x_integral_to_compensate <- dplyr::left_join(ls_pre_shock_to_compensate, production_scenario_target_tot_to_compensate,
-      by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography")
+      by = c("asset_id", "company_id", "sector", "technology")
     ) %>%
       dplyr::mutate(
         sum_1_to_n_shocked_years = .data$n_shocked_years * (.data$n_shocked_years + 1) / 2,
         x = (.data$production_scenario_target_total_sum - .data$late_sudden_pre_shock_tot - .data$n_shocked_years * .data$late_sudden_pre_shock_val) /
           (-sum_1_to_n_shocked_years)
       ) %>%
-      dplyr::select(company_id, company_name, ald_sector, ald_business_unit, scenario_geography, x)
+      dplyr::select(asset_id, company_id, sector, technology, x)
 
     ls_overshoot_compensated <-
       dplyr::bind_rows(
@@ -247,21 +264,20 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
           dplyr::filter(.data$year < year_of_shock),
         ls_pre_clean_to_compensate %>%
           dplyr::filter(year >= year_of_shock) %>%
-          dplyr::left_join(ls_pre_shock_to_compensate, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography")) %>%
-          dplyr::left_join(x_integral_to_compensate, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography")) %>%
+          dplyr::left_join(ls_pre_shock_to_compensate, by = c("asset_id", "company_id", "sector", "technology")) %>%
+          dplyr::left_join(x_integral_to_compensate, by = c("asset_id", "company_id", "sector", "technology")) %>%
           dplyr::mutate(
             year_diff = year - year_of_shock + 1,
             late_sudden = late_sudden_pre_shock_val - pmax(year_diff, 0) * x
           )
       ) %>%
-      dplyr::select(company_id, company_name, ald_sector, ald_business_unit, scenario_geography, year, late_sudden)
+      dplyr::select(asset_id, company_id, sector, technology, year, late_sudden)
   } else {
     ls_overshoot_compensated <- dplyr::tibble(
       company_id = character(),
-      company_name = character(),
-      ald_sector = character(),
-      ald_business_unit = character(),
-      scenario_geography = character(),
+      asset_id = character(),
+      sector = character(),
+      technology = character(),
       year = integer(),
       late_sudden = numeric()
     )
@@ -270,34 +286,33 @@ calc_late_sudden_traj <- function(data, start_year, end_year, year_of_shock, TIM
   # Process companies not requiring overshoot compensation
   if (nrow(to_not_compensate) > 0) {
     ls_data_to_not_compensate <- late_sudden_data %>%
-      dplyr::inner_join(to_not_compensate, by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography"))
+      dplyr::inner_join(to_not_compensate, by = c("asset_id", "company_id", "sector", "technology"))
 
     ls_post_prod_not_compensated <- ls_data_to_not_compensate %>%
       dplyr::mutate(
         late_sudden = production_plan_company_technology_filled + scenario_change_cumsum
       ) %>%
-      dplyr::select(company_id, company_name, ald_sector, ald_business_unit, scenario_geography, year, late_sudden)
+      dplyr::select(asset_id, company_id, sector, technology, year, late_sudden)
   } else {
     ls_post_prod_not_compensated <- dplyr::tibble(
       company_id = character(),
-      company_name = character(),
-      ald_sector = character(),
-      ald_business_unit = character(),
-      scenario_geography = character(),
+      asset_id = character(),
+      sector = character(),
+      technology = character(),
       year = integer(),
       late_sudden = numeric()
     )
   }
-
+  
   # Combine results
   late_sudden_df <- dplyr::bind_rows(ls_overshoot_compensated, ls_post_prod_not_compensated) %>%
-    dplyr::select_at(c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography", "year", "late_sudden"))
+    dplyr::select_at(c("asset_id", "company_id", "sector", "technology", "year", "late_sudden"))
   late_sudden_df <- late_sudden_df %>%
     dplyr::left_join(
       flagged_overshoot %>%
         dplyr::select(-requires_overshoot_correction) %>%
-        dplyr::distinct_at(c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography", "overshoot_direction")),
-      by = c("company_id", "company_name", "ald_sector", "ald_business_unit", "scenario_geography")
+        dplyr::distinct_at(c("asset_id", "company_id", "sector", "technology", "overshoot_direction")),
+      by = c("asset_id", "company_id", "sector", "technology")
     )
 
   # filter_negative_late_and_sudden

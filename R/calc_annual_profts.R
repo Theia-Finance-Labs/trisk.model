@@ -5,10 +5,10 @@
 #' @param data data frame containing the full trajectory company data
 #' @param baseline_scenario Character. A string that indicates which
 #'   of the scenarios included in the analysis should be used to set the
-#'   baseline ald_business_unit trajectories.
+#'   baseline technology trajectories.
 #' @param shock_scenario Character. A string that indicates which
 #'   of the scenarios included in the analysis should be used to set the
-#'   late & sudden ald_business_unit trajectories.
+#'   late & sudden technology trajectories.
 #' @param end_year Numeric, holding end year of analysis.
 #' @param growth_rate Numeric, that holds the terminal growth rate of profits
 #'   beyond the `end_year` in the DCF.
@@ -20,6 +20,7 @@ calculate_annual_profits <- function(data,
                                      end_year,
                                      discount_rate,
                                      growth_rate) {
+  
   data <- data %>%
     dividend_discount_model(discount_rate = discount_rate) %>%
     calculate_terminal_value(
@@ -39,14 +40,14 @@ calculate_annual_profits <- function(data,
 #' Calculates discounted net profits based on a dividends discount model
 #'
 #' @param data A data frame containing the annual net profits on company
-#'   ald_business_unit level
+#'   technology level
 #' @param discount_rate Numeric, that holds the discount rate of dividends per
 #'   year in the DCF.
 dividend_discount_model <- function(data, discount_rate) {
   data <- data %>%
     dplyr::group_by(
-      .data$company_id, .data$company_name, .data$ald_sector, .data$ald_business_unit,
-      .data$scenario_geography
+      .data$asset_id, .data$company_id, .data$sector, .data$technology,
+      
     ) %>%
     dplyr::mutate(
       t_calc = seq(0, (dplyr::n() - 1)),
@@ -91,7 +92,7 @@ calculate_terminal_value <- function(data,
       !!rlang::sym(shock_scenario) := NA_real_,
       baseline = NA_real_,
       late_sudden = NA_real_,
-      price_baseline = NA_real_,
+      scenario_price_baseline = NA_real_,
       late_sudden_price = NA_real_,
       production_compensation = NA_real_
     )
@@ -99,8 +100,7 @@ calculate_terminal_value <- function(data,
   data <- data %>%
     dplyr::bind_rows(terminal_value) %>%
     dplyr::arrange(
-      .data$company_id, .data$scenario_geography, .data$company_name, .data$ald_sector,
-      .data$ald_business_unit, .data$year
+      .data$asset_id, .data$company_id, .data$sector, .data$technology, .data$year
     )
 
   return(data)

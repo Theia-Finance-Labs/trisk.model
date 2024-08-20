@@ -1,5 +1,5 @@
 #' Calculate percentage value change between scenarios for equity (and
-#' temporarily other asset types) on the company-ald_business_unit level
+#' temporarily other asset types) on the company-technology level
 #'
 #' @param data A dataframe containing the (discounted) annual profits
 #' @param shock_scenario A dataframe containing the specification of the
@@ -11,11 +11,11 @@
 #' @param crispy Boolean. Indicates if the output should be used for the CRISPY
 #'   database or for standard portfolio calculation (default).
 calculate_asset_value_at_risk <- function(data,
-                                                   shock_year,
-                                                   start_year,
-                                                   div_netprofit_prop_coef = NULL,
-                                                   flat_multiplier = 1,
-                                                   crispy = FALSE) {
+                                          shock_year,
+                                          start_year,
+                                          div_netprofit_prop_coef = NULL,
+                                          flat_multiplier = 1,
+                                          crispy = FALSE) {
   data <- data %>%
     dplyr::filter(
       .data$year >= shock_year,
@@ -23,8 +23,7 @@ calculate_asset_value_at_risk <- function(data,
       !is.na(.data$discounted_net_profit_baseline)
     ) %>%
     dplyr::group_by(
-      .data$company_id, .data$ald_sector, .data$ald_business_unit,
-      .data$scenario_geography
+      .data$company_id, .data$asset_id, .data$company_name, .data$asset_name, .data$sector, .data$technology
     ) %>%
     dplyr::summarise(
       total_disc_npv_ls = sum(.data$discounted_net_profit_ls), # TODO delete

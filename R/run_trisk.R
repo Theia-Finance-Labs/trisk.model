@@ -1,60 +1,3 @@
-
-
-#' Process data of type indicated by function name
-#'
-#' @inheritParams process_production_data
-#'
-#' @return A tibble of data as indicated by function name.
-#' @noRd
-process_carbon_data <- function(data, start_year, end_year, carbon_price_model) {
-  data_processed <- data
-
-  ## dataframe will be NULL for lrisk this is the case as lrisk does not read in and use carbon prices
-  if (is.null(data_processed)) {
-    data_processed <- NULL
-  } else {
-    data_processed <- data_processed %>%
-      dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
-      dplyr::select(-c(scenario_geography)) %>%
-      dplyr::filter(.data$scenario %in% .env$carbon_price_model)
-  }
-
-  return(data_processed)
-}
-
-
-#' Get End year from data
-#'
-#' @param data data
-#' @param scenarios_filter scenarios to use
-#'
-#' @return the end year
-get_end_year <- function(data, scenarios_filter, MAX_POSSIBLE_YEAR = 2050) {
-  available_min_of_max_years <- dplyr::bind_rows(
-    data$df_price %>%
-      dplyr::distinct(.data$year, .data$scenario) %>%
-      dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year = max(.data$year)),
-    data$capacity_factors_power %>%
-      dplyr::distinct(.data$year, .data$scenario) %>%
-      dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year = max(.data$year)),
-    data$scenario_data %>%
-      dplyr::distinct(.data$year, .data$scenario) %>%
-      dplyr::group_by(.data$scenario) %>%
-      dplyr::summarise(year = max(.data$year))
-  ) %>%
-    dplyr::group_by(.data$scenario) %>%
-    dplyr::summarise(year = min(.data$year)) %>%
-    dplyr::filter(.data$scenario %in% scenarios_filter) %>%
-    dplyr::pull(.data$year)
-
-  end_year <- min(MAX_POSSIBLE_YEAR, min(available_min_of_max_years))
-
-  return(end_year)
-}
-
-
 #' Run stress testing for provided asset type.
 #'
 #' This function runs the transition risk stress test. It can be desirable to
@@ -84,7 +27,12 @@ run_trisk <- function(
 
   input_data_list <- st_read_agnostic(input_path)
 
-  output_list <- run_trisk_model(input_data_list = input_data_list, ...)
+  output_list <- run_trisk_model(
+    assets_data = input_data_list$assets_data, 
+    scenarios_data = input_data_list$scenarios_data, 
+    financial_data=input_data_list$financial_data, 
+    carbon_data=input_data_list$carbon_data
+    , ...)
 
   if (save_and_check) {
     check_results <- function(output_list) {
@@ -96,14 +44,18 @@ run_trisk <- function(
 
     write_results(output_list = output_list, output_path = output_path, trisk_params = trisk_params, show_params_cols = show_params_cols)
   } else {
-    return(output_list) 
+    return(output_list)
   }
 }
 
 
 
 #' Run stress test model
-#'
+#' 
+#' @param assets_data assets_data
+#' @param scenarios_data scenarios_data
+#' @param financial_data financial_data
+#' @param carbon_data carbon_data
 #' @param baseline_scenario Holds the name of the baseline scenario to be used
 #'   in the stress test, for accepted value range check `stress_test_arguments`.
 #' @param target_scenario Holds the name of the shock scenario to be used in the
@@ -135,7 +87,10 @@ run_trisk <- function(
 #'
 #' @return NULL
 #' @export
-run_trisk_model <- function(input_data_list,
+run_trisk_model <- function(assets_data,
+                            scenarios_data,
+                            financial_data,
+                            carbon_data,
                             baseline_scenario,
                             target_scenario,
                             scenario_geography,
@@ -148,43 +103,35 @@ run_trisk_model <- function(input_data_list,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
                             market_passthrough = 0) {
-                              
-  cat("-- Processing inputs. \n")
-  # TODO remove MAX_POSSIBLE_YEAR
-  end_analysis <- get_end_year(input_data_list, c(baseline_scenario, target_scenario), MAX_POSSIBLE_YEAR = 2050)
+  cat("-- Processing Assets and Scenarios. \n")
 
-  start_analysis <- min(input_data_list$production_data$year)
+  processed_assets_data <- process_assets_data(assets_data = assets_data, financial_data=financial_data, scenario_geography = scenario_geography)
+  scenarios_data <- process_scenarios_data(scenarios_data = scenarios_data, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
 
-  assets_data <- process_assets_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, scenario_geography = scenario_geography)
-  scenarios_data <- process_scenarios_data(data = input_data_list, start_analysis = start_analysis, end_analysis = end_analysis, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
+  cat("-- Transforming to Trisk model input. \n")
+
+  assets_scenarios <- merge_assets_and_scenarios_data(assets_data = processed_assets_data, scenarios_data = scenarios_data)
+
   trisk_model_input <- process_trisk_input(
-    assets_data = assets_data, scenarios_data = scenarios_data,
-    target_scenario = target_scenario, start_analysis = start_analysis
+    assets_scenarios = assets_scenarios,
+    target_scenario = target_scenario
   )
 
-  cat("-- Calculating baseline and shock trajectories. \n")
-  
-  
-  trajectories <- extend_assets_trajectories(
+  start_year = min(trisk_model_input$year)
+  end_analysis = max(trisk_model_input$year)
+
+  cat("-- Calculating baseline, target, and shock trajectories. \n")
+
+  trisk_model_output <- extend_assets_trajectories(
     trisk_model_input = trisk_model_input,
-    start_year = start_year,
-    shock_year = shock_year,
-    end_year = end_analysis
+    start_year=start_year,
+    shock_year=shock_year
   )
-
-# TODO THIS PART MUST GO
-  trisk_model_output <- trajectories %>% 
-    dplyr::left_join(
-      input_data_list$financial_data,
-      by=c("company_id"))  %>% 
-      dplyr::left_join(scenarios_data %>% dplyr::distinct(ald_business_unit , direction), by="ald_business_unit") %>%
-      dplyr::left_join(trisk_model_input %>% dplyr::distinct(company_id, ald_business_unit, proximity_to_target), by=c("company_id", "ald_business_unit"))
 
   cat("-- Calculating net profits. \n")
 
-
-  carbon_data <- process_carbon_data(
-    input_data_list$carbon_data,
+  processed_carbon_data <- process_carbon_data(
+    carbon_data,
     start_year = start_year,
     end_year = end_analysis,
     carbon_price_model = carbon_price_model
@@ -194,7 +141,7 @@ run_trisk_model <- function(input_data_list,
   # calc net profits
   company_net_profits <- calculate_net_profits(
     trisk_model_output,
-    carbon_data = carbon_data,
+    carbon_data = processed_carbon_data,
     shock_year = shock_year,
     market_passthrough = market_passthrough
   )
@@ -236,3 +183,29 @@ run_trisk_model <- function(input_data_list,
     )
   )
 }
+
+
+
+
+#' Process data of type indicated by function name
+#'
+#' @inheritParams process_production_data
+#'
+#' @return A tibble of data as indicated by function name.
+#' @noRd
+process_carbon_data <- function(data, start_year, end_year, carbon_price_model) {
+  data_processed <- data
+
+  ## dataframe will be NULL for lrisk this is the case as lrisk does not read in and use carbon prices
+  if (is.null(data_processed)) {
+    data_processed <- NULL
+  } else {
+    data_processed <- data_processed %>%
+      dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
+      dplyr::select(-c(scenario_geography)) %>%
+      dplyr::filter(.data$scenario %in% .env$carbon_price_model)
+  }
+
+  return(data_processed)
+}
+

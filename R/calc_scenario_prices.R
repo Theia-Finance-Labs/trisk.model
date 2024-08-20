@@ -8,27 +8,23 @@
 #'
 #'
 #' @param price_data A tibble holding price data.
-#' @param baseline_scenario String holding name of the baseline scenario.
-#' @param target_scenario String holding name of the target scenario.
-#' @param transition_scenario Tibble with 1 row holding at least variables
-#'   `year_of_shock` and `duration_of_shock`.
-#' @param start_year Start_year of analysis
+#' @param shock_year Year of shock.
 #'
 #' @return A tibble holding late_and_sudden_prices
-apply_scenario_prices <- function(data, start_year, shock_year) {
+apply_scenario_prices <- function(data, shock_year) {
   # Part 1: Process for years <= shock_year
   before_shock <- data %>%
     dplyr::filter(.data$year <= shock_year) %>%
-    dplyr::mutate(late_sudden_price = .data$price_baseline)
+    dplyr::mutate(late_sudden_price = .data$scenario_price_baseline)
 
   # Part 2: Process for years > shock_year
   after_shock <- data %>%
     dplyr::filter(.data$year > shock_year - 1) %>%
-    dplyr::group_by(.data$company_id, .data$ald_business_unit) %>%
+    dplyr::group_by(.data$asset_id, .data$company_id, .data$technology) %>%
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
     dplyr::summarise(
-      baseline_price_at_shock = dplyr::first(.data$price_baseline),
-      target_price_end_shockperiod = dplyr::last(.data$price_target),
+      baseline_price_at_shock = dplyr::first(.data$scenario_price_baseline),
+      target_price_end_shockperiod = dplyr::last(.data$scenario_price_target),
       first_year = min(.data$year) + 1,
       last_year = max(.data$year)
     ) %>%
@@ -50,17 +46,15 @@ apply_scenario_prices <- function(data, start_year, shock_year) {
       late_sudden_price = list(tail(.data$ls_price_full, -1))
     ) %>%
     tidyr::unnest(c(.data$year, .data$late_sudden_price)) %>%
-    dplyr::select(.data$company_id, .data$ald_business_unit, .data$year, .data$late_sudden_price)
-
-
+    dplyr::select(.data$asset_id, .data$company_id, .data$technology, .data$year, .data$late_sudden_price)
 
   # Combine both parts
   final_result <- dplyr::bind_rows(before_shock, after_shock) %>%
-    dplyr::select(.data$company_id, .data$ald_business_unit, .data$year, .data$late_sudden_price)
+    dplyr::select(.data$asset_id, .data$company_id, .data$technology, .data$year, .data$late_sudden_price)
 
 
   data <- data %>%
-    dplyr::inner_join(final_result, by = c("company_id", "ald_business_unit", "year"))
+    dplyr::inner_join(final_result, by = c("asset_id", "company_id", "technology", "year"))
 
 
   return(data)
