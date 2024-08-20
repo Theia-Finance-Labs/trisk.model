@@ -26,6 +26,9 @@ calculate_net_profits <- function(data,
                                   shock_year,
                                   market_passthrough) {
                                     
+  data <- data %>% 
+    calculate_proximity_to_target()
+
   baseline <- calculate_net_profits_baseline(data) %>%
     dplyr::select(
       .data$company_id,
@@ -35,6 +38,7 @@ calculate_net_profits <- function(data,
       .data$technology,
       .data$net_profits_baseline
     )
+
 
   shock_increasing_technologies <- calculate_net_profits_shock_increasing_technologies(
     data = data %>% dplyr::filter(.data$technology_type == "greentech"),
@@ -64,6 +68,75 @@ calculate_net_profits <- function(data,
 
   return(data)
 }
+
+
+
+#' Calculate the ratio of the required change in technology that each company
+#' has achieved per technology at the end of the production forecast period.
+#' This ratio will later serve to adjust the net profit margin for companies
+#' that have not built out enough production capacity in increasing technologies
+#' and hence need to scale up production to compensate for their lag in buildout.
+#'
+#' @param data A data frame containing the production forecasts of companies
+#'   (in the portfolio). Pre-processed to fit analysis parameters and after
+#'   conversion of power capacity to generation.
+#' @param target_scenario Character. A vector of length 1 indicating target
+#'   scenario
+#'
+#' @noRd
+calculate_proximity_to_target <- function(data) {
+                                        
+  # Identify the position of the first non-NA value per group
+  first_non_na_positions <- data %>%
+    dplyr::group_by(asset_id, company_id, sector, technology) %>%
+    dplyr::arrange(.data$year, .by_group = TRUE) %>%
+    dplyr::summarise(last_non_na_year = max(year[!is.na(production_plan_company_technology)], na.rm = TRUE)) %>%
+    dplyr::ungroup()
+
+  # Filter the data based on the identified positions
+  production_changes <- data %>%
+    dplyr::inner_join(first_non_na_positions,
+      by = c("asset_id", "company_id", "sector", "technology")
+    ) %>%
+    dplyr::filter(
+      year <= last_non_na_year
+    ) %>%
+    dplyr::group_by(
+      .data$asset_id, .data$company_id, .data$sector, .data$technology
+    ) %>%
+    dplyr::arrange(.data$year, .by_group = TRUE) %>%
+    dplyr::mutate(
+      initial_technology_production = dplyr::first(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
+      required_change = production_scenario_target - initial_technology_production,
+      realised_change = production_plan_company_technology - initial_technology_production
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::group_by(asset_id, company_id, sector, technology) %>%    
+    dplyr::summarise(
+      sum_required_change = sum(required_change, na.rm = TRUE),
+      sum_realised_change = sum(realised_change, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(
+      ratio_realised_required = sum_realised_change / sum_required_change,
+      proximity_to_target = dplyr::case_when(
+        ratio_realised_required < 0 ~ 0,
+        ratio_realised_required > 1 ~ 1,
+        TRUE ~ ratio_realised_required
+      )
+    ) %>%
+    dplyr::select(
+      -dplyr::all_of(c("sum_required_change", "sum_realised_change", "ratio_realised_required"))
+    )
+
+  data  <-  data %>%
+    dplyr::inner_join(production_changes, by=c("asset_id", "company_id", "sector" ,"technology" ))
+
+  return(data)
+}
+
+
 
 #' Calculates annual net profits on the company-technology level for the
 #' baseline and late and sudden scenarios - with a carbon tax being added.

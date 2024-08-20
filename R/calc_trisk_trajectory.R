@@ -38,8 +38,20 @@ extend_assets_trajectories <- function(
     ))
 
 
+  # attach the necessary columns for the rest
+  trisk_model_output <- trajectories %>%
+    dplyr::left_join(
+      trisk_model_input %>%
+        dplyr::distinct(
+          .data$asset_id, .data$company_id, .data$sector, .data$technology, .data$technology_type,
+          .data$scenario_geography, .data$year, .data$emission_factor, .data$debt_equity_ratio,
+          .data$net_profit_margin, .data$pd, .data$volatility
+        ),
+      by = c("asset_id", "company_id", "sector", "technology", "year")
+    )
 
-  return(trajectories)
+
+  return(trisk_model_output)
 }
 
 
@@ -188,7 +200,7 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
   flagged_overshoot <- late_sudden_data %>%
     dplyr::inner_join(last_non_na_positions, by = c("asset_id", "company_id", "sector", "technology")) %>%
     dplyr::group_by(asset_id, company_id, sector, technology) %>%
-    dplyr::filter(year <= last_non_na_year) %>%
+    dplyr::filter(year > min(year), year <= last_non_na_year) %>% # TODO IS (year > min(year), and not (year >= min(year),  A BUG ?? 
     dplyr::summarise(
       prod_to_follow = sum(.data$production_scenario_target, na.rm = TRUE),
       real_prod = sum(.data$production_plan_company_technology, na.rm = TRUE),
