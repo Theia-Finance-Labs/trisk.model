@@ -17,7 +17,7 @@
 #'
 #' @inheritParams run_trisk_model
 #' @export
-#' 
+#'
 run_trisk <- function(
     input_path,
     output_path = NULL,
@@ -90,7 +90,7 @@ run_trisk <- function(
 #'
 #' @return NULL
 #' @export
-#' 
+#'
 run_trisk_model <- function(assets_data,
                             scenarios_data,
                             financial_data,
