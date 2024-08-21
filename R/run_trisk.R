@@ -80,10 +80,6 @@ run_trisk <- function(
 #' @param scenario_geography Character vector, indicating which geographical
 #'   region(s) (concerning asset location) results shall be calculated for. For
 #'   accepted values compare `stress_test_arguments`.
-#' @param start_year Numeric, first year in the analysis used as the starting
-#'   point from which production forecasts are compared against scenario targets.
-#'   Must be available in the production data and indicates the first year of
-#'   the scenario data.
 #' @param carbon_price_model Character vector, indicating which NGFS model is used in regards to
 #'   carbon prices. Default is no carbon tax.
 #' @param market_passthrough Firm's ability to pass carbon tax onto the consumer
@@ -98,7 +94,6 @@ run_trisk_model <- function(assets_data,
                             baseline_scenario,
                             target_scenario,
                             scenario_geography,
-                            start_year = 2022,
                             carbon_price_model = "no_carbon_tax",
                             lgd = 0.45,
                             risk_free_rate = 0.02,
