@@ -12,21 +12,21 @@ write_results <- function(output_list, output_path, trisk_params, show_params_co
   run_id <- uuid::UUIDgenerate()
 
   # Prepare results
-  npv_results <- prepare_npv_results(output_list)
-  pd_results <- prepare_pd_results(output_list)
-  company_trajectories <- prepare_company_trajectories(output_list)
+  npv_results <- prepare_npv_results(output_list, run_id)
+  pd_results <- prepare_pd_results(output_list, run_id)
+  company_trajectories <- prepare_company_trajectories(output_list, run_id)
   params_df <- prepare_params_df(trisk_params, run_id)
 
 
   if (show_params_cols) {
     npv_results <- npv_results %>%
-      dplyr::bind_cols(params_df[rep(1, nrow(npv_results)), ])
+      dplyr::bind_cols(params_df[rep(1, nrow(npv_results)), ] %>% dplyr::select(-c(.data$run_id)))
 
     pd_results <- pd_results %>%
-      dplyr::bind_cols(params_df[rep(1, nrow(pd_results)), ])
+      dplyr::bind_cols(params_df[rep(1, nrow(pd_results)), ] %>% dplyr::select(-c(.data$run_id)))
 
     company_trajectories <- company_trajectories %>%
-      dplyr::bind_cols(params_df[rep(1, nrow(company_trajectories)), ])
+      dplyr::bind_cols(params_df[rep(1, nrow(company_trajectories)), ] %>% dplyr::select(-c(.data$run_id)))
   }
 
   # Create output folder
@@ -49,13 +49,15 @@ prepare_params_df <- function(trisk_params, run_id) {
   return(params_df)
 }
 
-prepare_npv_results <- function(output_list) {
+prepare_npv_results <- function(output_list, run_id) {
   npv_results <- output_list$company_technology_npv %>%
+  dplyr::mutate(run_id=.env$run_id)%>%
     dplyr::rename(
       net_present_value_baseline = .data$total_disc_npv_baseline,
       net_present_value_shock = .data$total_disc_npv_ls,
     ) %>%
     dplyr::select(
+      .data$run_id, 
       .data$company_id,
       .data$asset_id,
       .data$company_name,
@@ -68,13 +70,15 @@ prepare_npv_results <- function(output_list) {
   return(npv_results)
 }
 
-prepare_pd_results <- function(output_list) {
+prepare_pd_results <- function(output_list, run_id) {
   pd_results <- output_list$company_pd_changes_overall %>%
+  dplyr::mutate(run_id=.env$run_id)%>%
     dplyr::rename(
       pd_baseline = .data$PD_baseline,
       pd_shock = .data$PD_late_sudden
     ) %>%
     dplyr::select(
+      .data$run_id, 
       .data$company_id,
       .data$company_name,
       .data$sector,
@@ -86,8 +90,9 @@ prepare_pd_results <- function(output_list) {
 }
 
 
-prepare_company_trajectories <- function(output_list) {
+prepare_company_trajectories <- function(output_list, run_id) {
   company_trajectories <- output_list$company_trajectories %>%
+    dplyr::mutate(run_id=.env$run_id)%>%
     dplyr::rename(
       production_baseline_scenario = .data$production_asset_baseline,
       production_target_scenario = .data$production_scenario_target,
@@ -100,7 +105,7 @@ prepare_company_trajectories <- function(output_list) {
       discounted_net_profits_shock_scenario = .data$discounted_net_profit_ls
     ) %>%
     dplyr::select(
-      .data$asset_id, .data$asset_name, .data$company_id, .data$company_name, .data$year,
+      .data$run_id, .data$asset_id, .data$asset_name, .data$company_id, .data$company_name, .data$year,
       .data$sector, .data$technology,
       .data$production_plan_company_technology, .data$production_baseline_scenario,
       .data$production_target_scenario, .data$production_shock_scenario, .data$company_id,
