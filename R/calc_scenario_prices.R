@@ -36,14 +36,14 @@ apply_scenario_prices <- function(data, shock_year) {
       # Create a linear interpolation from baseline to target
       ls_price_full = list(
         zoo::na.approx(
-          c(baseline_price_at_shock, target_price_end_shockperiod),
+          c(.data$baseline_price_at_shock, .data$target_price_end_shockperiod),
           x = c(.data$first_year - 1, .data$last_year),
           xout = seq(.data$first_year - 1, .data$last_year),
           na.rm = FALSE
         )
       ),
       # Remove the first value from ls_price_full
-      late_sudden_price = list(tail(.data$ls_price_full, -1))
+      late_sudden_price = list(.data$ls_price_full[-1])
     ) %>%
     tidyr::unnest(c(.data$year, .data$late_sudden_price)) %>%
     dplyr::select(.data$asset_id, .data$company_id, .data$technology, .data$year, .data$late_sudden_price)

@@ -106,15 +106,15 @@ create_base_production_trajectories <- function(data) {
 lag_scenario_productions <- function(data) {
   data <- data %>%
     # 3. compute scenario changes
-    dplyr::group_by(scenario_type) %>%
-    dplyr::arrange(company_id, asset_id, sector, technology, year, .by_group = TRUE) %>%
+    dplyr::group_by(.data$scenario_type) %>%
+    dplyr::arrange(.data$company_id, .data$asset_id, .data$sector, .data$technology, .data$year, .by_group = TRUE) %>%
     dplyr::mutate(
       production_change_scenario = .data$production_scenario - dplyr::lag(.data$production_scenario, default = NA)
     ) %>%
     # 4. set assets scenario production to NA when real asset production is known
     dplyr::mutate(
       production_change_scenario = ifelse(
-        !is.na(.data$production_plan_company_technology) | (.data$year == min(.data$year)), NA, production_change_scenario
+        !is.na(.data$production_plan_company_technology) | (.data$year == min(.data$year)), NA, .data$production_change_scenario
       )
     ) %>%
     dplyr::ungroup() %>%

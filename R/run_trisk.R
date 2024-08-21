@@ -206,7 +206,7 @@ process_carbon_data <- function(data, start_year, end_year, carbon_price_model) 
   } else {
     data_processed <- data_processed %>%
       dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
-      dplyr::select(-c(scenario_geography)) %>%
+      dplyr::select(-c(.data$scenario_geography)) %>%
       dplyr::filter(.data$scenario %in% .env$carbon_price_model)
   }
 

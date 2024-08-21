@@ -86,9 +86,9 @@ calculate_net_profits <- function(data,
 calculate_proximity_to_target <- function(data) {
   # Identify the position of the first non-NA value per group
   first_non_na_positions <- data %>%
-    dplyr::group_by(asset_id, company_id, sector, technology) %>%
+    dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
-    dplyr::summarise(last_non_na_year = max(year[!is.na(production_plan_company_technology)], na.rm = TRUE)) %>%
+    dplyr::summarise(last_non_na_year = max(.data$year[!is.na(.data$production_plan_company_technology)], na.rm = TRUE)) %>%
     dplyr::ungroup()
 
   # Filter the data based on the identified positions
@@ -97,7 +97,7 @@ calculate_proximity_to_target <- function(data) {
       by = c("asset_id", "company_id", "sector", "technology")
     ) %>%
     dplyr::filter(
-      year <= last_non_na_year
+      .data$year <= .data$last_non_na_year
     ) %>%
     dplyr::group_by(
       .data$asset_id, .data$company_id, .data$sector, .data$technology
@@ -105,23 +105,23 @@ calculate_proximity_to_target <- function(data) {
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
     dplyr::mutate(
       initial_technology_production = dplyr::first(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
-      required_change = production_scenario_target - initial_technology_production,
-      realised_change = production_plan_company_technology - initial_technology_production
+      required_change = .data$production_scenario_target - .data$initial_technology_production,
+      realised_change = .data$production_plan_company_technology - .data$initial_technology_production
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::group_by(asset_id, company_id, sector, technology) %>%
+    dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
     dplyr::summarise(
-      sum_required_change = sum(required_change, na.rm = TRUE),
-      sum_realised_change = sum(realised_change, na.rm = TRUE),
+      sum_required_change = sum(.data$required_change, na.rm = TRUE),
+      sum_realised_change = sum(.data$realised_change, na.rm = TRUE),
       .groups = "drop"
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      ratio_realised_required = sum_realised_change / sum_required_change,
+      ratio_realised_required = .data$sum_realised_change / .data$sum_required_change,
       proximity_to_target = dplyr::case_when(
-        ratio_realised_required < 0 ~ 0,
-        ratio_realised_required > 1 ~ 1,
-        TRUE ~ ratio_realised_required
+        .data$ratio_realised_required < 0 ~ 0,
+        .data$ratio_realised_required > 1 ~ 1,
+        TRUE ~ .data$ratio_realised_required
       )
     ) %>%
     dplyr::select(
