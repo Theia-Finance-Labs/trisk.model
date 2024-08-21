@@ -3,7 +3,7 @@ process_params <- function(fun, ...) {
   params <- formals(fun)
   default_params <- params[!sapply(params, is.symbol)]
   args <- list(...)
-  final_params <- modifyList(default_params, args)
+  final_params <- utils::modifyList(default_params, args)
   return(final_params)
 }
 

@@ -1,3 +1,19 @@
+
+### Custom
+# Folder view configuration files
+# Mac files
+.DS_STORE
+**/.DS_STORE
+Desktop.ini
+*.icloud
+.Rproj.user
+docs
+tests/testthat/_snaps/run_trisk*
+tests/testthat/_snaps/run_lrisk*
+.workspace/
+.vscode
+inst/doc
+
 # History files
 .Rhistory
 .Rapp.history
@@ -38,17 +54,3 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-### MacOS specific ###
-# Folder view configuration files
-# Mac files
-.DS_STORE
-**/.DS_STORE
-Desktop.ini
-*.icloud
-.Rproj.user
-docs
-tests/testthat/_snaps/run_trisk*
-tests/testthat/_snaps/run_lrisk*
-workspace/
-.vscode
-inst/doc

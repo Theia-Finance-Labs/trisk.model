@@ -17,7 +17,7 @@
 #'
 #' @inheritParams run_trisk_model
 #' @export
-#' 
+#'
 run_trisk <- function(
     input_path,
     output_path = NULL,
@@ -90,7 +90,7 @@ run_trisk <- function(
 #'
 #' @return NULL
 #' @export
-#' 
+#'
 run_trisk_model <- function(assets_data,
                             scenarios_data,
                             financial_data,
@@ -206,7 +206,7 @@ process_carbon_data <- function(data, start_year, end_year, carbon_price_model) 
   } else {
     data_processed <- data_processed %>%
       dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
-      dplyr::select(-c(scenario_geography)) %>%
+      dplyr::select(-c(.data$scenario_geography)) %>%
       dplyr::filter(.data$scenario %in% .env$carbon_price_model)
   }
 

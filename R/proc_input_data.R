@@ -2,7 +2,7 @@ process_scenarios_data <- function(scenarios_data, baseline_scenario, target_sce
   scenarios_data <- scenarios_data %>%
     dplyr::filter(.data$scenario %in% c(baseline_scenario, target_scenario)) %>%
     dplyr::filter(.data$scenario_geography %in% .env$scenario_geography) %>%
-    dplyr::arrange(scenario_year, .by_group = TRUE) %>%
+    dplyr::arrange(.data$scenario_year, .by_group = TRUE) %>%
     add_technology_fair_share_ratio() %>%
     add_market_fair_share_percentage() %>%
     calculate_fair_share_perc()
@@ -92,8 +92,8 @@ remove_sectors_with_missing_production_start_year <- function(data) {
 
 compute_plan_sec_prod <- function(data) {
   data <- data %>%
-    dplyr::group_by(scenario_geography, company_id, sector, production_year) %>%
-    dplyr::mutate(plan_sec_prod = sum(production_plan_company_technology, na.rm = TRUE)) %>%
+    dplyr::group_by(.data$scenario_geography, .data$company_id, .data$sector, .data$production_year) %>%
+    dplyr::mutate(plan_sec_prod = sum(.data$production_plan_company_technology, na.rm = TRUE)) %>%
     dplyr::ungroup()
   return(data)
 }

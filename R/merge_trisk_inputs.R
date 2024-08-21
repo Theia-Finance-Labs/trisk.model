@@ -83,7 +83,7 @@ extend_to_full_analysis_timeframe <- function(data,
       ),
       .direction = "up"
     ) %>%
-    ungroup()
+    dplyr::ungroup()
 
   # TODO CAREFULLY INTEGRATE
   # Fill down production_plan_company_technology only up to the start_analysis year
