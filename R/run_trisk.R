@@ -91,9 +91,9 @@ run_trisk_model <- function(assets_data,
                             scenarios_data,
                             financial_data,
                             carbon_data,
-                            baseline_scenario,
-                            target_scenario,
-                            scenario_geography,
+                            baseline_scenario="",
+                            target_scenario="",
+                            scenario_geography="Global",
                             carbon_price_model = "no_carbon_tax",
                             lgd = 0.45,
                             risk_free_rate = 0.02,
@@ -104,7 +104,7 @@ run_trisk_model <- function(assets_data,
                             market_passthrough = 0) {
   cat("-- Processing Assets and Scenarios. \n")
 
-  processed_assets_data <- process_assets_data(assets_data = assets_data, financial_data = financial_data, scenario_geography = scenario_geography)
+  processed_assets_data <- process_assets_data(assets_data = assets_data, financial_data = financial_data)
   scenarios_data <- process_scenarios_data(scenarios_data = scenarios_data, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
 
   cat("-- Transforming to Trisk model input. \n")
