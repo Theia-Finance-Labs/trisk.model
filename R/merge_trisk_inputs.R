@@ -16,7 +16,7 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
   # add extend production data with scenario targets
   assets_scenarios <- dplyr::inner_join(
     assets_data_full, scenarios_data,
-    by = c("sector", "technology", "scenario_geography", "production_year" = "scenario_year")
+    by = c("sector", "technology", "production_year" = "scenario_year")
   ) %>%
     dplyr::rename(year = .data$production_year)
 
@@ -59,7 +59,6 @@ extend_to_full_analysis_timeframe <- function(data,
         "asset_name",
         "company_name",
         "country_iso2",
-        "scenario_geography",
         "emission_factor",
         "pd",
         "net_profit_margin",
@@ -73,7 +72,6 @@ extend_to_full_analysis_timeframe <- function(data,
         "asset_name",
         "company_name",
         "country_iso2",
-        "scenario_geography",
         "emission_factor",
         "pd",
         "net_profit_margin",

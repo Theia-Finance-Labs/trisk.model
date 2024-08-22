@@ -90,8 +90,7 @@ read_production_data <- function(path = NULL) {
         technology = "c",
         capacity = "d",
         capacity_factor = "d",
-        emission_factor = "d",
-        scenario_geography = "c"
+        emission_factor = "d"
       )
     ) %>%
     dplyr::mutate(

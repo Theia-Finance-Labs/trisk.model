@@ -11,14 +11,12 @@ process_scenarios_data <- function(scenarios_data, baseline_scenario, target_sce
   return(scenarios_data)
 }
 
-process_assets_data <- function(assets_data, financial_data, scenario_geography) {
+process_assets_data <- function(assets_data, financial_data) {
   production_financial_data <- dplyr::inner_join(
     assets_data,
     financial_data,
     by = "company_id"
-  ) %>%
-    dplyr::filter(.data$scenario_geography == .env$scenario_geography)
-
+  )
   assets_data <- production_financial_data %>%
     remove_sectors_with_missing_production_start_year() %>%
     compute_plan_sec_prod()
@@ -92,7 +90,7 @@ remove_sectors_with_missing_production_start_year <- function(data) {
 
 compute_plan_sec_prod <- function(data) {
   data <- data %>%
-    dplyr::group_by(.data$scenario_geography, .data$company_id, .data$sector, .data$production_year) %>%
+    dplyr::group_by(.data$company_id, .data$sector, .data$production_year) %>%
     dplyr::mutate(plan_sec_prod = sum(.data$production_plan_company_technology, na.rm = TRUE)) %>%
     dplyr::ungroup()
   return(data)
