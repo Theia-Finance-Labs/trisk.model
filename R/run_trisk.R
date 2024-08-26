@@ -42,7 +42,7 @@ run_trisk <- function(
       TRUE
     } # TODO
     stopifnot(check_results(output_list))
-
+    if (!is.null(output_path)){
     trisk_params <- process_params(fun = run_trisk_model, ...)
 
     write_results(output_list = output_list, output_path = output_path, trisk_params = trisk_params, show_params_cols = show_params_cols)
