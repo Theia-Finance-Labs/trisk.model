@@ -13,7 +13,6 @@
 #'   NOTE: Results and logs per run are saved to a subdirectory of output_path
 #'   that will be generated automatically. The name of the subdirectory is the
 #'   timestamp of the run of the analysis.
-#' @param save_and_check Boolean, indicating if results shall be exported.
 #'
 #' @inheritParams run_trisk_model
 #' @export
@@ -21,7 +20,6 @@
 run_trisk <- function(
     input_path,
     output_path = NULL,
-    check_outputs = TRUE,
     show_params_cols = TRUE,
     ...) {
   # stopifnot(!((save_and_check & !is.null(output_path)) | !save_and_check),
@@ -37,18 +35,15 @@ run_trisk <- function(
     ...
   )
 
-  if (check_outputs) {
-    check_results <- function(output_list) {
-      TRUE
-    } # TODO
-    stopifnot(check_results(output_list))
-    if (output_path is not NULL){
+
+  check_results <- function(output_list) {
+    TRUE
+  } # TODO
+  stopifnot(check_results(output_list))
+  if (!is.null(output_path)) {
     trisk_params <- process_params(fun = run_trisk_model, ...)
-  
+
     write_results(output_list = output_list, output_path = output_path, trisk_params = trisk_params, show_params_cols = show_params_cols)
-    } else {
-    return(output_list)
-  }
   } else {
     return(output_list)
   }
@@ -94,9 +89,9 @@ run_trisk_model <- function(assets_data,
                             scenarios_data,
                             financial_data,
                             carbon_data,
-                            baseline_scenario="",
-                            target_scenario="",
-                            scenario_geography="Global",
+                            baseline_scenario = "",
+                            target_scenario = "",
+                            scenario_geography = "Global",
                             carbon_price_model = "no_carbon_tax",
                             lgd = 0.45,
                             risk_free_rate = 0.02,
