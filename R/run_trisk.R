@@ -21,7 +21,7 @@
 run_trisk <- function(
     input_path,
     output_path = NULL,
-    save_and_check = TRUE,
+    check_outputs = TRUE,
     show_params_cols = TRUE,
     ...) {
   # stopifnot(!((save_and_check & !is.null(output_path)) | !save_and_check),
@@ -37,15 +37,18 @@ run_trisk <- function(
     ...
   )
 
-  if (save_and_check) {
+  if (check_outputs) {
     check_results <- function(output_list) {
       TRUE
     } # TODO
     stopifnot(check_results(output_list))
-
+    if (output_path is not NULL){
     trisk_params <- process_params(fun = run_trisk_model, ...)
-
+  
     write_results(output_list = output_list, output_path = output_path, trisk_params = trisk_params, show_params_cols = show_params_cols)
+    } else {
+    return(output_list)
+  }
   } else {
     return(output_list)
   }
@@ -135,7 +138,6 @@ run_trisk_model <- function(assets_data,
     end_year = end_analysis,
     carbon_price_model = carbon_price_model
   )
-
 
   # calc net profits
   company_net_profits <- calculate_net_profits(
