@@ -13,7 +13,6 @@
 #'   NOTE: Results and logs per run are saved to a subdirectory of output_path
 #'   that will be generated automatically. The name of the subdirectory is the
 #'   timestamp of the run of the analysis.
-#' @param save_and_check Boolean, indicating if results shall be exported.
 #'
 #' @inheritParams run_trisk_model
 #' @export
@@ -21,7 +20,6 @@
 run_trisk <- function(
     input_path,
     output_path = NULL,
-    save_and_check = TRUE,
     show_params_cols = TRUE,
     ...) {
   # stopifnot(!((save_and_check & !is.null(output_path)) | !save_and_check),
@@ -37,7 +35,7 @@ run_trisk <- function(
     ...
   )
 
-  if (save_and_check) {
+  
     check_results <- function(output_list) {
       TRUE
     } # TODO
