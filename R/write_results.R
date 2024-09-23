@@ -50,7 +50,6 @@ prepare_params_df <- function(trisk_params, run_id) {
 }
 
 prepare_npv_results <- function(output_list, run_id) {
-  browser()
   npv_results <- output_list$company_technology_npv %>%
     dplyr::mutate(run_id = .env$run_id) %>%
     dplyr::rename(
