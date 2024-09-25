@@ -22,7 +22,6 @@ assets_testdata <- read.csv(system.file("testdata", "assets_testdata.csv", packa
 scenarios_testdata <- read.csv(system.file("testdata", "scenarios_testdata.csv", package = "trisk.model"))
 financial_features_testdata <- read.csv(system.file("testdata", "financial_features_testdata.csv", package = "trisk.model"))
 ngfs_carbon_price_testdata <- read.csv(system.file("testdata", "ngfs_carbon_price_testdata.csv", package = "trisk.model"))
-
 ```
 
 ---
