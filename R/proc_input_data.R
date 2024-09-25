@@ -16,7 +16,7 @@ process_assets_data <- function(assets_data, financial_data) {
     assets_data,
     financial_data,
     by = "company_id"
-  )%>%
+  ) %>%
     dplyr::mutate(
       production_plan_company_technology = .data$capacity * .data$capacity_factor
     ) %>%

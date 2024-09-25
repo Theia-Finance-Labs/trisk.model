@@ -21,7 +21,7 @@
 #'   \item{capacity_factor}{Asset utilization percentage.}
 #'   \item{production_unit}{Unit for production.}
 #' }
-#' 
+#'
 #' @note This dataset is accessible via `trisk.model:::assets_testdata` for testing purposes.
 "assets_testdata"
 
@@ -37,7 +37,7 @@
 #'   \item{debt_equity_ratio}{Debt to equity ratio.}
 #'   \item{volatility}{Volatility of the company's asset values.}
 #' }
-#' 
+#'
 #' @note This dataset is accessible via `trisk.model:::financial_features_testdata` for testing purposes.
 "financial_features_testdata"
 
@@ -55,7 +55,7 @@
 #'   \item{unit}{Unit of the variable.}
 #'   \item{carbon_tax}{The amount of carbon tax applied in the scenario.}
 #' }
-#' 
+#'
 #' @note This dataset is accessible via `trisk.model:::carbon_price_testdata` for testing purposes.
 "ngfs_carbon_price_testdata"
 
@@ -80,6 +80,6 @@
 #'   \item{capacity_factor_unit}{Unit for the capacity factor.}
 #'   \item{price_indicator}{Indicator for the price path.}
 #' }
-#' 
+#'
 #' @note This dataset is accessible via `trisk.model:::scenarios_testdata` for testing purposes.
 "scenarios_testdata"

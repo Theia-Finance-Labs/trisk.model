@@ -10,6 +10,7 @@
 #'   of the scenarios included in the analysis should be used to set the
 #'   late & sudden technology trajectories.
 #' @param end_year Numeric, holding end year of analysis.
+#' @param discount_rate Numeric, the discount rate
 #' @param growth_rate Numeric, that holds the terminal growth rate of profits
 #'   beyond the `end_year` in the DCF.
 #'

@@ -6,6 +6,9 @@
 \usage{
 check_valid_financial_data_values(financial_data)
 }
+\arguments{
+\item{financial_data}{data frame that is to be validated}
+}
 \description{
 Checks that numeric columns hold values in acceptable ranges.
 }

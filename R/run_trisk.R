@@ -13,11 +13,11 @@
 #'   that will be generated automatically. The subdirectory name is the
 #'   timestamp of the analysis run.
 #' @param show_params_cols Logical, indicating whether to display parameter columns in the output.
+#' @param ... Additional arguments passed to `run_trisk_model` to customize model parameters.
+#'   See `run_trisk_model()` for details on available parameters.
 #'
-#' @return If output_path is NULL, returns the output_list. Otherwise, writes results to the specified path.
+#' @return If `output_path` is NULL, returns the output list. Otherwise, writes results to the specified path.
 #' @export
-#'
-#' @inheritParams run_trisk_model
 #'
 run_trisk <- function(
     input_path,

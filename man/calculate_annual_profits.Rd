@@ -26,6 +26,8 @@ late & sudden technology trajectories.}
 
 \item{end_year}{Numeric, holding end year of analysis.}
 
+\item{discount_rate}{Numeric, the discount rate}
+
 \item{growth_rate}{Numeric, that holds the terminal growth rate of profits
 beyond the \code{end_year} in the DCF.}
 }

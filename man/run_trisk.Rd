@@ -15,9 +15,12 @@ that will be generated automatically. The subdirectory name is the
 timestamp of the analysis run.}
 
 \item{show_params_cols}{Logical, indicating whether to display parameter columns in the output.}
+
+\item{...}{Additional arguments passed to \code{run_trisk_model} to customize model parameters.
+See \code{run_trisk_model()} for details on available parameters.}
 }
 \value{
-If output_path is NULL, returns the output_list. Otherwise, writes results to the specified path.
+If \code{output_path} is NULL, returns the output list. Otherwise, writes results to the specified path.
 }
 \description{
 This function executes the transition risk stress test. It can be beneficial to

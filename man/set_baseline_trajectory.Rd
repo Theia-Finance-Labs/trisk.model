@@ -12,10 +12,6 @@ set_baseline_trajectory(data)
 until 2040 for all the scenarios included in the analysis and
 production build out plans by technology or company and technology,
 usually for 5 years, based on PACTA results.}
-
-\item{baseline_scenario}{Character. A string that indicates which
-of the scenarios included in the analysis should be used to set the
-baseline technology trajectories.}
 }
 \value{
 dataframe.

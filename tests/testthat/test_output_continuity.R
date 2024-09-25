@@ -20,12 +20,12 @@ SNAPSHOT_PATH <- testthat::test_path("snapshots", "stress_test_snapshot.rds")
 test_that("Ensure continuity of stress test outputs against snapshot", {
   # Skip the test if not enabled
   skip_if_not(Sys.getenv("R_USE_TESTS") == "TRUE", "Test is disabled. Set R_USE_TESTS environment variable to TRUE to enable testing.")
-  
+
   # Check if the specified scenarios exist in the scenarios_testdata
   available_scenarios <- unique(scenarios_testdata$scenario)
   expect_true(baseline_scenario %in% available_scenarios, info = paste("Baseline scenario", baseline_scenario, "not found in scenarios_testdata"))
   expect_true(target_scenario %in% available_scenarios, info = paste("Target scenario", target_scenario, "not found in scenarios_testdata"))
-  
+
   # Run the model with the provided data
   st_results_current <- run_trisk_model(
     assets_data = assets_testdata,
@@ -36,7 +36,7 @@ test_that("Ensure continuity of stress test outputs against snapshot", {
     target_scenario = target_scenario,
     scenario_geography = scenario_geography
   )
-  
+
   # Check if the snapshot exists, if not, create and save it
   if (!file.exists(SNAPSHOT_PATH)) {
     message("Snapshot not found. Creating snapshot with current results.")
@@ -44,26 +44,26 @@ test_that("Ensure continuity of stress test outputs against snapshot", {
     saveRDS(st_results_current, SNAPSHOT_PATH)
     skip("Snapshot created. Run the test again to compare results.")
   }
-  
+
   # Load the snapshot for comparison
   snapshot_results <- readRDS(SNAPSHOT_PATH)
-  
+
   # Compare the entire data frames without selecting specific columns
   current_npv <- st_results_current$company_technology_npv %>% arrange_all()
   snapshot_npv <- snapshot_results$company_technology_npv %>% arrange_all()
-  
+
   # Compare the data frames
   expect_equal(current_npv, snapshot_npv, tolerance = 1e-8, info = "company_technology_npv does not match the snapshot")
 
   # Compare the PD calculations
   current_pd <- st_results_current$company_pd_changes_overall %>% arrange_all()
   snapshot_pd <- snapshot_results$company_pd_changes_overall %>% arrange_all()
-  
+
   expect_equal(current_pd, snapshot_pd, tolerance = 1e-8, info = "company_pd_changes_overall does not match the snapshot")
 
   # Compare the company trajectories
   current_trajectories <- st_results_current$company_trajectories %>% arrange_all()
   snapshot_trajectories <- snapshot_results$company_trajectories %>% arrange_all()
-  
+
   expect_equal(current_trajectories, snapshot_trajectories, tolerance = 1e-8, info = "company_trajectories do not match the snapshot")
 })
