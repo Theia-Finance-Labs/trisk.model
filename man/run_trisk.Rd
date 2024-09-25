@@ -10,9 +10,14 @@ run_trisk(input_path, output_path = NULL, show_params_cols = TRUE, ...)
 \item{input_path}{String containing the path to project-agnostic data.}
 
 \item{output_path}{String containing the path to which output files are written.
-NOTE: Results and logs per run are saved to a subdirectory of output_path
-that will be generated automatically. The name of the subdirectory is the
-timestamp of the run of the analysis.}
+If NULL, the function returns the results list. Results and logs per run are saved
+to a subdirectory of \code{output_path} that will be generated automatically with a
+timestamp.}
+
+\item{show_params_cols}{Logical indicating whether parameter columns should be shown
+in the output. Default is TRUE.}
+
+\item{...}{Additional arguments passed to \code{\link{run_trisk_model}} (clic for parameters detail).}
 }
 \value{
 If \code{output_path} is NULL, returns the output list. Otherwise, writes results
