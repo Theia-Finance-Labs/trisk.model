@@ -11,13 +11,8 @@ run_trisk(input_path, output_path = NULL, show_params_cols = TRUE, ...)
 
 \item{output_path}{String containing the path to which output files are written.
 NOTE: Results and logs per run are saved to a subdirectory of output_path
-that will be generated automatically. The subdirectory name is the
-timestamp of the analysis run.}
-
-\item{show_params_cols}{Logical, indicating whether to display parameter columns in the output.}
-
-\item{...}{Additional arguments passed to \code{run_trisk_model} to customize model parameters.
-See \code{run_trisk_model()} for details on available parameters.}
+that will be generated automatically. The name of the subdirectory is the
+timestamp of the run of the analysis.}
 }
 \value{
 If \code{output_path} is NULL, returns the output list. Otherwise, writes results to the specified path.
