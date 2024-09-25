@@ -2,7 +2,7 @@
 % Please edit documentation in R/run_trisk.R
 \name{run_trisk}
 \alias{run_trisk}
-\title{Run stress testing for provided asset type.}
+\title{Run stress testing for provided asset type}
 \usage{
 run_trisk(input_path, output_path = NULL, show_params_cols = TRUE, ...)
 }
@@ -10,18 +10,24 @@ run_trisk(input_path, output_path = NULL, show_params_cols = TRUE, ...)
 \item{input_path}{String containing the path to project-agnostic data.}
 
 \item{output_path}{String containing the path to which output files are written.
-NOTE: Results and logs per run are saved to a subdirectory of output_path
-that will be generated automatically. The name of the subdirectory is the
-timestamp of the run of the analysis.}
+If NULL, the function returns the results list. Results and logs per run are saved
+to a subdirectory of \code{output_path} that will be generated automatically with a
+timestamp.}
+
+\item{show_params_cols}{Logical indicating whether parameter columns should be shown
+in the output. Default is TRUE.}
+
+\item{...}{Additional arguments passed to \code{\link{run_trisk_model}} (clic for parameters detail).}
 }
 \value{
-If \code{output_path} is NULL, returns the output list. Otherwise, writes results to the specified path.
+If \code{output_path} is NULL, returns the output list. Otherwise, writes results
+to the specified path.
 }
 \description{
-This function executes the transition risk stress test. It can be beneficial to
-understand scenario sensitivities, in which case the user may pass a
-vector of values to one (and only one) of the detailed arguments. This will
-result in running the analysis multiple times consecutively with the varied argument.
-NOTE: If \code{return_results} is TRUE, results will not be written to the \code{output_path}
-but will instead be returned.
+This function executes the transition risk stress test. It reads data from
+the input path, runs the transition risk model using the provided parameters,
+and writes results to the output path if provided.
+}
+\details{
+For details on specific parameters, refer to the documentation of \code{\link{run_trisk_model}}.
 }

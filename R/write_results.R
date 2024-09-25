@@ -1,5 +1,12 @@
+#' Process function parameters
+#'
+#' This function extracts the default parameters from a function and replaces them with user-provided values where applicable.
+#'
+#' @param fun A function whose parameters are to be processed.
+#' @param ... User-defined arguments to override the function's default parameters.
+#' @return A list of final parameters.
+#' @export
 process_params <- function(fun, ...) {
-  # Extract the parameters and their default values, replace by user inputs where applicable
   params <- formals(fun)
   default_params <- params[!sapply(params, is.symbol)]
   args <- list(...)
@@ -27,10 +34,10 @@ process_params <- function(fun, ...) {
 #' @export
 prepare_trisk_results <- function(output_list, trisk_params, run_id){
     list(
-      npv = tibble::as_tibble(trisk.model:::prepare_npv_results(output_list, run_id)),
-      pd = tibble::as_tibble(trisk.model:::prepare_pd_results(output_list, run_id)),
-      trajectories = tibble::as_tibble(trisk.model:::prepare_company_trajectories(output_list, run_id)),
-      params = tibble::as_tibble(trisk.model:::prepare_params_df(trisk_params, run_id))
+      npv = tibble::as_tibble(prepare_npv_results(output_list, run_id)),
+      pd = tibble::as_tibble(prepare_pd_results(output_list, run_id)),
+      trajectories = tibble::as_tibble(prepare_company_trajectories(output_list, run_id)),
+      params = tibble::as_tibble(prepare_params_df(trisk_params, run_id))
   )
 }
 
