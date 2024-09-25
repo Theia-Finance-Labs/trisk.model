@@ -28,6 +28,3 @@ This function executes the transition risk stress test. It reads data from
 the input path, runs the transition risk model using the provided parameters,
 and writes results to the output path if provided.
 }
-\details{
-For details on specific parameters, refer to the documentation of \code{\link{run_trisk_model}}.
-}
