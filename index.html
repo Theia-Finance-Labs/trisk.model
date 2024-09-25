@@ -100,11 +100,13 @@
 <ol style="list-style-type: decimal">
 <li>
 <p>Install the <code>remotes</code> package if you don’t have it:</p>
-<p><code>{r}  install.packages("remotes")</code></p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span></code></pre></div>
 </li>
 <li>
 <p>Install the transition risk stress testing suite from GitHub:</p>
-<p><code>{r}  remotes::install_github("Theia-Finance-Labs/trisk.model")</code></p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Theia-Finance-Labs/trisk.model"</span><span class="op">)</span></span></code></pre></div>
 </li>
 </ol>
 <hr>
@@ -138,7 +140,11 @@
 <h3 id="loading-data">Loading Data<a class="anchor" aria-label="anchor" href="#loading-data"></a>
 </h3>
 <p>In the <code>trisk.model</code> package, you can also load the prepackaged example datasets to run quick tests or model executions. These datasets are stored internally and can be loaded with:</p>
-<p><code>{r} data(assets_testdata, package = "trisk.model") data(scenarios_testdata, package = "trisk.model") data(financial_features_testdata, package = "trisk.model") data(carbon_price_testdata, package = "trisk.model")</code></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">assets_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">scenarios_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">financial_features_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">carbon_price_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span></code></pre></div>
 <p>If you are using your own CSV files, place them in a directory with the above structure and point to that directory in the <code>input_path</code> parameter when running the <code><a href="reference/run_trisk.html">run_trisk()</a></code> function.</p>
 <hr>
 </div>
@@ -183,45 +189,56 @@
 <li>A list of result data frames or writes results to the disk based on the provided path.</li>
 </ul>
 <p><strong>Example Usage:</strong></p>
-<p>```{r} # Load the package library(trisk.model)</p>
-</div>
-</div>
-</div>
-<div class="section level1">
-<h1 id="run-the-stress-test-and-save-results-to-disk">Run the stress test and save results to disk<a class="anchor" aria-label="anchor" href="#run-the-stress-test-and-save-results-to-disk"></a>
-</h1>
-<p>run_trisk( input_path = “path/to/project_input/”, output_path = “path/to/output”, baseline_scenario = “NGFS2023GCAM_CP”, target_scenario = “NGFS2023GCAM_NZ2050”, scenario_geography = “Global”, risk_free_rate = 0.02, discount_rate = 0.07, growth_rate = 0.03, div_netprofit_prop_coef = 1, shock_year = 2030, show_params_cols = TRUE )</p>
-<pre><code>
----
-
-### `run_trisk_model()`
-
-This function runs the core transition risk stress test model without handling file read/write operations. It is used to execute the transition risk stress test when data is already loaded into memory.
-
-**Example Usage:**
-
-```{r}
-# Load the package
-library(trisk.model)
-
-# Load the internal datasets from the package
-data(assets_testdata, package = "trisk.model")
-data(scenarios_testdata, package = "trisk.model")
-data(financial_features_testdata, package = "trisk.model")
-data(carbon_price_testdata, package = "trisk.model")
-
-# Run the transition risk model
-results &lt;- run_trisk_model(
-  assets_data = assets_testdata,
-  scenarios_data = scenarios_testdata,
-  financial_data = financial_features_testdata,
-  carbon_data = carbon_price_testdata,
-  baseline_scenario = "NGFS2023GCAM_CP",
-  target_scenario = "NGFS2023GCAM_NZ2050",
-  scenario_geography = "Global",
-  shock_year = 2030
-)</code></pre>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load the package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">trisk.model</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Run the stress test and save results to disk</span></span>
+<span><span class="fu"><a href="reference/run_trisk.html">run_trisk</a></span><span class="op">(</span></span>
+<span>  input_path <span class="op">=</span> <span class="st">"path/to/project_input/"</span>,</span>
+<span>  output_path <span class="op">=</span> <span class="st">"path/to/output"</span>,</span>
+<span>  baseline_scenario <span class="op">=</span> <span class="st">"NGFS2023GCAM_CP"</span>,</span>
+<span>  target_scenario <span class="op">=</span> <span class="st">"NGFS2023GCAM_NZ2050"</span>,</span>
+<span>  scenario_geography <span class="op">=</span> <span class="st">"Global"</span>,</span>
+<span>  risk_free_rate <span class="op">=</span> <span class="fl">0.02</span>,</span>
+<span>  discount_rate <span class="op">=</span> <span class="fl">0.07</span>,</span>
+<span>  growth_rate <span class="op">=</span> <span class="fl">0.03</span>,</span>
+<span>  div_netprofit_prop_coef <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  shock_year <span class="op">=</span> <span class="fl">2030</span>,</span>
+<span>  show_params_cols <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <hr>
+</div>
+<div class="section level3">
+<h3 id="run_trisk_model">
+<code>run_trisk_model()</code><a class="anchor" aria-label="anchor" href="#run_trisk_model"></a>
+</h3>
+<p>This function runs the core transition risk stress test model without handling file read/write operations. It is used to execute the transition risk stress test when data is already loaded into memory.</p>
+<p><strong>Example Usage:</strong></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load the package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">trisk.model</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load the internal datasets from the package</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">assets_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">scenarios_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">financial_features_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">carbon_price_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Run the transition risk model</span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_trisk_model.html">run_trisk_model</a></span><span class="op">(</span></span>
+<span>  assets_data <span class="op">=</span> <span class="va">assets_testdata</span>,</span>
+<span>  scenarios_data <span class="op">=</span> <span class="va">scenarios_testdata</span>,</span>
+<span>  financial_data <span class="op">=</span> <span class="va">financial_features_testdata</span>,</span>
+<span>  carbon_data <span class="op">=</span> <span class="va">carbon_price_testdata</span>,</span>
+<span>  baseline_scenario <span class="op">=</span> <span class="st">"NGFS2023GCAM_CP"</span>,</span>
+<span>  target_scenario <span class="op">=</span> <span class="st">"NGFS2023GCAM_NZ2050"</span>,</span>
+<span>  scenario_geography <span class="op">=</span> <span class="st">"Global"</span>,</span>
+<span>  shock_year <span class="op">=</span> <span class="fl">2030</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+</div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
