@@ -65,7 +65,6 @@ run_trisk <- function(
 #' @param target_scenario String specifying the name of the shock scenario.
 #' @param scenario_geography Character vector indicating which geographical region(s) to calculate results for.
 #' @param carbon_price_model Character vector specifying which NGFS model to use for carbon prices. Default is "no_carbon_tax".
-#' @param lgd Numeric value for Loss Given Default. Default is 0.45.
 #' @param risk_free_rate Numeric value for the risk-free interest rate. Default is 0.02.
 #' @param discount_rate Numeric value for the discount rate of dividends per year in the DCF. Default is 0.07.
 #' @param growth_rate Numeric value for the terminal growth rate of profits beyond the final year in the DCF. Default is 0.03.
@@ -87,7 +86,6 @@ run_trisk_model <- function(assets_data,
                             target_scenario = "",
                             scenario_geography = "Global",
                             carbon_price_model = "no_carbon_tax",
-                            lgd = 0.45,
                             risk_free_rate = 0.02,
                             discount_rate = 0.07,
                             growth_rate = 0.03,

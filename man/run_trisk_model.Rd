@@ -13,7 +13,6 @@ run_trisk_model(
   target_scenario = "",
   scenario_geography = "Global",
   carbon_price_model = "no_carbon_tax",
-  lgd = 0.45,
   risk_free_rate = 0.02,
   discount_rate = 0.07,
   growth_rate = 0.03,
@@ -38,8 +37,6 @@ run_trisk_model(
 \item{scenario_geography}{Character vector indicating which geographical region(s) to calculate results for.}
 
 \item{carbon_price_model}{Character vector specifying which NGFS model to use for carbon prices. Default is "no_carbon_tax".}
-
-\item{lgd}{Numeric value for Loss Given Default. Default is 0.45.}
 
 \item{risk_free_rate}{Numeric value for the risk-free interest rate. Default is 0.02.}
 
