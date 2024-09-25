@@ -32,13 +32,13 @@ You can install this package directly from GitHub using the `remotes` package in
 
 1. Install the `remotes` package if you don't have it:
 
-    ```{r}
+    ```r
     install.packages("remotes")
     ```
 
 2. Install the transition risk stress testing suite from GitHub:
 
-    ```{r}
+    ```r
     remotes::install_github("Theia-Finance-Labs/trisk.model")
     ```
 
@@ -70,7 +70,7 @@ For more details on how to structure the input data, refer to the [Vignette on D
 
 In the `trisk.model` package, you can also load the prepackaged example datasets to run quick tests or model executions. These datasets are stored internally and can be loaded with:
 
-```{r}
+```r
 data(assets_testdata, package = "trisk.model")
 data(scenarios_testdata, package = "trisk.model")
 data(financial_features_testdata, package = "trisk.model")
@@ -108,7 +108,7 @@ The primary function for running the transition risk stress test. It processes t
 
 **Example Usage:**
 
-```{r}
+```r
 # Load the package
 library(trisk.model)
 
@@ -136,7 +136,7 @@ This function runs the core transition risk stress test model without handling f
 
 **Example Usage:**
 
-```{r}
+```r
 # Load the package
 library(trisk.model)
 
