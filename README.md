@@ -2,6 +2,8 @@
 
 This repository provides a comprehensive toolkit for conducting transition risk stress tests on financial assets. The tools enable users to analyze the impact of various climate scenarios on company trajectories, technology valuations, and default probabilities.
 
+If you prefer a quick setup and use of the code, use directly the package [trisk.analysis](https://github.com/Theia-Finance-Labs/trisk.analysis). 
+
 ## Table of Contents
 
 - [trisk.model](#triskmodel)
