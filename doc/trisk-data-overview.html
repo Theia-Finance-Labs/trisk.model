@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>trisk-data-overview</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">trisk-data-overview</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(trisk.model)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>assets_testdata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">&quot;testdata&quot;</span>, <span class="st">&quot;assets_testdata.csv&quot;</span>, <span class="at">package =</span> <span class="st">&quot;trisk.model&quot;</span>))</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>scenarios_testdata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">&quot;testdata&quot;</span>, <span class="st">&quot;scenarios_testdata.csv&quot;</span>, <span class="at">package =</span> <span class="st">&quot;trisk.model&quot;</span>))</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>financial_features_testdata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">&quot;testdata&quot;</span>, <span class="st">&quot;financial_features_testdata.csv&quot;</span>, <span class="at">package =</span> <span class="st">&quot;trisk.model&quot;</span>))</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>ngfs_carbon_price_testdata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">&quot;testdata&quot;</span>, <span class="st">&quot;ngfs_carbon_price_testdata.csv&quot;</span>, <span class="at">package =</span> <span class="st">&quot;trisk.model&quot;</span>))</span></code></pre></div>
+<hr />
+<div id="datasets" class="section level2">
+<h2>Datasets</h2>
+<div id="assets-test-data" class="section level3">
+<h3>Assets Test Data</h3>
+<p>This dataset contains data about company assets, including
+production, technology, and geographical details.</p>
+<div id="data-description" class="section level4">
+<h4>Data Description</h4>
+<p>The <code>assets_testdata</code> dataset includes the following
+columns:</p>
+<ul>
+<li><code>company_id</code>: Unique identifier for the company.</li>
+<li><code>company_name</code>: Name of the company.</li>
+<li><code>plan_sec_prod</code>: Secondary production plan.</li>
+<li><code>country_name</code>: Country where the asset is located.</li>
+<li><code>plant_age_years</code>: Age of the plant in years.</li>
+<li><code>workforce_size</code>: Size of the workforce.</li>
+<li><code>asset_id</code>: Unique identifier for the asset.</li>
+<li><code>country_iso2</code>: ISO 3166-1 alpha-2 code for the
+country.</li>
+<li><code>asset_name</code>: Name of the asset.</li>
+<li><code>production_year</code>: Year of production data.</li>
+<li><code>emission_factor</code>: Emissions from production.</li>
+<li><code>technology</code>: Type of technology used.</li>
+<li><code>sector</code>: Production sector.</li>
+<li><code>capacity</code>: Asset capacity.</li>
+<li><code>capacity_factor</code>: Asset utilization percentage.</li>
+<li><code>production_unit</code>: Unit for production.</li>
+</ul>
+</div>
+<div id="data-structure" class="section level4">
+<h4>Data Structure</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">str</span>(assets_testdata)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; &#39;data.frame&#39;:    42 obs. of  16 variables:</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt;  $ company_id     : int  101 101 101 101 101 101 102 102 102 102 ...</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt;  $ company_name   : chr  &quot;Company 1&quot; &quot;Company 1&quot; &quot;Company 1&quot; &quot;Company 1&quot; ...</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt;  $ plan_sec_prod  : num  5000 5423 6200 7400 7800 ...</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt;  $ country_name   : logi  NA NA NA NA NA NA ...</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt;  $ plant_age_years: logi  NA NA NA NA NA NA ...</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt;  $ workforce_size : logi  NA NA NA NA NA NA ...</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt;  $ asset_id       : int  101 101 101 101 101 101 102 102 102 102 ...</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt;  $ country_iso2   : chr  &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; &quot;DE&quot; ...</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt;  $ asset_name     : chr  &quot;Company 1&quot; &quot;Company 1&quot; &quot;Company 1&quot; &quot;Company 1&quot; ...</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt;  $ production_year: int  2022 2023 2024 2025 2026 2027 2022 2023 2024 2025 ...</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt;  $ emission_factor: num  0.062 0.062 0.062 0.062 0.062 ...</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt;  $ technology     : chr  &quot;Gas&quot; &quot;Gas&quot; &quot;Gas&quot; &quot;Gas&quot; ...</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt;  $ sector         : chr  &quot;Oil&amp;Gas&quot; &quot;Oil&amp;Gas&quot; &quot;Oil&amp;Gas&quot; &quot;Oil&amp;Gas&quot; ...</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt;  $ capacity       : num  5000 5423 6200 7400 7800 ...</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt;  $ capacity_factor: int  1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt;  $ production_unit: chr  &quot;GJ&quot; &quot;GJ&quot; &quot;GJ&quot; &quot;GJ&quot; ...</span></span></code></pre></div>
+</div>
+<div id="sample-data" class="section level4">
+<h4>Sample Data</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">head</span>(assets_testdata)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt;   company_id company_name plan_sec_prod country_name plant_age_years</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; 1        101    Company 1          5000           NA              NA</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; 2        101    Company 1          5423           NA              NA</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; 3        101    Company 1          6200           NA              NA</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; 4        101    Company 1          7400           NA              NA</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; 5        101    Company 1          7800           NA              NA</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; 6        101    Company 1          8600           NA              NA</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt;   workforce_size asset_id country_iso2 asset_name production_year</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; 1             NA      101           DE  Company 1            2022</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; 2             NA      101           DE  Company 1            2023</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; 3             NA      101           DE  Company 1            2024</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; 4             NA      101           DE  Company 1            2025</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 5             NA      101           DE  Company 1            2026</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 6             NA      101           DE  Company 1            2027</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt;   emission_factor technology  sector capacity capacity_factor production_unit</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; 1      0.06202588        Gas Oil&amp;Gas     5000               1              GJ</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; 2      0.06202588        Gas Oil&amp;Gas     5423               1              GJ</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; 3      0.06202588        Gas Oil&amp;Gas     6200               1              GJ</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; 4      0.06202588        Gas Oil&amp;Gas     7400               1              GJ</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; 5      0.06202588        Gas Oil&amp;Gas     7800               1              GJ</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; 6      0.06202588        Gas Oil&amp;Gas     8600               1              GJ</span></span></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="financial-features-test-data" class="section level3">
+<h3>Financial Features Test Data</h3>
+<p>This dataset contains financial metrics necessary for calculating
+stress test outputs.</p>
+<div id="data-description-1" class="section level4">
+<h4>Data Description</h4>
+<p>The <code>financial_features_testdata</code> dataset includes the
+following columns:</p>
+<ul>
+<li><code>company_id</code>: Unique identifier for the company.</li>
+<li><code>pd</code>: Probability of default for the company.</li>
+<li><code>net_profit_margin</code>: Net profit margin for the
+company.</li>
+<li><code>debt_equity_ratio</code>: Debt to equity ratio.</li>
+<li><code>volatility</code>: Volatility of the company’s asset
+values.</li>
+</ul>
+</div>
+<div id="data-structure-1" class="section level4">
+<h4>Data Structure</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">str</span>(financial_features_testdata)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; &#39;data.frame&#39;:    5 obs. of  5 variables:</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt;  $ company_id       : int  101 103 105 104 102</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt;  $ pd               : num  0.00562 0.00398 0.00246 0.00298 0.00365</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;  $ net_profit_margin: num  0.0764 0.0717 0.0539 0.0539 0.1058</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt;  $ debt_equity_ratio: num  0.13 0.128 0.119 0.11 0.104</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt;  $ volatility       : num  0.259 0.251 0.236 0.251 0.317</span></span></code></pre></div>
+</div>
+<div id="sample-data-1" class="section level4">
+<h4>Sample Data</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">head</span>(financial_features_testdata)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt;   company_id        pd net_profit_margin debt_equity_ratio volatility</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; 1        101 0.0056224        0.07635422         0.1297317  0.2593230</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; 2        103 0.0039782        0.07169490         0.1277164  0.2513500</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; 3        105 0.0024568        0.05393410         0.1194000  0.2360043</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; 4        104 0.0029792        0.05393410         0.1097633  0.2513500</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; 5        102 0.0036483        0.10578785         0.1044025  0.3167116</span></span></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="ngfs-carbon-price-test-data" class="section level3">
+<h3>NGFS Carbon Price Test Data</h3>
+<p>This dataset provides carbon pricing data used in the stress test
+scenarios.</p>
+<div id="data-description-2" class="section level4">
+<h4>Data Description</h4>
+<p>The <code>ngfs_carbon_price_testdata</code> dataset includes the
+following columns:</p>
+<ul>
+<li><code>year</code>: Year of the carbon price.</li>
+<li><code>model</code>: Model used to generate the carbon price.</li>
+<li><code>scenario</code>: Scenario name.</li>
+<li><code>scenario_geography</code>: Geographic region for the
+scenario.</li>
+<li><code>variable</code>: The variable measured (e.g., carbon
+price).</li>
+<li><code>unit</code>: Unit of the variable.</li>
+<li><code>carbon_tax</code>: The amount of carbon tax applied in the
+scenario.</li>
+</ul>
+</div>
+<div id="data-structure-2" class="section level4">
+<h4>Data Structure</h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">str</span>(ngfs_carbon_price_testdata)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; &#39;data.frame&#39;:    1376 obs. of  7 variables:</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt;  $ year              : int  2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 ...</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt;  $ model             : chr  &quot;GCAM 5.3+ NGFS&quot; &quot;GCAM 5.3+ NGFS&quot; &quot;GCAM 5.3+ NGFS&quot; &quot;GCAM 5.3+ NGFS&quot; ...</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt;  $ scenario          : chr  &quot;B2DS&quot; &quot;B2DS&quot; &quot;B2DS&quot; &quot;B2DS&quot; ...</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt;  $ scenario_geography: chr  &quot;Global&quot; &quot;Global&quot; &quot;Global&quot; &quot;Global&quot; ...</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt;  $ variable          : chr  &quot;Price|Carbon&quot; &quot;Price|Carbon&quot; &quot;Price|Carbon&quot; &quot;Price|Carbon&quot; ...</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt;  $ unit              : chr  &quot;US$2010/t CO2&quot; &quot;US$2010/t CO2&quot; &quot;US$2010/t CO2&quot; &quot;US$2010/t CO2&quot; ...</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt;  $ carbon_tax        : num  0 0 0 0 0 0 0 0 0 0 ...</span></span></code></pre></div>
+</div>
+<div id="sample-data-2" class="section level4">
+<h4>Sample Data</h4>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">head</span>(ngfs_carbon_price_testdata)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt;   year          model scenario scenario_geography     variable          unit</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; 1 2015 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; 2 2016 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; 3 2017 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; 4 2018 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; 5 2019 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 6 2020 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt;   carbon_tax</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; 1          0</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; 2          0</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; 3          0</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; 4          0</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; 5          0</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; 6          0</span></span></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="scenarios-test-data" class="section level3">
+<h3>Scenarios Test Data</h3>
+<p>This dataset contains scenario-specific data including price paths,
+capacity factors, and other relevant information.</p>
+<div id="data-description-3" class="section level4">
+<h4>Data Description</h4>
+<p>The <code>scenarios_testdata</code> dataset includes the following
+columns:</p>
+<ul>
+<li><code>scenario_geography</code>: Region relevant to the
+scenario.</li>
+<li><code>scenario</code>: Scenario name.</li>
+<li><code>scenario_pathway</code>: Specific pathway for the
+scenario.</li>
+<li><code>scenario_type</code>: Type of scenario (e.g., baseline,
+shock).</li>
+<li><code>sector</code>: Sector of production.</li>
+<li><code>technology</code>: Type of technology.</li>
+<li><code>scenario_year</code>: Year of the scenario data.</li>
+<li><code>scenario_price</code>: Price in the scenario.</li>
+<li><code>price_unit</code>: Unit for the price.</li>
+<li><code>pathway_unit</code>: Unit of the pathway.</li>
+<li><code>scenario_capacity_factor</code>: Capacity factor for the
+scenario.</li>
+<li><code>technology_type</code>: Type of technology involved.</li>
+<li><code>capacity_factor_unit</code>: Unit for the capacity
+factor.</li>
+<li><code>price_indicator</code>: Indicator for the price path.</li>
+</ul>
+</div>
+<div id="data-structure-3" class="section level4">
+<h4>Data Structure</h4>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">str</span>(scenarios_testdata)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt; &#39;data.frame&#39;:    1422 obs. of  14 variables:</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt;  $ scenario_geography      : chr  &quot;Global&quot; &quot;Global&quot; &quot;Global&quot; &quot;Global&quot; ...</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt;  $ scenario                : chr  &quot;NGFS2023GCAM_CP&quot; &quot;NGFS2023GCAM_CP&quot; &quot;NGFS2023GCAM_CP&quot; &quot;NGFS2023GCAM_CP&quot; ...</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt;  $ scenario_pathway        : num  159 160 161 162 162 ...</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt;  $ scenario_type           : chr  &quot;baseline&quot; &quot;baseline&quot; &quot;baseline&quot; &quot;baseline&quot; ...</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt;  $ sector                  : chr  &quot;Coal&quot; &quot;Coal&quot; &quot;Coal&quot; &quot;Coal&quot; ...</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt;  $ technology              : chr  &quot;Coal&quot; &quot;Coal&quot; &quot;Coal&quot; &quot;Coal&quot; ...</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt;  $ scenario_year           : int  2022 2023 2024 2025 2026 2027 2028 2029 2030 2031 ...</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt;  $ scenario_price          : num  57 57.4 57.7 58 58.4 ...</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt;  $ price_unit              : chr  &quot;$/tonnes&quot; &quot;$/tonnes&quot; &quot;$/tonnes&quot; &quot;$/tonnes&quot; ...</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt;  $ pathway_unit            : chr  &quot;EJ/yr&quot; &quot;EJ/yr&quot; &quot;EJ/yr&quot; &quot;EJ/yr&quot; ...</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt;  $ scenario_capacity_factor: num  1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt;  $ technology_type         : chr  &quot;carbontech&quot; &quot;carbontech&quot; &quot;carbontech&quot; &quot;carbontech&quot; ...</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt;  $ capacity_factor_unit    : logi  NA NA NA NA NA NA ...</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt;  $ price_indicator         : logi  NA NA NA NA NA NA ...</span></span></code></pre></div>
+</div>
+<div id="sample-data-3" class="section level4">
+<h4>Sample Data</h4>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">head</span>(scenarios_testdata, <span class="dv">50</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt;    scenario_geography        scenario scenario_pathway scenario_type sector</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; 1              Global NGFS2023GCAM_CP         159.4468      baseline   Coal</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; 2              Global NGFS2023GCAM_CP         160.4324      baseline   Coal</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; 3              Global NGFS2023GCAM_CP         161.4180      baseline   Coal</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; 4              Global NGFS2023GCAM_CP         162.4035      baseline   Coal</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 5              Global NGFS2023GCAM_CP         162.4545      baseline   Coal</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; 6              Global NGFS2023GCAM_CP         162.5055      baseline   Coal</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; 7              Global NGFS2023GCAM_CP         162.5565      baseline   Coal</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; 8              Global NGFS2023GCAM_CP         162.6075      baseline   Coal</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; 9              Global NGFS2023GCAM_CP         162.6585      baseline   Coal</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; 10             Global NGFS2023GCAM_CP         163.5647      baseline   Coal</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; 11             Global NGFS2023GCAM_CP         164.4709      baseline   Coal</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; 12             Global NGFS2023GCAM_CP         165.3771      baseline   Coal</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; 13             Global NGFS2023GCAM_CP         166.2833      baseline   Coal</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; 14             Global NGFS2023GCAM_CP         167.1895      baseline   Coal</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; 15             Global NGFS2023GCAM_CP         167.6793      baseline   Coal</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; 16             Global NGFS2023GCAM_CP         168.1691      baseline   Coal</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt; 17             Global NGFS2023GCAM_CP         168.6589      baseline   Coal</span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt; 18             Global NGFS2023GCAM_CP         169.1487      baseline   Coal</span></span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="co">#&gt; 19             Global NGFS2023GCAM_CP         169.6385      baseline   Coal</span></span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="co">#&gt; 20             Global NGFS2023GCAM_CP         169.6492      baseline   Coal</span></span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a><span class="co">#&gt; 21             Global NGFS2023GCAM_CP         169.6599      baseline   Coal</span></span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a><span class="co">#&gt; 22             Global NGFS2023GCAM_CP         169.6706      baseline   Coal</span></span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a><span class="co">#&gt; 23             Global NGFS2023GCAM_CP         169.6813      baseline   Coal</span></span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a><span class="co">#&gt; 24             Global NGFS2023GCAM_CP         169.6920      baseline   Coal</span></span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a><span class="co">#&gt; 25             Global NGFS2023GCAM_CP         169.3689      baseline   Coal</span></span>
+<span id="cb9-28"><a href="#cb9-28" tabindex="-1"></a><span class="co">#&gt; 26             Global NGFS2023GCAM_CP         169.0457      baseline   Coal</span></span>
+<span id="cb9-29"><a href="#cb9-29" tabindex="-1"></a><span class="co">#&gt; 27             Global NGFS2023GCAM_CP         168.7226      baseline   Coal</span></span>
+<span id="cb9-30"><a href="#cb9-30" tabindex="-1"></a><span class="co">#&gt; 28             Global NGFS2023GCAM_CP         168.3994      baseline   Coal</span></span>
+<span id="cb9-31"><a href="#cb9-31" tabindex="-1"></a><span class="co">#&gt; 29             Global NGFS2023GCAM_CP         168.0763      baseline   Coal</span></span>
+<span id="cb9-32"><a href="#cb9-32" tabindex="-1"></a><span class="co">#&gt; 30             Global NGFS2023GCAM_CP         167.9941      baseline   Coal</span></span>
+<span id="cb9-33"><a href="#cb9-33" tabindex="-1"></a><span class="co">#&gt; 31             Global NGFS2023GCAM_CP         167.9119      baseline   Coal</span></span>
+<span id="cb9-34"><a href="#cb9-34" tabindex="-1"></a><span class="co">#&gt; 32             Global NGFS2023GCAM_CP         167.8298      baseline   Coal</span></span>
+<span id="cb9-35"><a href="#cb9-35" tabindex="-1"></a><span class="co">#&gt; 33             Global NGFS2023GCAM_CP         167.7476      baseline   Coal</span></span>
+<span id="cb9-36"><a href="#cb9-36" tabindex="-1"></a><span class="co">#&gt; 34             Global NGFS2023GCAM_CP         167.6655      baseline   Coal</span></span>
+<span id="cb9-37"><a href="#cb9-37" tabindex="-1"></a><span class="co">#&gt; 35             Global NGFS2023GCAM_CP         167.3440      baseline   Coal</span></span>
+<span id="cb9-38"><a href="#cb9-38" tabindex="-1"></a><span class="co">#&gt; 36             Global NGFS2023GCAM_CP         167.0226      baseline   Coal</span></span>
+<span id="cb9-39"><a href="#cb9-39" tabindex="-1"></a><span class="co">#&gt; 37             Global NGFS2023GCAM_CP         166.7011      baseline   Coal</span></span>
+<span id="cb9-40"><a href="#cb9-40" tabindex="-1"></a><span class="co">#&gt; 38             Global NGFS2023GCAM_CP         166.3796      baseline   Coal</span></span>
+<span id="cb9-41"><a href="#cb9-41" tabindex="-1"></a><span class="co">#&gt; 39             Global NGFS2023GCAM_CP         166.0582      baseline   Coal</span></span>
+<span id="cb9-42"><a href="#cb9-42" tabindex="-1"></a><span class="co">#&gt; 40             Global NGFS2023GCAM_CP         165.4385      baseline   Coal</span></span>
+<span id="cb9-43"><a href="#cb9-43" tabindex="-1"></a><span class="co">#&gt; 41             Global NGFS2023GCAM_CP         164.8189      baseline   Coal</span></span>
+<span id="cb9-44"><a href="#cb9-44" tabindex="-1"></a><span class="co">#&gt; 42             Global NGFS2023GCAM_CP         164.1992      baseline   Coal</span></span>
+<span id="cb9-45"><a href="#cb9-45" tabindex="-1"></a><span class="co">#&gt; 43             Global NGFS2023GCAM_CP         163.5796      baseline   Coal</span></span>
+<span id="cb9-46"><a href="#cb9-46" tabindex="-1"></a><span class="co">#&gt; 44             Global NGFS2023GCAM_CP         162.9599      baseline   Coal</span></span>
+<span id="cb9-47"><a href="#cb9-47" tabindex="-1"></a><span class="co">#&gt; 45             Global NGFS2023GCAM_CP         161.8002      baseline   Coal</span></span>
+<span id="cb9-48"><a href="#cb9-48" tabindex="-1"></a><span class="co">#&gt; 46             Global NGFS2023GCAM_CP         160.6404      baseline   Coal</span></span>
+<span id="cb9-49"><a href="#cb9-49" tabindex="-1"></a><span class="co">#&gt; 47             Global NGFS2023GCAM_CP         159.4807      baseline   Coal</span></span>
+<span id="cb9-50"><a href="#cb9-50" tabindex="-1"></a><span class="co">#&gt; 48             Global NGFS2023GCAM_CP         158.3210      baseline   Coal</span></span>
+<span id="cb9-51"><a href="#cb9-51" tabindex="-1"></a><span class="co">#&gt; 49             Global NGFS2023GCAM_CP         157.1612      baseline   Coal</span></span>
+<span id="cb9-52"><a href="#cb9-52" tabindex="-1"></a><span class="co">#&gt; 50             Global NGFS2023GCAM_CP         156.1628      baseline   Coal</span></span>
+<span id="cb9-53"><a href="#cb9-53" tabindex="-1"></a><span class="co">#&gt;    technology scenario_year scenario_price price_unit pathway_unit</span></span>
+<span id="cb9-54"><a href="#cb9-54" tabindex="-1"></a><span class="co">#&gt; 1        Coal          2022       57.03917   $/tonnes        EJ/yr</span></span>
+<span id="cb9-55"><a href="#cb9-55" tabindex="-1"></a><span class="co">#&gt; 2        Coal          2023       57.35451   $/tonnes        EJ/yr</span></span>
+<span id="cb9-56"><a href="#cb9-56" tabindex="-1"></a><span class="co">#&gt; 3        Coal          2024       57.66985   $/tonnes        EJ/yr</span></span>
+<span id="cb9-57"><a href="#cb9-57" tabindex="-1"></a><span class="co">#&gt; 4        Coal          2025       57.98520   $/tonnes        EJ/yr</span></span>
+<span id="cb9-58"><a href="#cb9-58" tabindex="-1"></a><span class="co">#&gt; 5        Coal          2026       58.41776   $/tonnes        EJ/yr</span></span>
+<span id="cb9-59"><a href="#cb9-59" tabindex="-1"></a><span class="co">#&gt; 6        Coal          2027       58.85032   $/tonnes        EJ/yr</span></span>
+<span id="cb9-60"><a href="#cb9-60" tabindex="-1"></a><span class="co">#&gt; 7        Coal          2028       59.28289   $/tonnes        EJ/yr</span></span>
+<span id="cb9-61"><a href="#cb9-61" tabindex="-1"></a><span class="co">#&gt; 8        Coal          2029       59.71545   $/tonnes        EJ/yr</span></span>
+<span id="cb9-62"><a href="#cb9-62" tabindex="-1"></a><span class="co">#&gt; 9        Coal          2030       60.14802   $/tonnes        EJ/yr</span></span>
+<span id="cb9-63"><a href="#cb9-63" tabindex="-1"></a><span class="co">#&gt; 10       Coal          2031       60.53991   $/tonnes        EJ/yr</span></span>
+<span id="cb9-64"><a href="#cb9-64" tabindex="-1"></a><span class="co">#&gt; 11       Coal          2032       60.93181   $/tonnes        EJ/yr</span></span>
+<span id="cb9-65"><a href="#cb9-65" tabindex="-1"></a><span class="co">#&gt; 12       Coal          2033       61.32370   $/tonnes        EJ/yr</span></span>
+<span id="cb9-66"><a href="#cb9-66" tabindex="-1"></a><span class="co">#&gt; 13       Coal          2034       61.71560   $/tonnes        EJ/yr</span></span>
+<span id="cb9-67"><a href="#cb9-67" tabindex="-1"></a><span class="co">#&gt; 14       Coal          2035       62.10749   $/tonnes        EJ/yr</span></span>
+<span id="cb9-68"><a href="#cb9-68" tabindex="-1"></a><span class="co">#&gt; 15       Coal          2036       62.28684   $/tonnes        EJ/yr</span></span>
+<span id="cb9-69"><a href="#cb9-69" tabindex="-1"></a><span class="co">#&gt; 16       Coal          2037       62.46619   $/tonnes        EJ/yr</span></span>
+<span id="cb9-70"><a href="#cb9-70" tabindex="-1"></a><span class="co">#&gt; 17       Coal          2038       62.64553   $/tonnes        EJ/yr</span></span>
+<span id="cb9-71"><a href="#cb9-71" tabindex="-1"></a><span class="co">#&gt; 18       Coal          2039       62.82488   $/tonnes        EJ/yr</span></span>
+<span id="cb9-72"><a href="#cb9-72" tabindex="-1"></a><span class="co">#&gt; 19       Coal          2040       63.00422   $/tonnes        EJ/yr</span></span>
+<span id="cb9-73"><a href="#cb9-73" tabindex="-1"></a><span class="co">#&gt; 20       Coal          2041       63.11835   $/tonnes        EJ/yr</span></span>
+<span id="cb9-74"><a href="#cb9-74" tabindex="-1"></a><span class="co">#&gt; 21       Coal          2042       63.23248   $/tonnes        EJ/yr</span></span>
+<span id="cb9-75"><a href="#cb9-75" tabindex="-1"></a><span class="co">#&gt; 22       Coal          2043       63.34661   $/tonnes        EJ/yr</span></span>
+<span id="cb9-76"><a href="#cb9-76" tabindex="-1"></a><span class="co">#&gt; 23       Coal          2044       63.46074   $/tonnes        EJ/yr</span></span>
+<span id="cb9-77"><a href="#cb9-77" tabindex="-1"></a><span class="co">#&gt; 24       Coal          2045       63.57487   $/tonnes        EJ/yr</span></span>
+<span id="cb9-78"><a href="#cb9-78" tabindex="-1"></a><span class="co">#&gt; 25       Coal          2046       63.60577   $/tonnes        EJ/yr</span></span>
+<span id="cb9-79"><a href="#cb9-79" tabindex="-1"></a><span class="co">#&gt; 26       Coal          2047       63.63667   $/tonnes        EJ/yr</span></span>
+<span id="cb9-80"><a href="#cb9-80" tabindex="-1"></a><span class="co">#&gt; 27       Coal          2048       63.66757   $/tonnes        EJ/yr</span></span>
+<span id="cb9-81"><a href="#cb9-81" tabindex="-1"></a><span class="co">#&gt; 28       Coal          2049       63.69847   $/tonnes        EJ/yr</span></span>
+<span id="cb9-82"><a href="#cb9-82" tabindex="-1"></a><span class="co">#&gt; 29       Coal          2050       63.72937   $/tonnes        EJ/yr</span></span>
+<span id="cb9-83"><a href="#cb9-83" tabindex="-1"></a><span class="co">#&gt; 30       Coal          2051       63.73330   $/tonnes        EJ/yr</span></span>
+<span id="cb9-84"><a href="#cb9-84" tabindex="-1"></a><span class="co">#&gt; 31       Coal          2052       63.73723   $/tonnes        EJ/yr</span></span>
+<span id="cb9-85"><a href="#cb9-85" tabindex="-1"></a><span class="co">#&gt; 32       Coal          2053       63.74115   $/tonnes        EJ/yr</span></span>
+<span id="cb9-86"><a href="#cb9-86" tabindex="-1"></a><span class="co">#&gt; 33       Coal          2054       63.74508   $/tonnes        EJ/yr</span></span>
+<span id="cb9-87"><a href="#cb9-87" tabindex="-1"></a><span class="co">#&gt; 34       Coal          2055       63.74900   $/tonnes        EJ/yr</span></span>
+<span id="cb9-88"><a href="#cb9-88" tabindex="-1"></a><span class="co">#&gt; 35       Coal          2056       63.66008   $/tonnes        EJ/yr</span></span>
+<span id="cb9-89"><a href="#cb9-89" tabindex="-1"></a><span class="co">#&gt; 36       Coal          2057       63.57115   $/tonnes        EJ/yr</span></span>
+<span id="cb9-90"><a href="#cb9-90" tabindex="-1"></a><span class="co">#&gt; 37       Coal          2058       63.48223   $/tonnes        EJ/yr</span></span>
+<span id="cb9-91"><a href="#cb9-91" tabindex="-1"></a><span class="co">#&gt; 38       Coal          2059       63.39331   $/tonnes        EJ/yr</span></span>
+<span id="cb9-92"><a href="#cb9-92" tabindex="-1"></a><span class="co">#&gt; 39       Coal          2060       63.30438   $/tonnes        EJ/yr</span></span>
+<span id="cb9-93"><a href="#cb9-93" tabindex="-1"></a><span class="co">#&gt; 40       Coal          2061       63.18854   $/tonnes        EJ/yr</span></span>
+<span id="cb9-94"><a href="#cb9-94" tabindex="-1"></a><span class="co">#&gt; 41       Coal          2062       63.07270   $/tonnes        EJ/yr</span></span>
+<span id="cb9-95"><a href="#cb9-95" tabindex="-1"></a><span class="co">#&gt; 42       Coal          2063       62.95686   $/tonnes        EJ/yr</span></span>
+<span id="cb9-96"><a href="#cb9-96" tabindex="-1"></a><span class="co">#&gt; 43       Coal          2064       62.84101   $/tonnes        EJ/yr</span></span>
+<span id="cb9-97"><a href="#cb9-97" tabindex="-1"></a><span class="co">#&gt; 44       Coal          2065       62.72517   $/tonnes        EJ/yr</span></span>
+<span id="cb9-98"><a href="#cb9-98" tabindex="-1"></a><span class="co">#&gt; 45       Coal          2066       62.58408   $/tonnes        EJ/yr</span></span>
+<span id="cb9-99"><a href="#cb9-99" tabindex="-1"></a><span class="co">#&gt; 46       Coal          2067       62.44300   $/tonnes        EJ/yr</span></span>
+<span id="cb9-100"><a href="#cb9-100" tabindex="-1"></a><span class="co">#&gt; 47       Coal          2068       62.30191   $/tonnes        EJ/yr</span></span>
+<span id="cb9-101"><a href="#cb9-101" tabindex="-1"></a><span class="co">#&gt; 48       Coal          2069       62.16082   $/tonnes        EJ/yr</span></span>
+<span id="cb9-102"><a href="#cb9-102" tabindex="-1"></a><span class="co">#&gt; 49       Coal          2070       62.01973   $/tonnes        EJ/yr</span></span>
+<span id="cb9-103"><a href="#cb9-103" tabindex="-1"></a><span class="co">#&gt; 50       Coal          2071       61.87448   $/tonnes        EJ/yr</span></span>
+<span id="cb9-104"><a href="#cb9-104" tabindex="-1"></a><span class="co">#&gt;    scenario_capacity_factor technology_type capacity_factor_unit</span></span>
+<span id="cb9-105"><a href="#cb9-105" tabindex="-1"></a><span class="co">#&gt; 1                         1      carbontech                   NA</span></span>
+<span id="cb9-106"><a href="#cb9-106" tabindex="-1"></a><span class="co">#&gt; 2                         1      carbontech                   NA</span></span>
+<span id="cb9-107"><a href="#cb9-107" tabindex="-1"></a><span class="co">#&gt; 3                         1      carbontech                   NA</span></span>
+<span id="cb9-108"><a href="#cb9-108" tabindex="-1"></a><span class="co">#&gt; 4                         1      carbontech                   NA</span></span>
+<span id="cb9-109"><a href="#cb9-109" tabindex="-1"></a><span class="co">#&gt; 5                         1      carbontech                   NA</span></span>
+<span id="cb9-110"><a href="#cb9-110" tabindex="-1"></a><span class="co">#&gt; 6                         1      carbontech                   NA</span></span>
+<span id="cb9-111"><a href="#cb9-111" tabindex="-1"></a><span class="co">#&gt; 7                         1      carbontech                   NA</span></span>
+<span id="cb9-112"><a href="#cb9-112" tabindex="-1"></a><span class="co">#&gt; 8                         1      carbontech                   NA</span></span>
+<span id="cb9-113"><a href="#cb9-113" tabindex="-1"></a><span class="co">#&gt; 9                         1      carbontech                   NA</span></span>
+<span id="cb9-114"><a href="#cb9-114" tabindex="-1"></a><span class="co">#&gt; 10                        1      carbontech                   NA</span></span>
+<span id="cb9-115"><a href="#cb9-115" tabindex="-1"></a><span class="co">#&gt; 11                        1      carbontech                   NA</span></span>
+<span id="cb9-116"><a href="#cb9-116" tabindex="-1"></a><span class="co">#&gt; 12                        1      carbontech                   NA</span></span>
+<span id="cb9-117"><a href="#cb9-117" tabindex="-1"></a><span class="co">#&gt; 13                        1      carbontech                   NA</span></span>
+<span id="cb9-118"><a href="#cb9-118" tabindex="-1"></a><span class="co">#&gt; 14                        1      carbontech                   NA</span></span>
+<span id="cb9-119"><a href="#cb9-119" tabindex="-1"></a><span class="co">#&gt; 15                        1      carbontech                   NA</span></span>
+<span id="cb9-120"><a href="#cb9-120" tabindex="-1"></a><span class="co">#&gt; 16                        1      carbontech                   NA</span></span>
+<span id="cb9-121"><a href="#cb9-121" tabindex="-1"></a><span class="co">#&gt; 17                        1      carbontech                   NA</span></span>
+<span id="cb9-122"><a href="#cb9-122" tabindex="-1"></a><span class="co">#&gt; 18                        1      carbontech                   NA</span></span>
+<span id="cb9-123"><a href="#cb9-123" tabindex="-1"></a><span class="co">#&gt; 19                        1      carbontech                   NA</span></span>
+<span id="cb9-124"><a href="#cb9-124" tabindex="-1"></a><span class="co">#&gt; 20                        1      carbontech                   NA</span></span>
+<span id="cb9-125"><a href="#cb9-125" tabindex="-1"></a><span class="co">#&gt; 21                        1      carbontech                   NA</span></span>
+<span id="cb9-126"><a href="#cb9-126" tabindex="-1"></a><span class="co">#&gt; 22                        1      carbontech                   NA</span></span>
+<span id="cb9-127"><a href="#cb9-127" tabindex="-1"></a><span class="co">#&gt; 23                        1      carbontech                   NA</span></span>
+<span id="cb9-128"><a href="#cb9-128" tabindex="-1"></a><span class="co">#&gt; 24                        1      carbontech                   NA</span></span>
+<span id="cb9-129"><a href="#cb9-129" tabindex="-1"></a><span class="co">#&gt; 25                        1      carbontech                   NA</span></span>
+<span id="cb9-130"><a href="#cb9-130" tabindex="-1"></a><span class="co">#&gt; 26                        1      carbontech                   NA</span></span>
+<span id="cb9-131"><a href="#cb9-131" tabindex="-1"></a><span class="co">#&gt; 27                        1      carbontech                   NA</span></span>
+<span id="cb9-132"><a href="#cb9-132" tabindex="-1"></a><span class="co">#&gt; 28                        1      carbontech                   NA</span></span>
+<span id="cb9-133"><a href="#cb9-133" tabindex="-1"></a><span class="co">#&gt; 29                        1      carbontech                   NA</span></span>
+<span id="cb9-134"><a href="#cb9-134" tabindex="-1"></a><span class="co">#&gt; 30                        1      carbontech                   NA</span></span>
+<span id="cb9-135"><a href="#cb9-135" tabindex="-1"></a><span class="co">#&gt; 31                        1      carbontech                   NA</span></span>
+<span id="cb9-136"><a href="#cb9-136" tabindex="-1"></a><span class="co">#&gt; 32                        1      carbontech                   NA</span></span>
+<span id="cb9-137"><a href="#cb9-137" tabindex="-1"></a><span class="co">#&gt; 33                        1      carbontech                   NA</span></span>
+<span id="cb9-138"><a href="#cb9-138" tabindex="-1"></a><span class="co">#&gt; 34                        1      carbontech                   NA</span></span>
+<span id="cb9-139"><a href="#cb9-139" tabindex="-1"></a><span class="co">#&gt; 35                        1      carbontech                   NA</span></span>
+<span id="cb9-140"><a href="#cb9-140" tabindex="-1"></a><span class="co">#&gt; 36                        1      carbontech                   NA</span></span>
+<span id="cb9-141"><a href="#cb9-141" tabindex="-1"></a><span class="co">#&gt; 37                        1      carbontech                   NA</span></span>
+<span id="cb9-142"><a href="#cb9-142" tabindex="-1"></a><span class="co">#&gt; 38                        1      carbontech                   NA</span></span>
+<span id="cb9-143"><a href="#cb9-143" tabindex="-1"></a><span class="co">#&gt; 39                        1      carbontech                   NA</span></span>
+<span id="cb9-144"><a href="#cb9-144" tabindex="-1"></a><span class="co">#&gt; 40                        1      carbontech                   NA</span></span>
+<span id="cb9-145"><a href="#cb9-145" tabindex="-1"></a><span class="co">#&gt; 41                        1      carbontech                   NA</span></span>
+<span id="cb9-146"><a href="#cb9-146" tabindex="-1"></a><span class="co">#&gt; 42                        1      carbontech                   NA</span></span>
+<span id="cb9-147"><a href="#cb9-147" tabindex="-1"></a><span class="co">#&gt; 43                        1      carbontech                   NA</span></span>
+<span id="cb9-148"><a href="#cb9-148" tabindex="-1"></a><span class="co">#&gt; 44                        1      carbontech                   NA</span></span>
+<span id="cb9-149"><a href="#cb9-149" tabindex="-1"></a><span class="co">#&gt; 45                        1      carbontech                   NA</span></span>
+<span id="cb9-150"><a href="#cb9-150" tabindex="-1"></a><span class="co">#&gt; 46                        1      carbontech                   NA</span></span>
+<span id="cb9-151"><a href="#cb9-151" tabindex="-1"></a><span class="co">#&gt; 47                        1      carbontech                   NA</span></span>
+<span id="cb9-152"><a href="#cb9-152" tabindex="-1"></a><span class="co">#&gt; 48                        1      carbontech                   NA</span></span>
+<span id="cb9-153"><a href="#cb9-153" tabindex="-1"></a><span class="co">#&gt; 49                        1      carbontech                   NA</span></span>
+<span id="cb9-154"><a href="#cb9-154" tabindex="-1"></a><span class="co">#&gt; 50                        1      carbontech                   NA</span></span>
+<span id="cb9-155"><a href="#cb9-155" tabindex="-1"></a><span class="co">#&gt;    price_indicator</span></span>
+<span id="cb9-156"><a href="#cb9-156" tabindex="-1"></a><span class="co">#&gt; 1               NA</span></span>
+<span id="cb9-157"><a href="#cb9-157" tabindex="-1"></a><span class="co">#&gt; 2               NA</span></span>
+<span id="cb9-158"><a href="#cb9-158" tabindex="-1"></a><span class="co">#&gt; 3               NA</span></span>
+<span id="cb9-159"><a href="#cb9-159" tabindex="-1"></a><span class="co">#&gt; 4               NA</span></span>
+<span id="cb9-160"><a href="#cb9-160" tabindex="-1"></a><span class="co">#&gt; 5               NA</span></span>
+<span id="cb9-161"><a href="#cb9-161" tabindex="-1"></a><span class="co">#&gt; 6               NA</span></span>
+<span id="cb9-162"><a href="#cb9-162" tabindex="-1"></a><span class="co">#&gt; 7               NA</span></span>
+<span id="cb9-163"><a href="#cb9-163" tabindex="-1"></a><span class="co">#&gt; 8               NA</span></span>
+<span id="cb9-164"><a href="#cb9-164" tabindex="-1"></a><span class="co">#&gt; 9               NA</span></span>
+<span id="cb9-165"><a href="#cb9-165" tabindex="-1"></a><span class="co">#&gt; 10              NA</span></span>
+<span id="cb9-166"><a href="#cb9-166" tabindex="-1"></a><span class="co">#&gt; 11              NA</span></span>
+<span id="cb9-167"><a href="#cb9-167" tabindex="-1"></a><span class="co">#&gt; 12              NA</span></span>
+<span id="cb9-168"><a href="#cb9-168" tabindex="-1"></a><span class="co">#&gt; 13              NA</span></span>
+<span id="cb9-169"><a href="#cb9-169" tabindex="-1"></a><span class="co">#&gt; 14              NA</span></span>
+<span id="cb9-170"><a href="#cb9-170" tabindex="-1"></a><span class="co">#&gt; 15              NA</span></span>
+<span id="cb9-171"><a href="#cb9-171" tabindex="-1"></a><span class="co">#&gt; 16              NA</span></span>
+<span id="cb9-172"><a href="#cb9-172" tabindex="-1"></a><span class="co">#&gt; 17              NA</span></span>
+<span id="cb9-173"><a href="#cb9-173" tabindex="-1"></a><span class="co">#&gt; 18              NA</span></span>
+<span id="cb9-174"><a href="#cb9-174" tabindex="-1"></a><span class="co">#&gt; 19              NA</span></span>
+<span id="cb9-175"><a href="#cb9-175" tabindex="-1"></a><span class="co">#&gt; 20              NA</span></span>
+<span id="cb9-176"><a href="#cb9-176" tabindex="-1"></a><span class="co">#&gt; 21              NA</span></span>
+<span id="cb9-177"><a href="#cb9-177" tabindex="-1"></a><span class="co">#&gt; 22              NA</span></span>
+<span id="cb9-178"><a href="#cb9-178" tabindex="-1"></a><span class="co">#&gt; 23              NA</span></span>
+<span id="cb9-179"><a href="#cb9-179" tabindex="-1"></a><span class="co">#&gt; 24              NA</span></span>
+<span id="cb9-180"><a href="#cb9-180" tabindex="-1"></a><span class="co">#&gt; 25              NA</span></span>
+<span id="cb9-181"><a href="#cb9-181" tabindex="-1"></a><span class="co">#&gt; 26              NA</span></span>
+<span id="cb9-182"><a href="#cb9-182" tabindex="-1"></a><span class="co">#&gt; 27              NA</span></span>
+<span id="cb9-183"><a href="#cb9-183" tabindex="-1"></a><span class="co">#&gt; 28              NA</span></span>
+<span id="cb9-184"><a href="#cb9-184" tabindex="-1"></a><span class="co">#&gt; 29              NA</span></span>
+<span id="cb9-185"><a href="#cb9-185" tabindex="-1"></a><span class="co">#&gt; 30              NA</span></span>
+<span id="cb9-186"><a href="#cb9-186" tabindex="-1"></a><span class="co">#&gt; 31              NA</span></span>
+<span id="cb9-187"><a href="#cb9-187" tabindex="-1"></a><span class="co">#&gt; 32              NA</span></span>
+<span id="cb9-188"><a href="#cb9-188" tabindex="-1"></a><span class="co">#&gt; 33              NA</span></span>
+<span id="cb9-189"><a href="#cb9-189" tabindex="-1"></a><span class="co">#&gt; 34              NA</span></span>
+<span id="cb9-190"><a href="#cb9-190" tabindex="-1"></a><span class="co">#&gt; 35              NA</span></span>
+<span id="cb9-191"><a href="#cb9-191" tabindex="-1"></a><span class="co">#&gt; 36              NA</span></span>
+<span id="cb9-192"><a href="#cb9-192" tabindex="-1"></a><span class="co">#&gt; 37              NA</span></span>
+<span id="cb9-193"><a href="#cb9-193" tabindex="-1"></a><span class="co">#&gt; 38              NA</span></span>
+<span id="cb9-194"><a href="#cb9-194" tabindex="-1"></a><span class="co">#&gt; 39              NA</span></span>
+<span id="cb9-195"><a href="#cb9-195" tabindex="-1"></a><span class="co">#&gt; 40              NA</span></span>
+<span id="cb9-196"><a href="#cb9-196" tabindex="-1"></a><span class="co">#&gt; 41              NA</span></span>
+<span id="cb9-197"><a href="#cb9-197" tabindex="-1"></a><span class="co">#&gt; 42              NA</span></span>
+<span id="cb9-198"><a href="#cb9-198" tabindex="-1"></a><span class="co">#&gt; 43              NA</span></span>
+<span id="cb9-199"><a href="#cb9-199" tabindex="-1"></a><span class="co">#&gt; 44              NA</span></span>
+<span id="cb9-200"><a href="#cb9-200" tabindex="-1"></a><span class="co">#&gt; 45              NA</span></span>
+<span id="cb9-201"><a href="#cb9-201" tabindex="-1"></a><span class="co">#&gt; 46              NA</span></span>
+<span id="cb9-202"><a href="#cb9-202" tabindex="-1"></a><span class="co">#&gt; 47              NA</span></span>
+<span id="cb9-203"><a href="#cb9-203" tabindex="-1"></a><span class="co">#&gt; 48              NA</span></span>
+<span id="cb9-204"><a href="#cb9-204" tabindex="-1"></a><span class="co">#&gt; 49              NA</span></span>
+<span id="cb9-205"><a href="#cb9-205" tabindex="-1"></a><span class="co">#&gt; 50              NA</span></span></code></pre></div>
+<hr />
+</div>
+</div>
+</div>
+<div id="data-preparation" class="section level2">
+<h2>Data Preparation</h2>
+<p>Before running the model, ensure that your datasets are correctly
+formatted and contain the necessary information. Use the provided test
+datasets as templates for your own data.</p>
+<p>For the scenarios, make sure that the <code>baseline_scenario</code>
+and <code>target_scenario</code> you plan to use are present in your
+<code>scenarios</code> dataframe, and that they correspond to the
+<code>scenario_geography</code> you are analyzing.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

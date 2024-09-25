@@ -57,7 +57,7 @@ project_input/
 3. **ngfs_carbon_price.csv** - Provides carbon pricing data for the climate scenarios.
 4. **scenarios.csv** - Holds the details of the climate scenarios including the baseline and shock scenarios.
 
-For more details on how to structure the input data, refer to the [Vignette on Data Overview](https://theia-finance-labs.github.io/trisk.model/articles/trisk-data-overview.html).
+For more details on how to structure the input data, refer to the [Vignette on Data Overview](https://theia-finance-labs.github.io/trisk.model/doc/trisk-data-overview.html).
 
 
 ### Loading Data
