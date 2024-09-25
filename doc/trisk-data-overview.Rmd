@@ -1,0 +1,170 @@
+---
+title: "trisk-data-overview"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{trisk-data-overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(trisk.model)
+
+
+assets_testdata <- read.csv(system.file("testdata", "assets_testdata.csv", package = "trisk.model"))
+scenarios_testdata <- read.csv(system.file("testdata", "scenarios_testdata.csv", package = "trisk.model"))
+financial_features_testdata <- read.csv(system.file("testdata", "financial_features_testdata.csv", package = "trisk.model"))
+ngfs_carbon_price_testdata <- read.csv(system.file("testdata", "ngfs_carbon_price_testdata.csv", package = "trisk.model"))
+```
+
+---
+
+## Datasets
+
+### Assets Test Data
+
+This dataset contains data about company assets, including production, technology, and geographical details.
+
+#### Data Description
+
+The `assets_testdata` dataset includes the following columns:
+
+- `company_id`: Unique identifier for the company.
+- `company_name`: Name of the company.
+- `plan_sec_prod`: Secondary production plan.
+- `country_name`: Country where the asset is located.
+- `plant_age_years`: Age of the plant in years.
+- `workforce_size`: Size of the workforce.
+- `asset_id`: Unique identifier for the asset.
+- `country_iso2`: ISO 3166-1 alpha-2 code for the country.
+- `asset_name`: Name of the asset.
+- `production_year`: Year of production data.
+- `emission_factor`: Emissions from production.
+- `technology`: Type of technology used.
+- `sector`: Production sector.
+- `capacity`: Asset capacity.
+- `capacity_factor`: Asset utilization percentage.
+- `production_unit`: Unit for production.
+
+#### Data Structure
+
+```{r}
+str(assets_testdata)
+```
+
+#### Sample Data
+
+```{r}
+head(assets_testdata)
+```
+
+---
+
+### Financial Features Test Data
+
+This dataset contains financial metrics necessary for calculating stress test outputs.
+
+#### Data Description
+
+The `financial_features_testdata` dataset includes the following columns:
+
+- `company_id`: Unique identifier for the company.
+- `pd`: Probability of default for the company.
+- `net_profit_margin`: Net profit margin for the company.
+- `debt_equity_ratio`: Debt to equity ratio.
+- `volatility`: Volatility of the company's asset values.
+
+#### Data Structure
+
+```{r}
+str(financial_features_testdata)
+```
+
+#### Sample Data
+
+```{r}
+head(financial_features_testdata)
+```
+
+---
+
+### NGFS Carbon Price Test Data
+
+This dataset provides carbon pricing data used in the stress test scenarios.
+
+#### Data Description
+
+The `ngfs_carbon_price_testdata` dataset includes the following columns:
+
+- `year`: Year of the carbon price.
+- `model`: Model used to generate the carbon price.
+- `scenario`: Scenario name.
+- `scenario_geography`: Geographic region for the scenario.
+- `variable`: The variable measured (e.g., carbon price).
+- `unit`: Unit of the variable.
+- `carbon_tax`: The amount of carbon tax applied in the scenario.
+
+#### Data Structure
+
+```{r}
+str(ngfs_carbon_price_testdata)
+```
+
+#### Sample Data
+
+```{r}
+head(ngfs_carbon_price_testdata)
+```
+
+---
+
+### Scenarios Test Data
+
+This dataset contains scenario-specific data including price paths, capacity factors, and other relevant information.
+
+#### Data Description
+
+The `scenarios_testdata` dataset includes the following columns:
+
+- `scenario_geography`: Region relevant to the scenario.
+- `scenario`: Scenario name.
+- `scenario_pathway`: Specific pathway for the scenario.
+- `scenario_type`: Type of scenario (e.g., baseline, shock).
+- `sector`: Sector of production.
+- `technology`: Type of technology.
+- `scenario_year`: Year of the scenario data.
+- `scenario_price`: Price in the scenario.
+- `price_unit`: Unit for the price.
+- `pathway_unit`: Unit of the pathway.
+- `scenario_capacity_factor`: Capacity factor for the scenario.
+- `technology_type`: Type of technology involved.
+- `capacity_factor_unit`: Unit for the capacity factor.
+- `price_indicator`: Indicator for the price path.
+
+#### Data Structure
+
+```{r}
+str(scenarios_testdata)
+```
+
+#### Sample Data
+
+
+```{r}
+head(scenarios_testdata, 50)
+```
+
+---
+
+## Data Preparation
+
+Before running the model, ensure that your datasets are correctly formatted and contain the necessary information. Use the provided test datasets as templates for your own data.
+
+For the scenarios, make sure that the `baseline_scenario` and `target_scenario` you plan to use are present in your `scenarios` dataframe, and that they correspond to the `scenario_geography` you are analyzing.
