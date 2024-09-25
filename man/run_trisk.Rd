@@ -4,29 +4,29 @@
 \alias{run_trisk}
 \title{Run stress testing for provided asset type.}
 \usage{
-run_trisk(
-  input_path,
-  output_path = NULL,
-  save_and_check = TRUE,
-  show_params_cols = TRUE,
-  ...
-)
+run_trisk(input_path, output_path = NULL, show_params_cols = TRUE, ...)
 }
 \arguments{
-\item{input_path}{String holding path to project agnostic data.}
+\item{input_path}{String containing the path to project-agnostic data.}
 
-\item{output_path}{String holding path to which output files are written.
+\item{output_path}{String containing the path to which output files are written.
 NOTE: Results and logs per run are saved to a subdirectory of output_path
-that will be generated automatically. The name of the subdirectory is the
-timestamp of the run of the analysis.}
+that will be generated automatically. The subdirectory name is the
+timestamp of the analysis run.}
 
-\item{save_and_check}{Boolean, indicating if results shall be exported.}
+\item{show_params_cols}{Logical, indicating whether to display parameter columns in the output.}
+
+\item{...}{Additional arguments passed to \code{run_trisk_model} to customize model parameters.
+See \code{run_trisk_model()} for details on available parameters.}
+}
+\value{
+If \code{output_path} is NULL, returns the output list. Otherwise, writes results to the specified path.
 }
 \description{
-This function runs the transition risk stress test. It can be desirable to
-understand sensitivities of the scenarios, in which case the user may pass a
-vector of values to one (and only one) of the detail arguments. This will
-result in running the analysis multiple times in a row with the argument
-varied.
-NOTE: if \code{return_results} is TRUE results will not be written to \verb{output path} but instead are returned.
+This function executes the transition risk stress test. It can be beneficial to
+understand scenario sensitivities, in which case the user may pass a
+vector of values to one (and only one) of the detailed arguments. This will
+result in running the analysis multiple times consecutively with the varied argument.
+NOTE: If \code{return_results} is TRUE, results will not be written to the \code{output_path}
+but will instead be returned.
 }

@@ -7,9 +7,9 @@
 apply_scenario_prices(data, shock_year)
 }
 \arguments{
-\item{shock_year}{Year of shock.}
+\item{data}{A tibble holding price data.}
 
-\item{price_data}{A tibble holding price data.}
+\item{shock_year}{Year of shock.}
 }
 \value{
 A tibble holding late_and_sudden_prices

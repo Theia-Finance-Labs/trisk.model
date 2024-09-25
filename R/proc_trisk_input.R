@@ -133,7 +133,7 @@ pivot_to_baseline_target_columns <- function(data) {
     dplyr::filter(.data$scenario_type == "baseline") %>%
     tidyr::pivot_wider(
       id_cols = dplyr::all_of(index_cols),
-      names_from = scenario_type,
+      names_from = .data$scenario_type,
       values_from = to_pivot,
       names_sep = "_"
     ) %>%
@@ -146,7 +146,7 @@ pivot_to_baseline_target_columns <- function(data) {
     dplyr::filter(.data$scenario_type == "target") %>%
     tidyr::pivot_wider(
       id_cols = dplyr::all_of(index_cols),
-      names_from = scenario_type,
+      names_from = .data$scenario_type,
       values_from = to_pivot,
       names_sep = "_"
     ) %>%

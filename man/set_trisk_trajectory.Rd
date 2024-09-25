@@ -14,16 +14,7 @@ step after the baseline trajectories are calculated.}
 \item{start_year}{Numeric. A numeric vector of length 1 that contains the
 start year of the analysis.}
 
-\item{target_scenario}{Character. A string that indicates which
-of the scenarios included in the analysis should be used to set the
-late & sudden technology trajectories.}
-
-\item{shock_scenario}{A dataframe that contains information about the
-transition scenario, specifically the shock year and, duration of the
-shock and the name of the shock scenario}
-
-\item{end_year}{Numeric. A numeric vector of length 1 that contains the
-end year of the analysis.}
+\item{shock_year}{Numeric. the shock year.}
 }
 \value{
 data frame

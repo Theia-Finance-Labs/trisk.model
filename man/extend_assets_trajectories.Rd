@@ -7,21 +7,11 @@
 extend_assets_trajectories(trisk_model_input, start_year, shock_year)
 }
 \arguments{
+\item{trisk_model_input}{List with project agnostic and project specific input data}
+
 \item{start_year}{Numeric, holding start year of analysis.}
 
 \item{shock_year}{year of transition from baseline scenario to target scenario}
-
-\item{input_data_list}{List with project agnostic and project specific input data}
-
-\item{baseline_scenario}{Character. A string that indicates which
-of the scenarios included in the analysis should be used to set the
-baseline technology trajectories.}
-
-\item{target_scenario}{Character. A string that indicates which
-of the scenarios included in the analysis should be used to set the
-late & sudden technology trajectories.}
-
-\item{end_year}{Numeric, holding end year of analysis.}
 }
 \value{
 A tibble holding annual profits

@@ -1,15 +1,8 @@
 #' Calculate baseline and transition shock trajectoroes
 #'
-#' @param input_data_list List with project agnostic and project specific input data
-#' @param baseline_scenario Character. A string that indicates which
-#'   of the scenarios included in the analysis should be used to set the
-#'   baseline technology trajectories.
-#' @param target_scenario Character. A string that indicates which
-#'   of the scenarios included in the analysis should be used to set the
-#'   late & sudden technology trajectories.
+#' @param trisk_model_input List with project agnostic and project specific input data
 #' @param shock_year year of transition from baseline scenario to target scenario
 #' @param start_year Numeric, holding start year of analysis.
-#' @param end_year Numeric, holding end year of analysis.
 #'
 #' @return A tibble holding annual profits
 extend_assets_trajectories <- function(
@@ -76,9 +69,6 @@ extend_assets_trajectories <- function(
 #'   until 2040 for all the scenarios included in the analysis and
 #'   production build out plans by technology or company and technology,
 #'   usually for 5 years, based on PACTA results.
-#' @param baseline_scenario Character. A string that indicates which
-#'   of the scenarios included in the analysis should be used to set the
-#'   baseline technology trajectories.
 #'
 #' @family scenario definition
 #'
@@ -128,16 +118,9 @@ set_baseline_trajectory <- function(data) {
 #' portfolio/technology level.
 #' @param data A dataframe that contains the scenario data prepared until the
 #'   step after the baseline trajectories are calculated.
-#' @param target_scenario Character. A string that indicates which
-#'   of the scenarios included in the analysis should be used to set the
-#'   late & sudden technology trajectories.
-#' @param shock_scenario A dataframe that contains information about the
-#'   transition scenario, specifically the shock year and, duration of the
-#'   shock and the name of the shock scenario
 #' @param start_year Numeric. A numeric vector of length 1 that contains the
 #'   start year of the analysis.
-#' @param end_year Numeric. A numeric vector of length 1 that contains the
-#'   end year of the analysis.
+#' @param shock_year Numeric. the shock year.
 #' @family scenario definition
 #'
 #' @return data frame

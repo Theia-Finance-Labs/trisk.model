@@ -63,7 +63,7 @@ read_financial_data <- function(path = NULL) {
       )
     )
 
-  check_valid_financial_data_values(data) # TODO move to DBT
+  check_valid_financial_data_values(data)
   return(data)
 }
 
@@ -92,11 +92,7 @@ read_production_data <- function(path = NULL) {
         capacity_factor = "d",
         emission_factor = "d"
       )
-    ) %>%
-    dplyr::mutate(
-      production_plan_company_technology = .data$capacity * .data$capacity_factor
-    ) %>%
-    dplyr::select(-c(.data$capacity, .data$capacity_factor))
+    )
 
 
   return(data)
@@ -190,7 +186,7 @@ validate_data_has_expected_cols <- function(data,
 #' Check if values in financial data are plausible
 #'
 #' Checks that numeric columns hold values in acceptable ranges.
-#'
+#' @param financial_data data frame that is to be validated
 #'
 #' @return NULL
 check_valid_financial_data_values <- function(financial_data) {

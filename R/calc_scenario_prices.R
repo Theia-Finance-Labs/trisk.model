@@ -7,7 +7,7 @@
 #' level of the `shock_scenario` during the `duration_of_shock`.
 #'
 #'
-#' @param price_data A tibble holding price data.
+#' @param data A tibble holding price data.
 #' @param shock_year Year of shock.
 #'
 #' @return A tibble holding late_and_sudden_prices

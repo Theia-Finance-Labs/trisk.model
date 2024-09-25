@@ -2,8 +2,8 @@
 #' temporarily other asset types) on the company-technology level
 #'
 #' @param data A dataframe containing the (discounted) annual profits
-#' @param shock_scenario A dataframe containing the specification of the
-#'   shock scenario at hand
+#' @param shock_year The shock_year
+#' @param start_year the start_year
 #' @param div_netprofit_prop_coef Numeric. A coefficient that determines how
 #'   strongly the future dividends propagate to the company value
 #' @param flat_multiplier Numeric. A ratio that determines for the asset type
