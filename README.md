@@ -57,7 +57,8 @@ project_input/
 3. **ngfs_carbon_price.csv** - Provides carbon pricing data for the climate scenarios.
 4. **scenarios.csv** - Holds the details of the climate scenarios including the baseline and shock scenarios.
 
-For more details on how to structure the input data, refer to the [Vignette on Data Overview](vignette_link_here).
+For more details on how to structure the input data, refer to the [Vignette on Data Overview](https://theia-finance-labs.github.io/trisk.model/articles/trisk-data-overview.html).
+
 
 ### Loading Data
 
@@ -148,10 +149,6 @@ results <- run_trisk_model(
   baseline_scenario = "NGFS2023GCAM_CP",
   target_scenario = "NGFS2023GCAM_NZ2050",
   scenario_geography = "Global",
-  risk_free_rate = 0.02,
-  discount_rate = 0.07,
-  growth_rate = 0.03,
-  div_netprofit_prop_coef = 1,
   shock_year = 2030
 )
 ```

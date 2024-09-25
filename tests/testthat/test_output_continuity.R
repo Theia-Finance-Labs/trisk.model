@@ -2,11 +2,11 @@ library(testthat)
 library(dplyr)
 library(trisk.model)
 
-# Load the internal datasets from the `data/` directory in the package
-data(assets_testdata, package = "trisk.model")
-data(scenarios_testdata, package = "trisk.model")
-data(financial_features_testdata, package = "trisk.model")
-data(ngfs_carbon_price_testdata, package = "trisk.model")
+# Load the internal datasets
+assets_testdata <- read.csv(system.file("testdata", "assets_testdata.csv", package = "trisk.model"))
+scenarios_testdata <- read.csv(system.file("testdata", "scenarios_testdata.csv", package = "trisk.model"))
+financial_features_testdata <- read.csv(system.file("testdata", "financial_features_testdata.csv", package = "trisk.model"))
+ngfs_carbon_price_testdata <- read.csv(system.file("testdata", "ngfs_carbon_price_testdata.csv", package = "trisk.model"))
 
 # Define the scenarios to use
 baseline_scenario <- "NGFS2023GCAM_CP"
