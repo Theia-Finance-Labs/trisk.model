@@ -7,15 +7,44 @@ process_params <- function(fun, ...) {
   return(final_params)
 }
 
+#' Prepare TRISK Results
+#'
+#' This function prepares a list of results from a TRISK model run, including net present value (NPV), 
+#' probability of default (PD), company trajectories, and model parameters. It converts these results into tibbles for further analysis.
+#'
+#' @param output_list A list containing the output data from the TRISK model run.
+#' @param trisk_params A data structure (e.g., list or tibble) containing the TRISK model parameters.
+#' @param run_id A unique identifier for the model run.
+#'
+#' @return A list of tibbles containing the following elements:
+#' \describe{
+#'   \item{npv}{A tibble with the NPV results of the TRISK model run.}
+#'   \item{pd}{A tibble with the PD results of the TRISK model run.}
+#'   \item{trajectories}{A tibble with the company trajectory results.}
+#'   \item{params}{A tibble with the model parameters used in the run.}
+#' }
+#' 
+#' @export
+prepare_trisk_results <- function(output_list, trisk_params, run_id){
+    list(
+      npv = tibble::as_tibble(trisk.model:::prepare_npv_results(output_list, run_id)),
+      pd = tibble::as_tibble(trisk.model:::prepare_pd_results(output_list, run_id)),
+      trajectories = tibble::as_tibble(trisk.model:::prepare_company_trajectories(output_list, run_id)),
+      params = tibble::as_tibble(trisk.model:::prepare_params_df(trisk_params, run_id))
+  )
+}
+
 write_results <- function(output_list, output_path, trisk_params, show_params_cols) {
   # create a random uuid as the run_id column
   run_id <- uuid::UUIDgenerate()
 
+  prepared_trisk_results <- prepare_trisk_results(output_list=output_list, trisk_params=trisk_params, run_id=run_id)
+
   # Prepare results
-  npv_results <- prepare_npv_results(output_list, run_id)
-  pd_results <- prepare_pd_results(output_list, run_id)
-  company_trajectories <- prepare_company_trajectories(output_list, run_id)
-  params_df <- prepare_params_df(trisk_params, run_id)
+  npv_results <- prepared_trisk_results$npv
+  pd_results <- prepared_trisk_results$pd
+  company_trajectories <- prepared_trisk_results$trajectories
+  params_df <- prepared_trisk_results$params
 
 
   if (show_params_cols) {
