@@ -54,4 +54,5 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+/doc/
 /Meta/
