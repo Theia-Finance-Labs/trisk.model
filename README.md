@@ -2,12 +2,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # r2dii.climate.stress.test 
-<!-- badges: start -->
-
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![R-CMD-check](https://github.com/2DegreesInvesting/r2dii.climate.stress.test/workflows/R-CMD-check/badge.svg)](https://github.com/2DegreesInvesting/r2dii.climate.stress.test/actions)
-[![R-CMD-check](https://github.com/Theia-Finance-Labs/trisk.model/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Theia-Finance-Labs/trisk.model/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
 
 The goal of r2dii.climate.stress.test is to provide a tool that can be
 used to conduct what-if climate stress test analyses for financial

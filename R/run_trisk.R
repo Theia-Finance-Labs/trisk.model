@@ -1,21 +1,23 @@
 #' Run stress testing for provided asset type.
 #'
-#' This function runs the transition risk stress test. It can be desirable to
-#' understand sensitivities of the scenarios, in which case the user may pass a
-#' vector of values to one (and only one) of the detail arguments. This will
-#' result in running the analysis multiple times in a row with the argument
-#' varied.
-#' NOTE: if `return_results` is TRUE results will not be written to `output
-#' path` but instead are returned.
+#' This function executes the transition risk stress test. It can be beneficial to
+#' understand scenario sensitivities, in which case the user may pass a
+#' vector of values to one (and only one) of the detailed arguments. This will
+#' result in running the analysis multiple times consecutively with the varied argument.
+#' NOTE: If `return_results` is TRUE, results will not be written to the `output_path`
+#' but will instead be returned.
 #'
-#' @param input_path String holding path to project agnostic data.
-#' @param output_path String holding path to which output files are written.
+#' @param input_path String containing the path to project-agnostic data.
+#' @param output_path String containing the path to which output files are written.
 #'   NOTE: Results and logs per run are saved to a subdirectory of output_path
-#'   that will be generated automatically. The name of the subdirectory is the
-#'   timestamp of the run of the analysis.
+#'   that will be generated automatically. The subdirectory name is the
+#'   timestamp of the analysis run.
+#' @param show_params_cols Logical, indicating whether to display parameter columns in the output.
+#'
+#' @return If output_path is NULL, returns the output_list. Otherwise, writes results to the specified path.
+#' @export
 #'
 #' @inheritParams run_trisk_model
-#' @export
 #'
 run_trisk <- function(
     input_path,
@@ -51,38 +53,30 @@ run_trisk <- function(
 
 
 
-#' Run stress test model
+#' Run transition risk stress test model
 #'
-#' @param assets_data assets_data
-#' @param scenarios_data scenarios_data
-#' @param financial_data financial_data
-#' @param carbon_data carbon_data
-#' @param baseline_scenario Holds the name of the baseline scenario to be used
-#'   in the stress test, for accepted value range check `stress_test_arguments`.
-#' @param target_scenario Holds the name of the shock scenario to be used in the
-#'   stress test, for accepted value range check `stress_test_arguments`.
-#' @param lgd Numeric, holding the loss given default for accepted value range
-#'   check `stress_test_arguments`.
-#' @param risk_free_rate Numeric that indicates the risk free rate of interest.
-#'   For accepted range compare `stress_test_arguments`.
-#' @param discount_rate Numeric, that holds the discount rate of dividends per
-#'   year in the DCF. For accepted range compare `stress_test_arguments`.
-#' @param growth_rate Numeric, that holds the terminal growth rate of profits
-#'   beyond the final year in the DCF. For accepted range compare
-#'   `stress_test_arguments`.
-#' @param div_netprofit_prop_coef Numeric. A coefficient that determines how
-#'   strongly the future dividends propagate to the company value. For accepted
-#'   range compare `stress_test_arguments`.
-#' @param shock_year Numeric, holding year the shock is applied. For accepted
-#'   range compare `stress_test_arguments`.
-#' @param scenario_geography Character vector, indicating which geographical
-#'   region(s) (concerning asset location) results shall be calculated for. For
-#'   accepted values compare `stress_test_arguments`.
-#' @param carbon_price_model Character vector, indicating which NGFS model is used in regards to
-#'   carbon prices. Default is no carbon tax.
-#' @param market_passthrough Firm's ability to pass carbon tax onto the consumer
+#' This function executes the core transition risk stress test model calculations.
 #'
-#' @return NULL
+#' @param assets_data Data frame containing asset information.
+#' @param scenarios_data Data frame containing scenario information.
+#' @param financial_data Data frame containing financial information.
+#' @param carbon_data Data frame containing carbon price information.
+#' @param baseline_scenario String specifying the name of the baseline scenario.
+#' @param target_scenario String specifying the name of the shock scenario.
+#' @param scenario_geography Character vector indicating which geographical region(s) to calculate results for.
+#' @param carbon_price_model Character vector specifying which NGFS model to use for carbon prices. Default is "no_carbon_tax".
+#' @param lgd Numeric value for Loss Given Default. Default is 0.45.
+#' @param risk_free_rate Numeric value for the risk-free interest rate. Default is 0.02.
+#' @param discount_rate Numeric value for the discount rate of dividends per year in the DCF. Default is 0.07.
+#' @param growth_rate Numeric value for the terminal growth rate of profits beyond the final year in the DCF. Default is 0.03.
+#' @param div_netprofit_prop_coef Numeric coefficient determining how strongly future dividends propagate to company value. Default is 1.
+#' @param shock_year Numeric value specifying the year when the shock is applied. Default is 2030.
+#' @param market_passthrough Numeric value representing the firm's ability to pass carbon tax onto the consumer. Default is 0.
+#'
+#' @return A list containing:
+#'   \item{company_pd_changes_overall}{Data frame of overall probability of default changes}
+#'   \item{company_trajectories}{Data frame of company annual profits}
+#'   \item{company_technology_npv}{Data frame of company technology net present values}
 #' @export
 #'
 run_trisk_model <- function(assets_data,

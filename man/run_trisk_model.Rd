@@ -2,17 +2,16 @@
 % Please edit documentation in R/run_trisk.R
 \name{run_trisk_model}
 \alias{run_trisk_model}
-\title{Run stress test model}
+\title{Run transition risk stress test model}
 \usage{
 run_trisk_model(
   assets_data,
   scenarios_data,
   financial_data,
   carbon_data,
-  baseline_scenario,
-  target_scenario,
-  scenario_geography,
-  start_year = 2022,
+  baseline_scenario = "",
+  target_scenario = "",
+  scenario_geography = "Global",
   carbon_price_model = "no_carbon_tax",
   lgd = 0.45,
   risk_free_rate = 0.02,
@@ -24,54 +23,42 @@ run_trisk_model(
 )
 }
 \arguments{
-\item{assets_data}{assets_data}
+\item{assets_data}{Data frame containing asset information.}
 
-\item{scenarios_data}{scenarios_data}
+\item{scenarios_data}{Data frame containing scenario information.}
 
-\item{financial_data}{financial_data}
+\item{financial_data}{Data frame containing financial information.}
 
-\item{carbon_data}{carbon_data}
+\item{carbon_data}{Data frame containing carbon price information.}
 
-\item{baseline_scenario}{Holds the name of the baseline scenario to be used
-in the stress test, for accepted value range check \code{stress_test_arguments}.}
+\item{baseline_scenario}{String specifying the name of the baseline scenario.}
 
-\item{target_scenario}{Holds the name of the shock scenario to be used in the
-stress test, for accepted value range check \code{stress_test_arguments}.}
+\item{target_scenario}{String specifying the name of the shock scenario.}
 
-\item{scenario_geography}{Character vector, indicating which geographical
-region(s) (concerning asset location) results shall be calculated for. For
-accepted values compare \code{stress_test_arguments}.}
+\item{scenario_geography}{Character vector indicating which geographical region(s) to calculate results for.}
 
-\item{start_year}{Numeric, first year in the analysis used as the starting
-point from which production forecasts are compared against scenario targets.
-Must be available in the production data and indicates the first year of
-the scenario data.}
+\item{carbon_price_model}{Character vector specifying which NGFS model to use for carbon prices. Default is "no_carbon_tax".}
 
-\item{carbon_price_model}{Character vector, indicating which NGFS model is used in regards to
-carbon prices. Default is no carbon tax.}
+\item{lgd}{Numeric value for Loss Given Default. Default is 0.45.}
 
-\item{lgd}{Numeric, holding the loss given default for accepted value range
-check \code{stress_test_arguments}.}
+\item{risk_free_rate}{Numeric value for the risk-free interest rate. Default is 0.02.}
 
-\item{risk_free_rate}{Numeric that indicates the risk free rate of interest.
-For accepted range compare \code{stress_test_arguments}.}
+\item{discount_rate}{Numeric value for the discount rate of dividends per year in the DCF. Default is 0.07.}
 
-\item{discount_rate}{Numeric, that holds the discount rate of dividends per
-year in the DCF. For accepted range compare \code{stress_test_arguments}.}
+\item{growth_rate}{Numeric value for the terminal growth rate of profits beyond the final year in the DCF. Default is 0.03.}
 
-\item{growth_rate}{Numeric, that holds the terminal growth rate of profits
-beyond the final year in the DCF. For accepted range compare
-\code{stress_test_arguments}.}
+\item{div_netprofit_prop_coef}{Numeric coefficient determining how strongly future dividends propagate to company value. Default is 1.}
 
-\item{div_netprofit_prop_coef}{Numeric. A coefficient that determines how
-strongly the future dividends propagate to the company value. For accepted
-range compare \code{stress_test_arguments}.}
+\item{shock_year}{Numeric value specifying the year when the shock is applied. Default is 2030.}
 
-\item{shock_year}{Numeric, holding year the shock is applied. For accepted
-range compare \code{stress_test_arguments}.}
-
-\item{market_passthrough}{Firm's ability to pass carbon tax onto the consumer}
+\item{market_passthrough}{Numeric value representing the firm's ability to pass carbon tax onto the consumer. Default is 0.}
+}
+\value{
+A list containing:
+\item{company_pd_changes_overall}{Data frame of overall probability of default changes}
+\item{company_trajectories}{Data frame of company annual profits}
+\item{company_technology_npv}{Data frame of company technology net present values}
 }
 \description{
-Run stress test model
+This function executes the core transition risk stress test model calculations.
 }

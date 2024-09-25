@@ -92,11 +92,7 @@ read_production_data <- function(path = NULL) {
         capacity_factor = "d",
         emission_factor = "d"
       )
-    ) %>%
-    dplyr::mutate(
-      production_plan_company_technology = .data$capacity * .data$capacity_factor
-    ) %>%
-    dplyr::select(-c(.data$capacity, .data$capacity_factor))
+    ) 
 
 
   return(data)
