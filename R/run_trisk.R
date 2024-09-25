@@ -1,19 +1,20 @@
-#' Run stress testing for provided asset type.
+#' Run stress testing for provided asset type
 #'
-#' This function executes the transition risk stress test. It can be beneficial to
-#' understand scenario sensitivities, in which case the user may pass a
-#' vector of values to one (and only one) of the detailed arguments. This will
-#' result in running the analysis multiple times consecutively with the varied argument.
-#' NOTE: If `return_results` is TRUE, results will not be written to the `output_path`
-#' but will instead be returned.
+#' This function executes the transition risk stress test. It reads data from 
+#' the input path, runs the transition risk model using the provided parameters,
+#' and writes results to the output path if provided.
 #'
 #' @param input_path String containing the path to project-agnostic data.
-#' @param output_path String containing the path to which output files are written.
-#'   NOTE: Results and logs per run are saved to a subdirectory of output_path
-#'   that will be generated automatically. The name of the subdirectory is the
-#'   timestamp of the run of the analysis.
+#' @param output_path String containing the path to which output files are written. 
+#'   If NULL, the function returns the results list. Results and logs per run are saved 
+#'   to a subdirectory of `output_path` that will be generated automatically with a 
+#'   timestamp.
+#' @param show_params_cols Logical indicating whether parameter columns should be shown 
+#'   in the output. Default is TRUE.
+#' @param ... Additional arguments passed to \code{\link{run_trisk_model}} (clic for parameters detail). 
 #'
-#' @return If `output_path` is NULL, returns the output list. Otherwise, writes results to the specified path.
+#' @return If `output_path` is NULL, returns the output list. Otherwise, writes results 
+#' to the specified path.
 #' @export
 #'
 run_trisk <- function(
