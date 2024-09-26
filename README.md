@@ -121,7 +121,7 @@ results <- run_trisk_model(
 
 ## See Also
 
-- Package [trisk.analysis](https://theia-finance-labs.github.io/trisk.analysis/) for advanced analysis of Trisk outputs
+- Package [trisk.analysis](https://theia-finance-labs.github.io/trisk.analysis/) for complex analyses of Trisk outputs
 
 ---
 

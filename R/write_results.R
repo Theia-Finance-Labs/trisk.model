@@ -1,6 +1,7 @@
 #' Process function parameters
 #'
 #' This function extracts the default parameters from a function and replaces them with user-provided values where applicable.
+#' /!\ It ignore params without default, or with a NULL default
 #'
 #' @param fun A function whose parameters are to be processed.
 #' @param ... User-defined arguments to override the function's default parameters.
@@ -8,26 +9,32 @@
 #' @export
 process_params <- function(fun, ...) {
   params <- formals(fun)
-  default_params <- params[!sapply(params, is.symbol)]
+  # Ignore params without default, or with a NULL default
+  default_params <- params[!sapply(params, is.symbol) & !sapply(params, is.null)]
   args <- list(...)
   final_params <- utils::modifyList(default_params, args)
   return(final_params)
 }
 
-write_results <- function(npv_results, pd_results, company_trajectories, trisk_params, output_path, show_params_cols) {
-  
-  params_df = prepare_params_df(trisk_params, run_id)
+write_results <- function(npv_results, pd_results, company_trajectories, trisk_params, run_id, output_path, show_params_cols) {
+
+  params_df <- tibble::as_tibble(trisk_params)
 
   if (show_params_cols) {
     npv_results <- npv_results %>%
-      dplyr::bind_cols(params_df[rep(1, nrow(npv_results)), ] %>% dplyr::select(-c(.data$run_id)))
+      dplyr::bind_cols(params_df[rep(1, nrow(npv_results)), ])
 
     pd_results <- pd_results %>%
-      dplyr::bind_cols(params_df[rep(1, nrow(pd_results)), ] %>% dplyr::select(-c(.data$run_id)))
+      dplyr::bind_cols(params_df[rep(1, nrow(pd_results)), ])
 
     company_trajectories <- company_trajectories %>%
-      dplyr::bind_cols(params_df[rep(1, nrow(company_trajectories)), ] %>% dplyr::select(-c(.data$run_id)))
+      dplyr::bind_cols(params_df[rep(1, nrow(company_trajectories)), ])
   }
+
+  # Adds the run_id column to params_df
+  params_df <- params_df %>%
+    dplyr::mutate(run_id = .env$run_id)
+
 
   # Create output folder
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
@@ -41,12 +48,8 @@ write_results <- function(npv_results, pd_results, company_trajectories, trisk_p
   params_df %>% readr::write_csv(fs::path(output_path, "params.csv"))
 
   print(paste("Outputs saved in folder:", output_path))
-}
 
-prepare_params_df <- function(trisk_params, run_id) {
-  params_df <- tibble::as_tibble(trisk_params) %>%
-    dplyr::mutate(run_id = .env$run_id)
-  return(params_df)
+  return(output_path)
 }
 
 prepare_npv_results <- function(company_technology_npv, run_id) {

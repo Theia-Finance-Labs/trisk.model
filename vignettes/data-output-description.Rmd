@@ -23,7 +23,6 @@ library(trisk.model)
 ## Load the test data
 
 ```{r}
-
 # Load the internal datasets
 assets_testdata <- read.csv(system.file("testdata", "assets_testdata.csv", package = "trisk.model"))
 scenarios_testdata <- read.csv(system.file("testdata", "scenarios_testdata.csv", package = "trisk.model"))
@@ -34,15 +33,13 @@ ngfs_carbon_price_testdata <- read.csv(system.file("testdata", "ngfs_carbon_pric
 # Define the scenarios to use
 baseline_scenario <- "NGFS2023GCAM_CP"
 target_scenario <- "NGFS2023GCAM_NZ2050"
-scenario_geography <- "Global" 
-
+scenario_geography <- "Global"
 ```
 
 ## Generate outputs
 
 ```{r}
-
-  # Run the model with the provided data
+# Run the model with the provided data
 st_results <- run_trisk_model(
   assets_data = assets_testdata,
   scenarios_data = scenarios_testdata,
@@ -53,6 +50,112 @@ st_results <- run_trisk_model(
   scenario_geography = scenario_geography
 )
 
+
+npv_results <- st_results$npv_results
+pd_results <- st_results$pd_results
+company_trajectories <- st_results$company_trajectories
+
 ```
 
 ---
+
+### NPV results
+
+#### Data Description
+
+The `npv_results` dataset includes the following columns:
+
+- `run_id`: Unique identifier for the simulation run.
+- `company_id`: Unique identifier for the company.
+- `asset_id`: Unique identifier for the asset.
+- `company_name`: Name of the company.
+- `asset_name`: Name of the asset.
+- `sector`: Sector in which the company operates (e.g., Oil&Gas, Coal, Power).
+- `technology`: Type of technology used by the company (e.g., Gas, CoalCap, RenewablesCap).
+- `net_present_value_baseline`: Net present value (NPV) under the baseline scenario.
+- `net_present_value_shock`: Net present value (NPV) under the shock scenario.
+
+#### Data Structure
+
+```{r}
+str(npv_results)
+```
+
+#### Sample Data
+
+```{r}
+head(as.data.frame(npv_results))
+```
+
+
+
+### PD results
+
+#### Data Description
+
+The `pd_results` dataset includes the following columns:
+
+- `run_id`: Unique identifier for the simulation run.
+- `company_id`: Unique identifier for the company.
+- `company_name`: Name of the company.
+- `sector`: Sector in which the company operates (e.g., Oil&Gas, Coal).
+- `term`: Time period for the probability of default (PD) calculation.
+- `pd_baseline`: Probability of default (PD) under the baseline scenario.
+- `pd_shock`: Probability of default (PD) under the shock scenario.
+
+
+#### Data Structure
+
+```{r}
+str(pd_results)
+```
+
+#### Sample Data
+
+```{r}
+head(as.data.frame(pd_results))
+```
+
+
+
+### Company trajectories results
+
+#### Data Description
+
+The `company_trajectories` dataset includes the following columns:
+
+- `run_id`: Unique identifier for the simulation run.
+- `asset_id`: Unique identifier for the asset.
+- `asset_name`: Name of the asset.
+- `company_id`: Unique identifier for the company.
+- `company_name`: Name of the company.
+- `year`: Year of the scenario data.
+- `sector`: Sector in which the company operates (e.g., Oil&Gas, Coal).
+- `technology`: Type of technology used by the company.
+- `production_plan_company_technology`: Production plan for the company’s technology.
+- `production_baseline_scenario`: Production output under the baseline scenario.
+- `production_target_scenario`: Production output under the target scenario.
+- `production_shock_scenario`: Production output under the shock scenario.
+- `pd`: Probability of default for the company.
+- `net_profit_margin`: Net profit margin for the company.
+- `debt_equity_ratio`: Debt to equity ratio for the company.
+- `volatility`: Volatility of the company’s asset values.
+- `scenario_price_baseline`: Price under the baseline scenario.
+- `price_shock_scenario`: Price under the shock scenario.
+- `net_profits_baseline_scenario`: Net profits under the baseline scenario.
+- `net_profits_shock_scenario`: Net profits under the shock scenario.
+- `discounted_net_profits_baseline_scenario`: Discounted net profits under the baseline scenario.
+- `discounted_net_profits_shock_scenario`: Discounted net profits under the shock scenario.
+
+#### Data Structure
+
+```{r}
+str(company_trajectories)
+```
+
+#### Sample Data
+
+```{r}
+head(as.data.frame(company_trajectories))
+```
+
