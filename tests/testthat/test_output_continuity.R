@@ -49,21 +49,21 @@ test_that("Ensure continuity of stress test outputs against snapshot", {
   snapshot_results <- readRDS(SNAPSHOT_PATH)
 
   # Compare the entire data frames without selecting specific columns
-  current_npv <- st_results_current$company_technology_npv %>% arrange_all()
-  snapshot_npv <- snapshot_results$company_technology_npv %>% arrange_all()
+  current_npv <- st_results_current$npv_results %>% select(-c(run_id)) %>% arrange_all()
+  snapshot_npv <- snapshot_results$npv_results %>% select(-c(run_id)) %>% arrange_all()
 
   # Compare the data frames
-  expect_equal(current_npv, snapshot_npv, tolerance = 1e-8, info = "company_technology_npv does not match the snapshot")
+  expect_equal(current_npv, snapshot_npv, tolerance = 1e-8, info = "npv_results does not match the snapshot")
 
   # Compare the PD calculations
-  current_pd <- st_results_current$company_pd_changes_overall %>% arrange_all()
-  snapshot_pd <- snapshot_results$company_pd_changes_overall %>% arrange_all()
+  current_pd <- st_results_current$pd_results %>% select(-c(run_id)) %>% arrange_all()
+  snapshot_pd <- snapshot_results$pd_results %>% select(-c(run_id)) %>% arrange_all()
 
-  expect_equal(current_pd, snapshot_pd, tolerance = 1e-8, info = "company_pd_changes_overall does not match the snapshot")
+  expect_equal(current_pd, snapshot_pd, tolerance = 1e-8, info = "pd_results does not match the snapshot")
 
   # Compare the company trajectories
-  current_trajectories <- st_results_current$company_trajectories %>% arrange_all()
-  snapshot_trajectories <- snapshot_results$company_trajectories %>% arrange_all()
+  current_trajectories <- st_results_current$company_trajectories %>% select(-c(run_id)) %>% arrange_all()
+  snapshot_trajectories <- snapshot_results$company_trajectories %>% select(-c(run_id)) %>% arrange_all()
 
   expect_equal(current_trajectories, snapshot_trajectories, tolerance = 1e-8, info = "company_trajectories do not match the snapshot")
 })

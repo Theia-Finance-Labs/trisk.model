@@ -1,52 +1,58 @@
 #' Run stress testing for provided asset type
 #'
-#' This function executes the transition risk stress test. It reads data from 
+#' This function executes the transition risk stress test. It reads data from
 #' the input path, runs the transition risk model using the provided parameters,
 #' and writes results to the output path if provided.
 #'
 #' @param input_path String containing the path to project-agnostic data.
-#' @param output_path String containing the path to which output files are written. 
-#'   If NULL, the function returns the results list. Results and logs per run are saved 
-#'   to a subdirectory of `output_path` that will be generated automatically with a 
+#' @param output_path String containing the path to which output files are written.
+#'   If NULL, the function returns the results list. Results and logs per run are saved
+#'   to a subdirectory of `output_path` that will be generated automatically with a
 #'   timestamp.
-#' @param show_params_cols Logical indicating whether parameter columns should be shown 
+#' @param show_params_cols Logical indicating whether parameter columns should be shown
 #'   in the output. Default is TRUE.
-#' @param ... Additional arguments passed to \code{\link{run_trisk_model}} (clic for parameters detail). 
+#' @param ... Additional arguments passed to \code{\link{run_trisk_model}} (clic for parameters detail).
 #'
-#' @return If `output_path` is NULL, returns the output list. Otherwise, writes results 
-#' to the specified path.
+#' @return Character, folder path containing output dataframes
 #' @export
 #'
 run_trisk <- function(
     input_path,
-    output_path = NULL,
+    output_path,
     show_params_cols = TRUE,
     ...) {
-  # stopifnot(!((save_and_check & !is.null(output_path)) | !save_and_check),
-  #  "Either output_path arg must be set, or save_and_check set to TRUE")
 
   input_data_list <- st_read_agnostic(input_path)
+
+  run_id <- uuid::UUIDgenerate()
 
   output_list <- run_trisk_model(
     assets_data = input_data_list$assets_data,
     scenarios_data = input_data_list$scenarios_data,
     financial_data = input_data_list$financial_data,
     carbon_data = input_data_list$carbon_data,
+    run_id=run_id,
     ...
   )
-
 
   check_results <- function(output_list) {
     TRUE
   } # TODO
   stopifnot(check_results(output_list))
-  if (!is.null(output_path)) {
-    trisk_params <- process_params(fun = run_trisk_model, ...)
 
-    write_results(output_list = output_list, output_path = output_path, trisk_params = trisk_params, show_params_cols = show_params_cols)
-  } else {
-    return(output_list)
-  }
+  trisk_params <- process_params(fun = run_trisk_model, ...)
+
+  results_output_path <- write_results(
+    npv_results = output_list$npv_results,
+    pd_results = output_list$pd_results,
+    company_trajectories = output_list$company_trajectories,
+    trisk_params = trisk_params,
+    run_id=run_id,
+    output_path = output_path,
+    show_params_cols = show_params_cols
+  )
+
+  return(results_output_path)
 }
 
 
@@ -69,11 +75,12 @@ run_trisk <- function(
 #' @param div_netprofit_prop_coef Numeric coefficient determining how strongly future dividends propagate to company value. Default is 1.
 #' @param shock_year Numeric value specifying the year when the shock is applied. Default is 2030.
 #' @param market_passthrough Numeric value representing the firm's ability to pass carbon tax onto the consumer. Default is 0.
+#' @param run_id (Optional) Character value representing the ID of current Trisk's iteration
 #'
 #' @return A list containing:
-#'   \item{company_pd_changes_overall}{Data frame of overall probability of default changes}
+#'   \item{pd_results}{Data frame of overall probability of default changes}
 #'   \item{company_trajectories}{Data frame of company annual profits}
-#'   \item{company_technology_npv}{Data frame of company technology net present values}
+#'   \item{npv_results}{Data frame of company technology net present values}
 #' @export
 #'
 run_trisk_model <- function(assets_data,
@@ -89,7 +96,12 @@ run_trisk_model <- function(assets_data,
                             growth_rate = 0.03,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
-                            market_passthrough = 0) {
+                            market_passthrough = 0,
+                            run_id = NULL) {
+  if (is.null(run_id)) {
+    run_id <- uuid::UUIDgenerate()
+  }
+
   cat("-- Processing Assets and Scenarios. \n")
 
   processed_assets_data <- process_assets_data(assets_data = assets_data, financial_data = financial_data)
@@ -161,36 +173,16 @@ run_trisk_model <- function(assets_data,
       risk_free_interest_rate = risk_free_rate
     )
 
+
+  npv_results <- tibble::as_tibble(prepare_npv_results(company_technology_npv = company_technology_npv, run_id = run_id))
+  pd_results <- tibble::as_tibble(prepare_pd_results(company_pd_changes_overall = company_pd_changes_overall, run_id = run_id))
+  company_trajectories_results <- tibble::as_tibble(prepare_company_trajectories(company_trajectories = company_annual_profits, run_id = run_id))
+
   return(
     list(
-      company_pd_changes_overall = company_pd_changes_overall,
-      company_trajectories = company_annual_profits,
-      company_technology_npv = company_technology_npv
+      npv_results = npv_results,
+      pd_results = pd_results,
+      company_trajectories = company_trajectories_results
     )
   )
-}
-
-
-
-
-#' Process data of type indicated by function name
-#'
-#' @inheritParams process_production_data
-#'
-#' @return A tibble of data as indicated by function name.
-#' @noRd
-process_carbon_data <- function(data, start_year, end_year, carbon_price_model) {
-  data_processed <- data
-
-  ## dataframe will be NULL for lrisk this is the case as lrisk does not read in and use carbon prices
-  if (is.null(data_processed)) {
-    data_processed <- NULL
-  } else {
-    data_processed <- data_processed %>%
-      dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
-      dplyr::select(-c(.data$scenario_geography)) %>%
-      dplyr::filter(.data$scenario %in% .env$carbon_price_model)
-  }
-
-  return(data_processed)
 }
