@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="What the Package Does (One Line, Title Case)">
-<meta name="description" content="The package provides functions and workflows for conducting financial stress tests of listed equity, corporate bond and corporate loan portfolios. It specifically focuses on climate change related risks, such as transition/policy risk, litigation risk and physical risk. The methodologies developed by 2DII focus on forward looking approaches and asset based analyses where possible. Some external stress tests are also featured. This package is currently in the beta stage and not finalised yet. Changes to the methodology will still be made that can and will impact the outcomes of the analysis.">
-<meta property="og:description" content="The package provides functions and workflows for conducting financial stress tests of listed equity, corporate bond and corporate loan portfolios. It specifically focuses on climate change related risks, such as transition/policy risk, litigation risk and physical risk. The methodologies developed by 2DII focus on forward looking approaches and asset based analyses where possible. Some external stress tests are also featured. This package is currently in the beta stage and not finalised yet. Changes to the methodology will still be made that can and will impact the outcomes of the analysis.">
+<meta name="description" content="The package provides functions and workflows for conducting financial stress tests of listed equity, corporate bond and corporate loan portfolios. It specifically focuses on climate change related risks, such as transition/policy risk, litigation risk and physical risk. The methodologies focus on forward looking approaches and asset based analyses.">
+<meta property="og:description" content="The package provides functions and workflows for conducting financial stress tests of listed equity, corporate bond and corporate loan portfolios. It specifically focuses on climate change related risks, such as transition/policy risk, litigation risk and physical risk. The methodologies focus on forward looking approaches and asset based analyses.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,7 +35,9 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/trisk-data-overview.html">trisk-data-overview</a></li>
+<li><a class="dropdown-item" href="articles/data-input-description.html">data-input-description</a></li>
+    <li><a class="dropdown-item" href="articles/data-output-description.html">data-output-description</a></li>
+    <li><a class="dropdown-item" href="articles/trisk-run-from-folder.html">trisk-run-from-folder</a></li>
   </ul>
 </li>
       </ul>
@@ -55,48 +57,36 @@
 <div class="page-header"><h1 id="triskmodel">trisk.model<a class="anchor" aria-label="anchor" href="#triskmodel"></a>
 </h1></div>
 <p>This repository provides a comprehensive toolkit for conducting transition risk stress tests on financial assets. The tools enable users to analyze the impact of various climate scenarios on company trajectories, technology valuations, and default probabilities.</p>
-<p>If you prefer a quick setup and use of the code, use directly the package <a href="https://github.com/Theia-Finance-Labs/trisk.analysis" class="external-link">trisk.analysis</a>.</p>
-<div class="section level2">
-<h2 id="table-of-contents">Table of Contents<a class="anchor" aria-label="anchor" href="#table-of-contents"></a>
-</h2>
 <ul>
 <li>
 <a href="#triskmodel">trisk.model</a>
 <ul>
-<li><a href="#table-of-contents">Table of Contents</a></li>
-<li>
-<a href="#installation">Installation</a>
-<ul>
-<li><a href="#steps">Steps:</a></li>
-</ul>
-</li>
 <li>
 <a href="#prequisites">Prequisites</a>
 <ul>
+<li><a href="#installation">Installation</a></li>
 <li><a href="#data-setup-and-project-structure">Data Setup and Project Structure</a></li>
-<li><a href="#loading-data">Loading Data</a></li>
 </ul>
 </li>
 <li>
-<a href="#core-functions">Core Functions</a>
+<a href="#main-functions">Main Functions</a>
 <ul>
-<li><a href="#run_trisk"><code>run_trisk()</code></a></li>
-<li><a href="#run_trisk_model"><code>run_trisk_model()</code></a></li>
+<li><a href="#run_trisk-doc"><code>run_trisk()</code> doc</a></li>
+<li><a href="#run_trisk_model-doc"><code>run_trisk_model()</code> doc</a></li>
 </ul>
 </li>
-<li><a href="#license">License</a></li>
+<li><a href="#see-also">See Also</a></li>
 </ul>
 </li>
 </ul>
 <hr>
-</div>
 <div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+<h2 id="prequisites">Prequisites<a class="anchor" aria-label="anchor" href="#prequisites"></a>
 </h2>
-<p>You can install this package directly from GitHub using the <code>remotes</code> package in R.</p>
 <div class="section level3">
-<h3 id="steps">Steps:<a class="anchor" aria-label="anchor" href="#steps"></a>
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
+<p>You can install this package directly from GitHub using the <code>remotes</code> package in R.</p>
 <ol style="list-style-type: decimal">
 <li>
 <p>Install the <code>remotes</code> package if you don’t have it:</p>
@@ -109,12 +99,7 @@
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Theia-Finance-Labs/trisk.model"</span><span class="op">)</span></span></code></pre></div>
 </li>
 </ol>
-<hr>
 </div>
-</div>
-<div class="section level2">
-<h2 id="prequisites">Prequisites<a class="anchor" aria-label="anchor" href="#prequisites"></a>
-</h2>
 <div class="section level3">
 <h3 id="data-setup-and-project-structure">Data Setup and Project Structure<a class="anchor" aria-label="anchor" href="#data-setup-and-project-structure"></a>
 </h3>
@@ -134,62 +119,23 @@
 <li>
 <strong>scenarios.csv</strong> - Holds the details of the climate scenarios including the baseline and shock scenarios.</li>
 </ol>
-<p>For more details on how to structure the input data, refer to the <a href="https://theia-finance-labs.github.io/trisk.model/doc/trisk-data-overview.html" class="external-link">Vignette on Data Overview</a>.</p>
-</div>
-<div class="section level3">
-<h3 id="loading-data">Loading Data<a class="anchor" aria-label="anchor" href="#loading-data"></a>
-</h3>
-<p>In the <code>trisk.model</code> package, you can also load the prepackaged example datasets to run quick tests or model executions. These datasets are stored internally and can be loaded with:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">assets_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">scenarios_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">financial_features_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">carbon_price_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span></code></pre></div>
-<p>If you are using your own CSV files, place them in a directory with the above structure and point to that directory in the <code>input_path</code> parameter when running the <code><a href="reference/run_trisk.html">run_trisk()</a></code> function.</p>
-<hr>
+<p>For details on columns structure, refer to the <a href="https://theia-finance-labs.github.io/trisk.model/doc/data-input-description.html" class="external-link">Vignette on Data Overview</a>.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="core-functions">Core Functions<a class="anchor" aria-label="anchor" href="#core-functions"></a>
+<h2 id="main-functions">Main Functions<a class="anchor" aria-label="anchor" href="#main-functions"></a>
 </h2>
 <div class="section level3">
-<h3 id="run_trisk">
-<code>run_trisk()</code><a class="anchor" aria-label="anchor" href="#run_trisk"></a>
+<h3 id="run_trisk-doc">
+<code>run_trisk()</code> <a href="https://theia-finance-labs.github.io/trisk.model/reference/run_trisk.html" class="external-link">doc</a>
+<a class="anchor" aria-label="anchor" href="#run_trisk-doc"></a>
 </h3>
-<p>The primary function for running the transition risk stress test. It processes the input data from specified directories, performs the stress test, and returns key outputs such as company default probability changes and profit trajectories.</p>
-<p><strong>Key Parameters:</strong></p>
-<ul>
-<li>
-<code>input_path</code>: Path to the directory containing input data.</li>
-<li>
-<code>output_path</code>: Directory to store the output files. If not provided, results are returned as a list.</li>
-<li>
-<code>baseline_scenario</code>: String specifying the name of the baseline scenario.</li>
-<li>
-<code>target_scenario</code>: String specifying the name of the shock scenario.</li>
-<li>
-<code>scenario_geography</code>: Character vector indicating which geographical region(s) to calculate results for.</li>
-<li>
-<code>carbon_price_model</code>: Character vector specifying which NGFS model to use for carbon prices. Default is <code>"no_carbon_tax"</code>.</li>
-<li>
-<code>risk_free_rate</code>: Numeric value for the risk-free interest rate. Default is <code>0.02</code>.</li>
-<li>
-<code>discount_rate</code>: Numeric value for the discount rate of dividends per year in the DCF. Default is <code>0.07</code>.</li>
-<li>
-<code>growth_rate</code>: Numeric value for the terminal growth rate of profits beyond the final year in the DCF. Must be positive and less than <code>discount_rate</code>. Default is <code>0.03</code>.</li>
-<li>
-<code>div_netprofit_prop_coef</code>: Numeric coefficient determining how strongly future dividends propagate to company value. Default is <code>1</code>.</li>
-<li>
-<code>shock_year</code>: Numeric value specifying the year when the shock is applied. Default is <code>2030</code>.</li>
-<li>
-<code>market_passthrough</code>: Numeric value representing the firm’s ability to pass carbon tax onto the consumer. Default is <code>0</code>.</li>
-</ul>
-<p><strong>Returns:</strong></p>
-<ul>
-<li>A list of result data frames or writes results to the disk based on the provided path.</li>
-</ul>
+<p>The primary function for running the transition risk stress test. It processes the input data from specified directories, performs the stress test, and returns key outputs such as company default probability changes and profit trajectories. &gt; <strong>Note 1</strong>: It is possible to change the scenario geography but that won’t affect the assets being analyzed. Your input dataset should then only contain assets covered by the geography you are analyzing. A more user-friendly approach can be found in the package trisk.analysis.</p>
+<blockquote>
+<p><strong>Note 2</strong>: The selected scenario geography needs to be available for the selected baseline and target scenarios. This can be determined from the input scenario data.</p>
+</blockquote>
 <p><strong>Example Usage:</strong></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">trisk.model</span><span class="op">)</span></span>
 <span></span>
@@ -199,23 +145,21 @@
 <span>  output_path <span class="op">=</span> <span class="st">"path/to/output"</span>,</span>
 <span>  baseline_scenario <span class="op">=</span> <span class="st">"NGFS2023GCAM_CP"</span>,</span>
 <span>  target_scenario <span class="op">=</span> <span class="st">"NGFS2023GCAM_NZ2050"</span>,</span>
-<span>  scenario_geography <span class="op">=</span> <span class="st">"Global"</span>,</span>
-<span>  risk_free_rate <span class="op">=</span> <span class="fl">0.02</span>,</span>
-<span>  discount_rate <span class="op">=</span> <span class="fl">0.07</span>,</span>
-<span>  growth_rate <span class="op">=</span> <span class="fl">0.03</span>,</span>
-<span>  div_netprofit_prop_coef <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  shock_year <span class="op">=</span> <span class="fl">2030</span>,</span>
-<span>  show_params_cols <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  scenario_geography <span class="op">=</span> <span class="st">"Global"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<hr>
+<p>The results can be retrieved in the new folder created inside the output folder you defined as input parameter.</p>
 </div>
 <div class="section level3">
-<h3 id="run_trisk_model">
-<code>run_trisk_model()</code><a class="anchor" aria-label="anchor" href="#run_trisk_model"></a>
+<h3 id="run_trisk_model-doc">
+<code>run_trisk_model()</code> <a href="https://theia-finance-labs.github.io/trisk.model/reference/run_trisk_model.html" class="external-link">doc</a>
+<a class="anchor" aria-label="anchor" href="#run_trisk_model-doc"></a>
 </h3>
 <p>This function runs the core transition risk stress test model without handling file read/write operations. It is used to execute the transition risk stress test when data is already loaded into memory.</p>
+<blockquote>
+<p><strong>Note</strong> The results are not saved to disk with this function but are instead returned by the function. They can be then handled for more complex operations.</p>
+</blockquote>
 <p><strong>Example Usage:</strong></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">trisk.model</span><span class="op">)</span></span>
 <span></span>
@@ -231,17 +175,22 @@
 <span>  scenarios_data <span class="op">=</span> <span class="va">scenarios_testdata</span>,</span>
 <span>  financial_data <span class="op">=</span> <span class="va">financial_features_testdata</span>,</span>
 <span>  carbon_data <span class="op">=</span> <span class="va">carbon_price_testdata</span>,</span>
-<span>  baseline_scenario <span class="op">=</span> <span class="st">"NGFS2023GCAM_CP"</span>,</span>
-<span>  target_scenario <span class="op">=</span> <span class="st">"NGFS2023GCAM_NZ2050"</span>,</span>
-<span>  scenario_geography <span class="op">=</span> <span class="st">"Global"</span>,</span>
-<span>  shock_year <span class="op">=</span> <span class="fl">2030</span></span>
+<span>  risk_free_rate <span class="op">=</span> <span class="fl">0.02</span>,</span>
+<span>  discount_rate <span class="op">=</span> <span class="fl">0.07</span>,</span>
+<span>  growth_rate <span class="op">=</span> <span class="fl">0.03</span>,</span>
+<span>  div_netprofit_prop_coef <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  shock_year <span class="op">=</span> <span class="fl">2030</span>,</span>
+<span>  show_params_cols <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+<h2 id="see-also">See Also<a class="anchor" aria-label="anchor" href="#see-also"></a>
 </h2>
+<ul>
+<li>Package <a href="https://theia-finance-labs.github.io/trisk.analysis/" class="external-link">trisk.analysis</a> for complex analyses of Trisk outputs</li>
+</ul>
+<hr>
 <p>This project is licensed under the GNU License. See the <a href="LICENSE">LICENSE</a> file for more information.</p>
 </div>
 </div>
