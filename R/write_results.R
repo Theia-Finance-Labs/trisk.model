@@ -17,7 +17,6 @@ process_params <- function(fun, ...) {
 }
 
 write_results <- function(npv_results, pd_results, company_trajectories, trisk_params, run_id, output_path, show_params_cols) {
-
   params_df <- tibble::as_tibble(trisk_params)
 
   if (show_params_cols) {

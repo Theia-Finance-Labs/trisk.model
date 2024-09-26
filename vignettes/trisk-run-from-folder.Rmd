@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 ``` {r, setup, echo=FALSE}
 # Load necessary libraries
 library(trisk.model)
-library(fs)  # For file system operations like copying
+library(fs) # For file system operations like copying
 
 # Define source and destination directories
 source_dir <- system.file("testdata", package = "trisk.model")
@@ -30,18 +30,21 @@ if (!dir_exists(destination_dir)) {
 }
 
 # Define the files to be copied and their new names
-files_to_copy <- c("assets_testdata.csv", "financial_features_testdata.csv", 
-                   "ngfs_carbon_price_testdata.csv", "scenarios_testdata.csv")
+files_to_copy <- c(
+  "assets_testdata.csv", "financial_features_testdata.csv",
+  "ngfs_carbon_price_testdata.csv", "scenarios_testdata.csv"
+)
 
-new_names <- c("assets.csv", "financial_features.csv", 
-               "ngfs_carbon_price.csv", "scenarios.csv")
+new_names <- c(
+  "assets.csv", "financial_features.csv",
+  "ngfs_carbon_price.csv", "scenarios.csv"
+)
 
 # Loop through the files, copy them, and rename
 for (i in seq_along(files_to_copy)) {
   # Construct full file paths
   source_file <- file.path(source_dir, files_to_copy[i])
   destination_file <- file.path(destination_dir, new_names[i])
-  
   # Copy the file to the new location with the new name
   file_copy(source_file, destination_file, overwrite = TRUE)
 }

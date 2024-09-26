@@ -21,7 +21,6 @@ run_trisk <- function(
     output_path,
     show_params_cols = TRUE,
     ...) {
-
   input_data_list <- st_read_agnostic(input_path)
 
   run_id <- uuid::UUIDgenerate()
@@ -31,7 +30,7 @@ run_trisk <- function(
     scenarios_data = input_data_list$scenarios_data,
     financial_data = input_data_list$financial_data,
     carbon_data = input_data_list$carbon_data,
-    run_id=run_id,
+    run_id = run_id,
     ...
   )
 
@@ -47,7 +46,7 @@ run_trisk <- function(
     pd_results = output_list$pd_results,
     company_trajectories = output_list$company_trajectories,
     trisk_params = trisk_params,
-    run_id=run_id,
+    run_id = run_id,
     output_path = output_path,
     show_params_cols = show_params_cols
   )
