@@ -45,7 +45,6 @@ for (i in seq_along(files_to_copy)) {
   # Construct full file paths
   source_file <- file.path(source_dir, files_to_copy[i])
   destination_file <- file.path(destination_dir, new_names[i])
-
   # Copy the file to the new location with the new name
   file_copy(source_file, destination_file, overwrite = TRUE)
 }
