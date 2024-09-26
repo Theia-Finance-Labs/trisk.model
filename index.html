@@ -57,35 +57,9 @@
 <div class="page-header"><h1 id="triskmodel">trisk.model<a class="anchor" aria-label="anchor" href="#triskmodel"></a>
 </h1></div>
 <p>This repository provides a comprehensive toolkit for conducting transition risk stress tests on financial assets. The tools enable users to analyze the impact of various climate scenarios on company trajectories, technology valuations, and default probabilities.</p>
-<ul>
-<li>
-<a href="#triskmodel">trisk.model</a>
-<ul>
-<li>
-<a href="#prequisites">Prequisites</a>
-<ul>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#data-setup-and-project-structure">Data Setup and Project Structure</a></li>
-</ul>
-</li>
-<li>
-<a href="#main-functions">Main Functions</a>
-<ul>
-<li><a href="#run_trisk-doc"><code>run_trisk()</code> doc</a></li>
-<li><a href="#run_trisk_model-doc"><code>run_trisk_model()</code> doc</a></li>
-</ul>
-</li>
-<li><a href="#see-also">See Also</a></li>
-</ul>
-</li>
-</ul>
-<hr>
 <div class="section level2">
-<h2 id="prequisites">Prequisites<a class="anchor" aria-label="anchor" href="#prequisites"></a>
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<div class="section level3">
-<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h3>
 <p>You can install this package directly from GitHub using the <code>remotes</code> package in R.</p>
 <ol style="list-style-type: decimal">
 <li>
@@ -99,97 +73,38 @@
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"Theia-Finance-Labs/trisk.model"</span><span class="op">)</span></span></code></pre></div>
 </li>
 </ol>
+<hr>
 </div>
-<div class="section level3">
-<h3 id="data-setup-and-project-structure">Data Setup and Project Structure<a class="anchor" aria-label="anchor" href="#data-setup-and-project-structure"></a>
-</h3>
-<p>The input data files for the stress test must be structured as CSV files. These files should follow a specific naming convention and format to be compatible with the <code>trisk.model</code> functions. Here’s the project structure expected:</p>
-<pre class="plaintext"><code>project_input/
-    ├── assets.csv
-    ├── financial_features.csv
-    ├── ngfs_carbon_price.csv
-    └── scenarios.csv</code></pre>
+<div class="section level2">
+<h2 id="data-inputs">Data inputs<a class="anchor" aria-label="anchor" href="#data-inputs"></a>
+</h2>
+<p>Trisk expects 4 dataframes in input:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong>assets.csv</strong> - Contains data on company assets, including production, technology, and geographical details.</li>
+<strong>assets</strong> - Contains data on company assets, including production, technology, and geographical details.</li>
 <li>
-<strong>financial_features.csv</strong> - Contains financial metrics needed for the stress test.</li>
+<strong>financial_features</strong> - Contains financial metrics needed for the stress test.</li>
 <li>
-<strong>ngfs_carbon_price.csv</strong> - Provides carbon pricing data for the climate scenarios.</li>
+<strong>ngfs_carbon_price</strong> - Provides carbon pricing data for the climate scenarios.</li>
 <li>
-<strong>scenarios.csv</strong> - Holds the details of the climate scenarios including the baseline and shock scenarios.</li>
+<strong>scenarios</strong> - Holds the details of the climate scenarios including the baseline and shock scenarios.</li>
 </ol>
-<p>For details on columns structure, refer to the <a href="https://theia-finance-labs.github.io/trisk.model/doc/data-input-description.html" class="external-link">Vignette on Data Overview</a>.</p>
+<p>For details on columns structure, refer to the <a href="https://theia-finance-labs.github.io/trisk.model/doc/data-input-description.html" class="external-link">Vignette on data inputs</a>.</p>
 </div>
+<div class="section level2">
+<h2 id="data-outputs">Data outputs<a class="anchor" aria-label="anchor" href="#data-outputs"></a>
+</h2>
+<p>Dataframes output structure is explained in the <a href="https://theia-finance-labs.github.io/trisk.model/articles/data-output-description.html" class="external-link">Vignette on data outputs</a></p>
+<hr>
 </div>
 <div class="section level2">
 <h2 id="main-functions">Main Functions<a class="anchor" aria-label="anchor" href="#main-functions"></a>
 </h2>
-<div class="section level3">
-<h3 id="run_trisk-doc">
-<code>run_trisk()</code> <a href="https://theia-finance-labs.github.io/trisk.model/reference/run_trisk.html" class="external-link">doc</a>
-<a class="anchor" aria-label="anchor" href="#run_trisk-doc"></a>
-</h3>
-<p>The primary function for running the transition risk stress test. It processes the input data from specified directories, performs the stress test, and returns key outputs such as company default probability changes and profit trajectories. &gt; <strong>Note 1</strong>: It is possible to change the scenario geography but that won’t affect the assets being analyzed. Your input dataset should then only contain assets covered by the geography you are analyzing. A more user-friendly approach can be found in the package trisk.analysis.</p>
+<p>The functions <code><a href="reference/run_trisk.html">run_trisk()</a></code><a href="https://theia-finance-labs.github.io/trisk.model/reference/run_trisk.html" class="external-link">(doc)</a> and <code><a href="reference/run_trisk_model.html">run_trisk_model()</a></code><a href="https://theia-finance-labs.github.io/trisk.model/reference/run_trisk_model.html" class="external-link">(doc)</a> are the main functions used to run Trisk simulations.</p>
 <blockquote>
-<p><strong>Note 2</strong>: The selected scenario geography needs to be available for the selected baseline and target scenarios. This can be determined from the input scenario data.</p>
+<p><strong>Note 1</strong>: The selected scenario geography needs to be available for the selected baseline and target scenarios. This can be determined from the input scenario data. <strong>Note 2</strong>: It is possible to change the scenario geography but that only filters the scenario data. It won’t impact the assets being analyzed depending on their country. Please refer to the package <a href="https://theia-finance-labs.github.io/trisk.analysis/" class="external-link">trisk.analysis</a> for complex analyses of Trisk outputs.</p>
 </blockquote>
-<p><strong>Example Usage:</strong></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load the package</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">trisk.model</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Run the stress test and save results to disk</span></span>
-<span><span class="fu"><a href="reference/run_trisk.html">run_trisk</a></span><span class="op">(</span></span>
-<span>  input_path <span class="op">=</span> <span class="st">"path/to/project_input/"</span>,</span>
-<span>  output_path <span class="op">=</span> <span class="st">"path/to/output"</span>,</span>
-<span>  baseline_scenario <span class="op">=</span> <span class="st">"NGFS2023GCAM_CP"</span>,</span>
-<span>  target_scenario <span class="op">=</span> <span class="st">"NGFS2023GCAM_NZ2050"</span>,</span>
-<span>  scenario_geography <span class="op">=</span> <span class="st">"Global"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>The results can be retrieved in the new folder created inside the output folder you defined as input parameter.</p>
-</div>
-<div class="section level3">
-<h3 id="run_trisk_model-doc">
-<code>run_trisk_model()</code> <a href="https://theia-finance-labs.github.io/trisk.model/reference/run_trisk_model.html" class="external-link">doc</a>
-<a class="anchor" aria-label="anchor" href="#run_trisk_model-doc"></a>
-</h3>
-<p>This function runs the core transition risk stress test model without handling file read/write operations. It is used to execute the transition risk stress test when data is already loaded into memory.</p>
-<blockquote>
-<p><strong>Note</strong> The results are not saved to disk with this function but are instead returned by the function. They can be then handled for more complex operations.</p>
-</blockquote>
-<p><strong>Example Usage:</strong></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load the package</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">trisk.model</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Load the internal datasets from the package</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">assets_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">scenarios_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">financial_features_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">carbon_price_testdata</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Run the transition risk model</span></span>
-<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_trisk_model.html">run_trisk_model</a></span><span class="op">(</span></span>
-<span>  assets_data <span class="op">=</span> <span class="va">assets_testdata</span>,</span>
-<span>  scenarios_data <span class="op">=</span> <span class="va">scenarios_testdata</span>,</span>
-<span>  financial_data <span class="op">=</span> <span class="va">financial_features_testdata</span>,</span>
-<span>  carbon_data <span class="op">=</span> <span class="va">carbon_price_testdata</span>,</span>
-<span>  risk_free_rate <span class="op">=</span> <span class="fl">0.02</span>,</span>
-<span>  discount_rate <span class="op">=</span> <span class="fl">0.07</span>,</span>
-<span>  growth_rate <span class="op">=</span> <span class="fl">0.03</span>,</span>
-<span>  div_netprofit_prop_coef <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  shock_year <span class="op">=</span> <span class="fl">2030</span>,</span>
-<span>  show_params_cols <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="see-also">See Also<a class="anchor" aria-label="anchor" href="#see-also"></a>
-</h2>
-<ul>
-<li>Package <a href="https://theia-finance-labs.github.io/trisk.analysis/" class="external-link">trisk.analysis</a> for complex analyses of Trisk outputs</li>
-</ul>
+<p>You can find an example usage of <code><a href="reference/run_trisk.html">run_trisk()</a></code> in the <a href="https://theia-finance-labs.github.io/trisk.model/articles/trisk-run-from-folder.html" class="external-link">Trisk run from folder Vignette</a>. Note that <code><a href="reference/run_trisk.html">run_trisk()</a></code> is a wrapper function around <code><a href="reference/run_trisk_model.html">run_trisk_model()</a></code> that handles disk I/O operations</p>
 <hr>
 <p>This project is licensed under the GNU License. See the <a href="LICENSE">LICENSE</a> file for more information.</p>
 </div>
