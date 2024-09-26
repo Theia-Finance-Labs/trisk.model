@@ -151,7 +151,7 @@ the shock scenario.</li>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">npv_results</span><span class="op">)</span></span>
 <span><span class="co">#&gt; tibble [7 × 9] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;  $ run_id                    : chr [1:7] "73ce234f-1a99-4a5d-b483-14565df20061" "73ce234f-1a99-4a5d-b483-14565df20061" "73ce234f-1a99-4a5d-b483-14565df20061" "73ce234f-1a99-4a5d-b483-14565df20061" ...</span></span>
+<span><span class="co">#&gt;  $ run_id                    : chr [1:7] "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" ...</span></span>
 <span><span class="co">#&gt;  $ company_id                : int [1:7] 101 102 103 104 105 105 105</span></span>
 <span><span class="co">#&gt;  $ asset_id                  : int [1:7] 101 102 103 104 105 105 105</span></span>
 <span><span class="co">#&gt;  $ company_name              : chr [1:7] "Company 1" "Company 2" "Company 3" "Company 4" ...</span></span>
@@ -167,12 +167,12 @@ the shock scenario.</li>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">npv_results</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                 run_id company_id asset_id company_name</span></span>
-<span><span class="co">#&gt; 1 73ce234f-1a99-4a5d-b483-14565df20061        101      101    Company 1</span></span>
-<span><span class="co">#&gt; 2 73ce234f-1a99-4a5d-b483-14565df20061        102      102    Company 2</span></span>
-<span><span class="co">#&gt; 3 73ce234f-1a99-4a5d-b483-14565df20061        103      103    Company 3</span></span>
-<span><span class="co">#&gt; 4 73ce234f-1a99-4a5d-b483-14565df20061        104      104    Company 4</span></span>
-<span><span class="co">#&gt; 5 73ce234f-1a99-4a5d-b483-14565df20061        105      105    Company 5</span></span>
-<span><span class="co">#&gt; 6 73ce234f-1a99-4a5d-b483-14565df20061        105      105    Company 5</span></span>
+<span><span class="co">#&gt; 1 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        101      101    Company 1</span></span>
+<span><span class="co">#&gt; 2 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        102      102    Company 2</span></span>
+<span><span class="co">#&gt; 3 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        103      103    Company 3</span></span>
+<span><span class="co">#&gt; 4 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        104      104    Company 4</span></span>
+<span><span class="co">#&gt; 5 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        105      105    Company 5</span></span>
+<span><span class="co">#&gt; 6 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        105      105    Company 5</span></span>
 <span><span class="co">#&gt;   asset_name  sector    technology net_present_value_baseline</span></span>
 <span><span class="co">#&gt; 1  Company 1 Oil&amp;Gas           Gas                   172718.3</span></span>
 <span><span class="co">#&gt; 2  Company 2    Coal          Coal                 42299475.0</span></span>
@@ -224,7 +224,7 @@ scenario.</li>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">pd_results</span><span class="op">)</span></span>
 <span><span class="co">#&gt; tibble [25 × 7] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;  $ run_id      : chr [1:25] "73ce234f-1a99-4a5d-b483-14565df20061" "73ce234f-1a99-4a5d-b483-14565df20061" "73ce234f-1a99-4a5d-b483-14565df20061" "73ce234f-1a99-4a5d-b483-14565df20061" ...</span></span>
+<span><span class="co">#&gt;  $ run_id      : chr [1:25] "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" ...</span></span>
 <span><span class="co">#&gt;  $ company_id  : int [1:25] 101 101 101 101 101 102 102 102 102 102 ...</span></span>
 <span><span class="co">#&gt;  $ company_name: chr [1:25] "Company 1" "Company 1" "Company 1" "Company 1" ...</span></span>
 <span><span class="co">#&gt;  $ sector      : chr [1:25] "Oil&amp;Gas" "Oil&amp;Gas" "Oil&amp;Gas" "Oil&amp;Gas" ...</span></span>
@@ -238,12 +238,12 @@ scenario.</li>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">pd_results</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                 run_id company_id company_name  sector term</span></span>
-<span><span class="co">#&gt; 1 73ce234f-1a99-4a5d-b483-14565df20061        101    Company 1 Oil&amp;Gas    1</span></span>
-<span><span class="co">#&gt; 2 73ce234f-1a99-4a5d-b483-14565df20061        101    Company 1 Oil&amp;Gas    2</span></span>
-<span><span class="co">#&gt; 3 73ce234f-1a99-4a5d-b483-14565df20061        101    Company 1 Oil&amp;Gas    3</span></span>
-<span><span class="co">#&gt; 4 73ce234f-1a99-4a5d-b483-14565df20061        101    Company 1 Oil&amp;Gas    4</span></span>
-<span><span class="co">#&gt; 5 73ce234f-1a99-4a5d-b483-14565df20061        101    Company 1 Oil&amp;Gas    5</span></span>
-<span><span class="co">#&gt; 6 73ce234f-1a99-4a5d-b483-14565df20061        102    Company 2    Coal    1</span></span>
+<span><span class="co">#&gt; 1 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        101    Company 1 Oil&amp;Gas    1</span></span>
+<span><span class="co">#&gt; 2 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        101    Company 1 Oil&amp;Gas    2</span></span>
+<span><span class="co">#&gt; 3 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        101    Company 1 Oil&amp;Gas    3</span></span>
+<span><span class="co">#&gt; 4 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        101    Company 1 Oil&amp;Gas    4</span></span>
+<span><span class="co">#&gt; 5 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        101    Company 1 Oil&amp;Gas    5</span></span>
+<span><span class="co">#&gt; 6 cccc5e12-a5c3-44e1-83c4-da9e047f02b7        102    Company 2    Coal    1</span></span>
 <span><span class="co">#&gt;    pd_baseline   pd_shock</span></span>
 <span><span class="co">#&gt; 1 0.000000e+00 0.03826603</span></span>
 <span><span class="co">#&gt; 2 2.819980e-09 0.11213381</span></span>
@@ -329,7 +329,7 @@ profits under the shock scenario.</li>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">company_trajectories</span><span class="op">)</span></span>
 <span><span class="co">#&gt; tibble [210 × 22] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;  $ run_id                                  : chr [1:210] "73ce234f-1a99-4a5d-b483-14565df20061" "73ce234f-1a99-4a5d-b483-14565df20061" "73ce234f-1a99-4a5d-b483-14565df20061" "73ce234f-1a99-4a5d-b483-14565df20061" ...</span></span>
+<span><span class="co">#&gt;  $ run_id                                  : chr [1:210] "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" "cccc5e12-a5c3-44e1-83c4-da9e047f02b7" ...</span></span>
 <span><span class="co">#&gt;  $ asset_id                                : int [1:210] 101 101 101 101 101 101 101 101 101 101 ...</span></span>
 <span><span class="co">#&gt;  $ asset_name                              : chr [1:210] "Company 1" "Company 1" "Company 1" "Company 1" ...</span></span>
 <span><span class="co">#&gt;  $ company_id                              : int [1:210] 101 101 101 101 101 101 101 101 101 101 ...</span></span>
@@ -358,12 +358,12 @@ profits under the shock scenario.</li>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">company_trajectories</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                 run_id asset_id asset_name company_id</span></span>
-<span><span class="co">#&gt; 1 73ce234f-1a99-4a5d-b483-14565df20061      101  Company 1        101</span></span>
-<span><span class="co">#&gt; 2 73ce234f-1a99-4a5d-b483-14565df20061      101  Company 1        101</span></span>
-<span><span class="co">#&gt; 3 73ce234f-1a99-4a5d-b483-14565df20061      101  Company 1        101</span></span>
-<span><span class="co">#&gt; 4 73ce234f-1a99-4a5d-b483-14565df20061      101  Company 1        101</span></span>
-<span><span class="co">#&gt; 5 73ce234f-1a99-4a5d-b483-14565df20061      101  Company 1        101</span></span>
-<span><span class="co">#&gt; 6 73ce234f-1a99-4a5d-b483-14565df20061      101  Company 1        101</span></span>
+<span><span class="co">#&gt; 1 cccc5e12-a5c3-44e1-83c4-da9e047f02b7      101  Company 1        101</span></span>
+<span><span class="co">#&gt; 2 cccc5e12-a5c3-44e1-83c4-da9e047f02b7      101  Company 1        101</span></span>
+<span><span class="co">#&gt; 3 cccc5e12-a5c3-44e1-83c4-da9e047f02b7      101  Company 1        101</span></span>
+<span><span class="co">#&gt; 4 cccc5e12-a5c3-44e1-83c4-da9e047f02b7      101  Company 1        101</span></span>
+<span><span class="co">#&gt; 5 cccc5e12-a5c3-44e1-83c4-da9e047f02b7      101  Company 1        101</span></span>
+<span><span class="co">#&gt; 6 cccc5e12-a5c3-44e1-83c4-da9e047f02b7      101  Company 1        101</span></span>
 <span><span class="co">#&gt;   company_name year  sector technology production_plan_company_technology</span></span>
 <span><span class="co">#&gt; 1    Company 1 2022 Oil&amp;Gas        Gas                               5000</span></span>
 <span><span class="co">#&gt; 2    Company 1 2023 Oil&amp;Gas        Gas                               5423</span></span>

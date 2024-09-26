@@ -49,7 +49,7 @@ and writes results to the output path if provided.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_trisk</span><span class="op">(</span><span class="va">input_path</span>, output_path <span class="op">=</span> <span class="cn">NULL</span>, show_params_cols <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_trisk</span><span class="op">(</span><span class="va">input_path</span>, <span class="va">output_path</span>, show_params_cols <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -78,8 +78,7 @@ in the output. Default is TRUE.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If <code>output_path</code> is NULL, returns the output list. Otherwise, writes results
-to the specified path.</p>
+    <p>Character, folder path containing output dataframes</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
