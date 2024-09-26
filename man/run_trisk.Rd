@@ -4,7 +4,7 @@
 \alias{run_trisk}
 \title{Run stress testing for provided asset type}
 \usage{
-run_trisk(input_path, output_path = NULL, show_params_cols = TRUE, ...)
+run_trisk(input_path, output_path, show_params_cols = TRUE, ...)
 }
 \arguments{
 \item{input_path}{String containing the path to project-agnostic data.}
@@ -20,8 +20,7 @@ in the output. Default is TRUE.}
 \item{...}{Additional arguments passed to \code{\link{run_trisk_model}} (clic for parameters detail).}
 }
 \value{
-If \code{output_path} is NULL, returns the output list. Otherwise, writes results
-to the specified path.
+Character, folder path containing output dataframes
 }
 \description{
 This function executes the transition risk stress test. It reads data from

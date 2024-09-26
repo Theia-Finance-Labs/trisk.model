@@ -16,4 +16,5 @@ A list of final parameters.
 }
 \description{
 This function extracts the default parameters from a function and replaces them with user-provided values where applicable.
+/!\ It ignore params without default, or with a NULL default
 }

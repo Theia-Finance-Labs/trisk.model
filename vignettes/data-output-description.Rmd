@@ -54,7 +54,6 @@ st_results <- run_trisk_model(
 npv_results <- st_results$npv_results
 pd_results <- st_results$pd_results
 company_trajectories <- st_results$company_trajectories
-
 ```
 
 ---
