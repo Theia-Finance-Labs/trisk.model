@@ -1,0 +1,58 @@
+---
+title: "data-output-description"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{data-output-description}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(trisk.model)
+```
+
+# Obtain outputs 
+
+## Load the test data
+
+```{r}
+
+# Load the internal datasets
+assets_testdata <- read.csv(system.file("testdata", "assets_testdata.csv", package = "trisk.model"))
+scenarios_testdata <- read.csv(system.file("testdata", "scenarios_testdata.csv", package = "trisk.model"))
+financial_features_testdata <- read.csv(system.file("testdata", "financial_features_testdata.csv", package = "trisk.model"))
+ngfs_carbon_price_testdata <- read.csv(system.file("testdata", "ngfs_carbon_price_testdata.csv", package = "trisk.model"))
+
+
+# Define the scenarios to use
+baseline_scenario <- "NGFS2023GCAM_CP"
+target_scenario <- "NGFS2023GCAM_NZ2050"
+scenario_geography <- "Global" 
+
+```
+
+## Generate outputs
+
+```{r}
+
+  # Run the model with the provided data
+st_results <- run_trisk_model(
+  assets_data = assets_testdata,
+  scenarios_data = scenarios_testdata,
+  financial_data = financial_features_testdata,
+  carbon_data = ngfs_carbon_price_testdata,
+  baseline_scenario = baseline_scenario,
+  target_scenario = target_scenario,
+  scenario_geography = scenario_geography
+)
+
+```
+
+---

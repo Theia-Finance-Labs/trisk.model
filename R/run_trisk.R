@@ -43,7 +43,13 @@ run_trisk <- function(
   if (!is.null(output_path)) {
     trisk_params <- process_params(fun = run_trisk_model, ...)
 
-    write_results(output_list = output_list, output_path = output_path, trisk_params = trisk_params, show_params_cols = show_params_cols)
+    write_results(
+      npv_results=output_list$npv_results,
+     pd_results=output_list$pd_results, 
+     company_trajectories=output_list$company_trajectories,
+      trisk_params = trisk_params,
+       output_path = output_path,
+        show_params_cols = show_params_cols)
   } else {
     return(output_list)
   }
@@ -71,9 +77,9 @@ run_trisk <- function(
 #' @param market_passthrough Numeric value representing the firm's ability to pass carbon tax onto the consumer. Default is 0.
 #'
 #' @return A list containing:
-#'   \item{company_pd_changes_overall}{Data frame of overall probability of default changes}
+#'   \item{pd_results}{Data frame of overall probability of default changes}
 #'   \item{company_trajectories}{Data frame of company annual profits}
-#'   \item{company_technology_npv}{Data frame of company technology net present values}
+#'   \item{npv_results}{Data frame of company technology net present values}
 #' @export
 #'
 run_trisk_model <- function(assets_data,
@@ -89,7 +95,13 @@ run_trisk_model <- function(assets_data,
                             growth_rate = 0.03,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
-                            market_passthrough = 0) {
+                            market_passthrough = 0,
+                            run_id=NULL) {
+
+  if (is.null(run_id)){
+    run_id <- uuid::UUIDgenerate()
+  }
+
   cat("-- Processing Assets and Scenarios. \n")
 
   processed_assets_data <- process_assets_data(assets_data = assets_data, financial_data = financial_data)
@@ -161,11 +173,18 @@ run_trisk_model <- function(assets_data,
       risk_free_interest_rate = risk_free_rate
     )
 
+
+
+    npv_results  <- tibble::as_tibble(prepare_npv_results(company_technology_npv=company_technology_npv, run_id=run_id)),
+    pd_results  <- tibble::as_tibble(prepare_pd_results(company_pd_changes_overall=company_pd_changes_overall, run_id=run_id)),
+    company_trajectories_results  <-  tibble::as_tibble(prepare_company_trajectories(company_trajectories=company_trajectories, run_id=run_id))
+
+
   return(
     list(
-      company_pd_changes_overall = company_pd_changes_overall,
-      company_trajectories = company_annual_profits,
-      company_technology_npv = company_technology_npv
+      npv_results = npv_results,
+      pd_results = pd_results,
+      company_trajectories = company_trajectories_results
     )
   )
 }

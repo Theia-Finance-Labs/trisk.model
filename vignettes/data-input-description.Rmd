@@ -1,8 +1,8 @@
 ---
-title: "trisk-data-overview"
+title: "data-input-description"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{trisk-data-overview}
+  %\VignetteIndexEntry{data-input-description}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

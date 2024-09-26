@@ -1,0 +1,29 @@
+---
+title: "trisk-output-data-overview"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{trisk-output-data-overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+```{r setup}
+library(trisk.model)
+
+
+assets_testdata <- read.csv(system.file("testdata", "assets_testdata.csv", package = "trisk.model"))
+scenarios_testdata <- read.csv(system.file("testdata", "scenarios_testdata.csv", package = "trisk.model"))
+financial_features_testdata <- read.csv(system.file("testdata", "financial_features_testdata.csv", package = "trisk.model"))
+ngfs_carbon_price_testdata <- read.csv(system.file("testdata", "ngfs_carbon_price_testdata.csv", package = "trisk.model"))
+
+```
+
+---
