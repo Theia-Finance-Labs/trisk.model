@@ -21,7 +21,7 @@ trisk_input_dir <- file.path(".", "trisk_inputs")
 trisk_output_dir <- file.path(".", "trisk_outputs")
 ```
 
-``` {r, setup, echo=FALSE}
+``` {r, echo=FALSE}
 library(fs) # For file system operations like copying
 
 # Define source and destination directories
@@ -59,20 +59,20 @@ cat("Files have been copied and renamed in ./trisk_inputs.\n")
 # Input folder structure
 The files inside the `trisk_inputs` folder are now structured as follows:
 
-``` {r}
+``` {r, echo=TRUE}
 dir_tree(trisk_input_dir)
 ```
 
 # Generate outputs using the Trisk model
 
-``` {r}
+``` {r, echo=TRUE}
 # Define the scenarios to use
 baseline_scenario <- "NGFS2023GCAM_CP"
 target_scenario <- "NGFS2023GCAM_NZ2050"
 scenario_geography <- "Global"
 ```
 
-``` {r}
+``` {r, echo=TRUE}
 # Run the model with the provided data
 saved_path <- run_trisk(
   input_path = trisk_input_dir,
@@ -86,14 +86,14 @@ saved_path <- run_trisk(
 # Output folder structure
 The generated outputs are saved in the `trisk_outputs` folder, structured as:
 
-``` {r}
+``` {r, echo=TRUE}
 dir_tree(trisk_output_dir)
 ```
 Each new run generates a folder with a unique name. The folders are named following this convention : DATE_TIME__RUNID
 
 The full path of the run is :
 
-``` {r}
+``` {r, echo=TRUE}
 # Print the normalized path to the saved output files
 print(normalizePath(saved_path, mustWork = FALSE))
 ```
