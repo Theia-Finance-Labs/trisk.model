@@ -4,7 +4,7 @@
 
 # trisk.model
 
-This repository provides a comprehensive toolkit for conducting transition risk stress tests on financial assets. The tools enable users to analyze the impact of various climate scenarios on company trajectories, technology valuations, and default probabilities.
+This repository hosts the core TRISK model, allowing to conduct transition risk stress tests on financial assets. The tool enable users to analyze the impact of various climate scenarios on company trajectories, technology valuations, and default probabilities.
 
 ## Installation
 
@@ -35,7 +35,7 @@ You can install this package directly from GitHub using the `remotes` package in
 3. **ngfs_carbon_price** - Provides carbon pricing data for the climate scenarios.
 4. **scenarios** - Holds the details of the climate scenarios including the baseline and shock scenarios.
 
-For details on columns structure, refer to the [Vignette on data inputs](https://theia-finance-labs.github.io/trisk.model/doc/data-input-description.html).
+For details on columns structure, refer to the [Vignette on data inputs](https://theia-finance-labs.github.io/trisk.model/articles/data-input-description.html).
 
 ## Data outputs
 
@@ -50,6 +50,7 @@ For details on columns structure, refer to the [Vignette on data inputs](https:/
 The functions `run_trisk()`[(doc)](https://theia-finance-labs.github.io/trisk.model/reference/run_trisk.html) and `run_trisk_model()`[(doc)](https://theia-finance-labs.github.io/trisk.model/reference/run_trisk_model.html) are the main functions used to run Trisk simulations.
 
 > **Note 1**: The selected scenario geography needs to be available for the selected baseline and target scenarios. This can be determined from the input scenario data.
+
 > **Note 2**:  It is possible to change the scenario geography but that only filters the scenario data. It won't impact the assets being analyzed depending on their country. Please refer to the package [trisk.analysis](https://theia-finance-labs.github.io/trisk.analysis/) for complex analyses of Trisk outputs.
 
 
