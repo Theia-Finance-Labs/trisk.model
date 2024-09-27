@@ -56,7 +56,7 @@
 <div class="section level1">
 <div class="page-header"><h1 id="triskmodel">trisk.model<a class="anchor" aria-label="anchor" href="#triskmodel"></a>
 </h1></div>
-<p>This repository provides a comprehensive toolkit for conducting transition risk stress tests on financial assets. The tools enable users to analyze the impact of various climate scenarios on company trajectories, technology valuations, and default probabilities.</p>
+<p>This repository hosts the core TRISK model, allowing to conduct transition risk stress tests on financial assets. The tool enable users to analyze the impact of various climate scenarios on company trajectories, technology valuations, and default probabilities.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -89,7 +89,7 @@
 <li>
 <strong>scenarios</strong> - Holds the details of the climate scenarios including the baseline and shock scenarios.</li>
 </ol>
-<p>For details on columns structure, refer to the <a href="https://theia-finance-labs.github.io/trisk.model/doc/data-input-description.html" class="external-link">Vignette on data inputs</a>.</p>
+<p>For details on columns structure, refer to the <a href="https://theia-finance-labs.github.io/trisk.model/articles/data-input-description.html" class="external-link">Vignette on data inputs</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="data-outputs">Data outputs<a class="anchor" aria-label="anchor" href="#data-outputs"></a>
@@ -102,7 +102,10 @@
 </h2>
 <p>The functions <code><a href="reference/run_trisk.html">run_trisk()</a></code><a href="https://theia-finance-labs.github.io/trisk.model/reference/run_trisk.html" class="external-link">(doc)</a> and <code><a href="reference/run_trisk_model.html">run_trisk_model()</a></code><a href="https://theia-finance-labs.github.io/trisk.model/reference/run_trisk_model.html" class="external-link">(doc)</a> are the main functions used to run Trisk simulations.</p>
 <blockquote>
-<p><strong>Note 1</strong>: The selected scenario geography needs to be available for the selected baseline and target scenarios. This can be determined from the input scenario data. <strong>Note 2</strong>: It is possible to change the scenario geography but that only filters the scenario data. It won’t impact the assets being analyzed depending on their country. Please refer to the package <a href="https://theia-finance-labs.github.io/trisk.analysis/" class="external-link">trisk.analysis</a> for complex analyses of Trisk outputs.</p>
+<p><strong>Note 1</strong>: The selected scenario geography needs to be available for the selected baseline and target scenarios. This can be determined from the input scenario data.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note 2</strong>: It is possible to change the scenario geography but that only filters the scenario data. It won’t impact the assets being analyzed depending on their country. Please refer to the package <a href="https://theia-finance-labs.github.io/trisk.analysis/" class="external-link">trisk.analysis</a> for complex analyses of Trisk outputs.</p>
 </blockquote>
 <p>You can find an example usage of <code><a href="reference/run_trisk.html">run_trisk()</a></code> in the <a href="https://theia-finance-labs.github.io/trisk.model/articles/trisk-run-from-folder.html" class="external-link">Trisk run from folder Vignette</a>. Note that <code><a href="reference/run_trisk.html">run_trisk()</a></code> is a wrapper function around <code><a href="reference/run_trisk_model.html">run_trisk_model()</a></code> that handles disk I/O operations</p>
 <hr>
