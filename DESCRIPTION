@@ -1,6 +1,6 @@
 Package: trisk.model
 Title: What the Package Does (One Line, Title Case)
-Version: 2.5.1
+Version: 2.6.0
 Authors@R: c(
     person(given = "Jacob",
            family = "Kastl",
@@ -48,4 +48,3 @@ Suggests:
     kableExtra
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-
