@@ -84,9 +84,15 @@ saved_path <- run_trisk(
 )
 ```
 
-Results are saved in this folder :
 ```{r}
-print(saved_path)
+full_path <- normalizePath(saved_path, mustWork = FALSE)
+```
+
+
+Each new run generates a folder with a unique name. The folders are named following this convention : DATE_TIME__RUNID. The full path of this run is : 
+
+```{r}
+print(full_path)
 ```
 
 # Output folder structure
@@ -94,11 +100,4 @@ The generated outputs are saved in the `trisk_outputs` folder, structured as:
 
 ``` {r, echo=TRUE}
 dir_tree(trisk_output_dir)
-```
-Each new run generates a folder with a unique name. The folders are named following this convention : DATE_TIME__RUNID
-
-The normalized path where are saved output files is:
-
-``` {r, echo=TRUE}
-print(normalizePath(saved_path, mustWork = FALSE))
 ```
