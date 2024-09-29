@@ -72,8 +72,9 @@ target_scenario <- "NGFS2023GCAM_NZ2050"
 scenario_geography <- "Global"
 ```
 
+Run the model with the downloaded data :
+
 ``` {r, echo=TRUE}
-# Run the model with the provided data
 saved_path <- run_trisk(
   input_path = trisk_input_dir,
   output_path = trisk_output_dir,
@@ -81,6 +82,11 @@ saved_path <- run_trisk(
   target_scenario = target_scenario,
   scenario_geography = scenario_geography
 )
+```
+
+Results are saved in this folder :
+```{r}
+print(saved_path)
 ```
 
 # Output folder structure
@@ -91,9 +97,8 @@ dir_tree(trisk_output_dir)
 ```
 Each new run generates a folder with a unique name. The folders are named following this convention : DATE_TIME__RUNID
 
-The full path of the run is :
+The normalized path where are saved output files is:
 
 ``` {r, echo=TRUE}
-# Print the normalized path to the saved output files
 print(normalizePath(saved_path, mustWork = FALSE))
 ```
