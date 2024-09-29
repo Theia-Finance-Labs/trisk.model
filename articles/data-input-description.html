@@ -52,7 +52,7 @@
 
 
 
-
+<script src="data-input-description_files/kePrint-0.0.1/kePrint.js"></script><link href="data-input-description_files/lightable-0.0.1/lightable.css" rel="stylesheet">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
@@ -67,9 +67,10 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">trisk.model</span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="va">assets_testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"testdata"</span>, <span class="st">"assets_testdata.csv"</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span></code></pre></div>
+<p>Load the internal datasets</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">assets_testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"testdata"</span>, <span class="st">"assets_testdata.csv"</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">scenarios_testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"testdata"</span>, <span class="st">"scenarios_testdata.csv"</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">financial_features_testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"testdata"</span>, <span class="st">"financial_features_testdata.csv"</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">ngfs_carbon_price_testdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"testdata"</span>, <span class="st">"ngfs_carbon_price_testdata.csv"</span>, package <span class="op">=</span> <span class="st">"trisk.model"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -126,7 +127,7 @@ country.</li>
 <div class="section level4">
 <h4 id="data-structure">Data Structure<a class="anchor" aria-label="anchor" href="#data-structure"></a>
 </h4>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">assets_testdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    42 obs. of  16 variables:</span></span>
 <span><span class="co">#&gt;  $ company_id     : int  101 101 101 101 101 101 102 102 102 102 ...</span></span>
@@ -149,29 +150,367 @@ country.</li>
 <div class="section level4">
 <h4 id="sample-data">Sample Data<a class="anchor" aria-label="anchor" href="#sample-data"></a>
 </h4>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">assets_testdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   company_id company_name plan_sec_prod country_name plant_age_years</span></span>
-<span><span class="co">#&gt; 1        101    Company 1          5000           NA              NA</span></span>
-<span><span class="co">#&gt; 2        101    Company 1          5423           NA              NA</span></span>
-<span><span class="co">#&gt; 3        101    Company 1          6200           NA              NA</span></span>
-<span><span class="co">#&gt; 4        101    Company 1          7400           NA              NA</span></span>
-<span><span class="co">#&gt; 5        101    Company 1          7800           NA              NA</span></span>
-<span><span class="co">#&gt; 6        101    Company 1          8600           NA              NA</span></span>
-<span><span class="co">#&gt;   workforce_size asset_id country_iso2 asset_name production_year</span></span>
-<span><span class="co">#&gt; 1             NA      101           DE  Company 1            2022</span></span>
-<span><span class="co">#&gt; 2             NA      101           DE  Company 1            2023</span></span>
-<span><span class="co">#&gt; 3             NA      101           DE  Company 1            2024</span></span>
-<span><span class="co">#&gt; 4             NA      101           DE  Company 1            2025</span></span>
-<span><span class="co">#&gt; 5             NA      101           DE  Company 1            2026</span></span>
-<span><span class="co">#&gt; 6             NA      101           DE  Company 1            2027</span></span>
-<span><span class="co">#&gt;   emission_factor technology  sector capacity capacity_factor production_unit</span></span>
-<span><span class="co">#&gt; 1      0.06202588        Gas Oil&amp;Gas     5000               1              GJ</span></span>
-<span><span class="co">#&gt; 2      0.06202588        Gas Oil&amp;Gas     5423               1              GJ</span></span>
-<span><span class="co">#&gt; 3      0.06202588        Gas Oil&amp;Gas     6200               1              GJ</span></span>
-<span><span class="co">#&gt; 4      0.06202588        Gas Oil&amp;Gas     7400               1              GJ</span></span>
-<span><span class="co">#&gt; 5      0.06202588        Gas Oil&amp;Gas     7800               1              GJ</span></span>
-<span><span class="co">#&gt; 6      0.06202588        Gas Oil&amp;Gas     8600               1              GJ</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">assets_testdata</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>bootstrap_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/scroll_box.html" class="external-link">scroll_box</a></span><span class="op">(</span>width <span class="op">=</span> <span class="st">"100%"</span>, height <span class="op">=</span> <span class="st">"400px"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/column_spec.html" class="external-link">column_spec</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">assets_testdata</span><span class="op">)</span>, width <span class="op">=</span> <span class="st">"150px"</span><span class="op">)</span></span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+<table class="table table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+company_id
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+company_name
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+plan_sec_prod
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+country_name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+plant_age_years
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+workforce_size
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+asset_id
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+country_iso2
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+asset_name
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+production_year
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+emission_factor
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+technology
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+sector
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+capacity
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+capacity_factor
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+production_unit
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+5000
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+DE
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+2022
+</td>
+<td style="text-align:right;width: 150px; ">
+0.0620259
+</td>
+<td style="text-align:left;width: 150px; ">
+Gas
+</td>
+<td style="text-align:left;width: 150px; ">
+Oil&amp;Gas
+</td>
+<td style="text-align:right;width: 150px; ">
+5000
+</td>
+<td style="text-align:right;width: 150px; ">
+1
+</td>
+<td style="text-align:left;width: 150px; ">
+GJ
+</td>
+</tr>
+<tr>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+5423
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+DE
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+2023
+</td>
+<td style="text-align:right;width: 150px; ">
+0.0620259
+</td>
+<td style="text-align:left;width: 150px; ">
+Gas
+</td>
+<td style="text-align:left;width: 150px; ">
+Oil&amp;Gas
+</td>
+<td style="text-align:right;width: 150px; ">
+5423
+</td>
+<td style="text-align:right;width: 150px; ">
+1
+</td>
+<td style="text-align:left;width: 150px; ">
+GJ
+</td>
+</tr>
+<tr>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+6200
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+DE
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+2024
+</td>
+<td style="text-align:right;width: 150px; ">
+0.0620259
+</td>
+<td style="text-align:left;width: 150px; ">
+Gas
+</td>
+<td style="text-align:left;width: 150px; ">
+Oil&amp;Gas
+</td>
+<td style="text-align:right;width: 150px; ">
+6200
+</td>
+<td style="text-align:right;width: 150px; ">
+1
+</td>
+<td style="text-align:left;width: 150px; ">
+GJ
+</td>
+</tr>
+<tr>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+7400
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+DE
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+2025
+</td>
+<td style="text-align:right;width: 150px; ">
+0.0620259
+</td>
+<td style="text-align:left;width: 150px; ">
+Gas
+</td>
+<td style="text-align:left;width: 150px; ">
+Oil&amp;Gas
+</td>
+<td style="text-align:right;width: 150px; ">
+7400
+</td>
+<td style="text-align:right;width: 150px; ">
+1
+</td>
+<td style="text-align:left;width: 150px; ">
+GJ
+</td>
+</tr>
+<tr>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+7800
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+DE
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+2026
+</td>
+<td style="text-align:right;width: 150px; ">
+0.0620259
+</td>
+<td style="text-align:left;width: 150px; ">
+Gas
+</td>
+<td style="text-align:left;width: 150px; ">
+Oil&amp;Gas
+</td>
+<td style="text-align:right;width: 150px; ">
+7800
+</td>
+<td style="text-align:right;width: 150px; ">
+1
+</td>
+<td style="text-align:left;width: 150px; ">
+GJ
+</td>
+</tr>
+<tr>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+8600
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:left;width: 150px; ">
+NA
+</td>
+<td style="text-align:right;width: 150px; ">
+101
+</td>
+<td style="text-align:left;width: 150px; ">
+DE
+</td>
+<td style="text-align:left;width: 150px; ">
+Company 1
+</td>
+<td style="text-align:right;width: 150px; ">
+2027
+</td>
+<td style="text-align:right;width: 150px; ">
+0.0620259
+</td>
+<td style="text-align:left;width: 150px; ">
+Gas
+</td>
+<td style="text-align:left;width: 150px; ">
+Oil&amp;Gas
+</td>
+<td style="text-align:right;width: 150px; ">
+8600
+</td>
+<td style="text-align:right;width: 150px; ">
+1
+</td>
+<td style="text-align:left;width: 150px; ">
+GJ
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -203,7 +542,7 @@ values.</li>
 <div class="section level4">
 <h4 id="data-structure-1">Data Structure<a class="anchor" aria-label="anchor" href="#data-structure-1"></a>
 </h4>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">financial_features_testdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    5 obs. of  5 variables:</span></span>
 <span><span class="co">#&gt;  $ company_id       : int  101 103 105 104 102</span></span>
@@ -215,14 +554,118 @@ values.</li>
 <div class="section level4">
 <h4 id="sample-data-1">Sample Data<a class="anchor" aria-label="anchor" href="#sample-data-1"></a>
 </h4>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">financial_features_testdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   company_id        pd net_profit_margin debt_equity_ratio volatility</span></span>
-<span><span class="co">#&gt; 1        101 0.0056224        0.07635422         0.1297317  0.2593230</span></span>
-<span><span class="co">#&gt; 2        103 0.0039782        0.07169490         0.1277164  0.2513500</span></span>
-<span><span class="co">#&gt; 3        105 0.0024568        0.05393410         0.1194000  0.2360043</span></span>
-<span><span class="co">#&gt; 4        104 0.0029792        0.05393410         0.1097633  0.2513500</span></span>
-<span><span class="co">#&gt; 5        102 0.0036483        0.10578785         0.1044025  0.3167116</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">financial_features_testdata</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>bootstrap_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/scroll_box.html" class="external-link">scroll_box</a></span><span class="op">(</span>width <span class="op">=</span> <span class="st">"100%"</span>, height <span class="op">=</span> <span class="st">"400px"</span><span class="op">)</span></span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+<table class="table table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+company_id
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+pd
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+net_profit_margin
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+debt_equity_ratio
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+volatility
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+0.0056224
+</td>
+<td style="text-align:right;">
+0.0763542
+</td>
+<td style="text-align:right;">
+0.1297317
+</td>
+<td style="text-align:right;">
+0.2593230
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+0.0039782
+</td>
+<td style="text-align:right;">
+0.0716949
+</td>
+<td style="text-align:right;">
+0.1277164
+</td>
+<td style="text-align:right;">
+0.2513500
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+0.0024568
+</td>
+<td style="text-align:right;">
+0.0539341
+</td>
+<td style="text-align:right;">
+0.1194000
+</td>
+<td style="text-align:right;">
+0.2360043
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+0.0029792
+</td>
+<td style="text-align:right;">
+0.0539341
+</td>
+<td style="text-align:right;">
+0.1097633
+</td>
+<td style="text-align:right;">
+0.2513500
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+0.0036483
+</td>
+<td style="text-align:right;">
+0.1057878
+</td>
+<td style="text-align:right;">
+0.1044025
+</td>
+<td style="text-align:right;">
+0.3167116
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -259,7 +702,7 @@ scenario.</li>
 <div class="section level4">
 <h4 id="data-structure-2">Data Structure<a class="anchor" aria-label="anchor" href="#data-structure-2"></a>
 </h4>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ngfs_carbon_price_testdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    1376 obs. of  7 variables:</span></span>
 <span><span class="co">#&gt;  $ year              : int  2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 ...</span></span>
@@ -273,22 +716,177 @@ scenario.</li>
 <div class="section level4">
 <h4 id="sample-data-2">Sample Data<a class="anchor" aria-label="anchor" href="#sample-data-2"></a>
 </h4>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ngfs_carbon_price_testdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   year          model scenario scenario_geography     variable          unit</span></span>
-<span><span class="co">#&gt; 1 2015 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
-<span><span class="co">#&gt; 2 2016 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
-<span><span class="co">#&gt; 3 2017 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
-<span><span class="co">#&gt; 4 2018 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
-<span><span class="co">#&gt; 5 2019 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
-<span><span class="co">#&gt; 6 2020 GCAM 5.3+ NGFS     B2DS             Global Price|Carbon US$2010/t CO2</span></span>
-<span><span class="co">#&gt;   carbon_tax</span></span>
-<span><span class="co">#&gt; 1          0</span></span>
-<span><span class="co">#&gt; 2          0</span></span>
-<span><span class="co">#&gt; 3          0</span></span>
-<span><span class="co">#&gt; 4          0</span></span>
-<span><span class="co">#&gt; 5          0</span></span>
-<span><span class="co">#&gt; 6          0</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ngfs_carbon_price_testdata</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>bootstrap_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/scroll_box.html" class="external-link">scroll_box</a></span><span class="op">(</span>width <span class="op">=</span> <span class="st">"100%"</span>, height <span class="op">=</span> <span class="st">"400px"</span><span class="op">)</span></span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+<table class="table table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+year
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+model
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+scenario
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+scenario_geography
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+variable
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+unit
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+carbon_tax
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+2015
+</td>
+<td style="text-align:left;">
+GCAM 5.3+ NGFS
+</td>
+<td style="text-align:left;">
+B2DS
+</td>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+Price&amp;#124;Carbon
+</td>
+<td style="text-align:left;">
+US$2010/t CO2
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2016
+</td>
+<td style="text-align:left;">
+GCAM 5.3+ NGFS
+</td>
+<td style="text-align:left;">
+B2DS
+</td>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+Price&amp;#124;Carbon
+</td>
+<td style="text-align:left;">
+US$2010/t CO2
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2017
+</td>
+<td style="text-align:left;">
+GCAM 5.3+ NGFS
+</td>
+<td style="text-align:left;">
+B2DS
+</td>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+Price&amp;#124;Carbon
+</td>
+<td style="text-align:left;">
+US$2010/t CO2
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2018
+</td>
+<td style="text-align:left;">
+GCAM 5.3+ NGFS
+</td>
+<td style="text-align:left;">
+B2DS
+</td>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+Price&amp;#124;Carbon
+</td>
+<td style="text-align:left;">
+US$2010/t CO2
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2019
+</td>
+<td style="text-align:left;">
+GCAM 5.3+ NGFS
+</td>
+<td style="text-align:left;">
+B2DS
+</td>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+Price&amp;#124;Carbon
+</td>
+<td style="text-align:left;">
+US$2010/t CO2
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2020
+</td>
+<td style="text-align:left;">
+GCAM 5.3+ NGFS
+</td>
+<td style="text-align:left;">
+B2DS
+</td>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+Price&amp;#124;Carbon
+</td>
+<td style="text-align:left;">
+US$2010/t CO2
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -341,7 +939,7 @@ factor.</li>
 <div class="section level4">
 <h4 id="data-structure-3">Data Structure<a class="anchor" aria-label="anchor" href="#data-structure-3"></a>
 </h4>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">scenarios_testdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    1422 obs. of  14 variables:</span></span>
 <span><span class="co">#&gt;  $ scenario_geography      : chr  "Global" "Global" "Global" "Global" ...</span></span>
@@ -362,212 +960,2260 @@ factor.</li>
 <div class="section level4">
 <h4 id="sample-data-3">Sample Data<a class="anchor" aria-label="anchor" href="#sample-data-3"></a>
 </h4>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">scenarios_testdata</span>, <span class="fl">50</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    scenario_geography        scenario scenario_pathway scenario_type sector</span></span>
-<span><span class="co">#&gt; 1              Global NGFS2023GCAM_CP         159.4468      baseline   Coal</span></span>
-<span><span class="co">#&gt; 2              Global NGFS2023GCAM_CP         160.4324      baseline   Coal</span></span>
-<span><span class="co">#&gt; 3              Global NGFS2023GCAM_CP         161.4180      baseline   Coal</span></span>
-<span><span class="co">#&gt; 4              Global NGFS2023GCAM_CP         162.4035      baseline   Coal</span></span>
-<span><span class="co">#&gt; 5              Global NGFS2023GCAM_CP         162.4545      baseline   Coal</span></span>
-<span><span class="co">#&gt; 6              Global NGFS2023GCAM_CP         162.5055      baseline   Coal</span></span>
-<span><span class="co">#&gt; 7              Global NGFS2023GCAM_CP         162.5565      baseline   Coal</span></span>
-<span><span class="co">#&gt; 8              Global NGFS2023GCAM_CP         162.6075      baseline   Coal</span></span>
-<span><span class="co">#&gt; 9              Global NGFS2023GCAM_CP         162.6585      baseline   Coal</span></span>
-<span><span class="co">#&gt; 10             Global NGFS2023GCAM_CP         163.5647      baseline   Coal</span></span>
-<span><span class="co">#&gt; 11             Global NGFS2023GCAM_CP         164.4709      baseline   Coal</span></span>
-<span><span class="co">#&gt; 12             Global NGFS2023GCAM_CP         165.3771      baseline   Coal</span></span>
-<span><span class="co">#&gt; 13             Global NGFS2023GCAM_CP         166.2833      baseline   Coal</span></span>
-<span><span class="co">#&gt; 14             Global NGFS2023GCAM_CP         167.1895      baseline   Coal</span></span>
-<span><span class="co">#&gt; 15             Global NGFS2023GCAM_CP         167.6793      baseline   Coal</span></span>
-<span><span class="co">#&gt; 16             Global NGFS2023GCAM_CP         168.1691      baseline   Coal</span></span>
-<span><span class="co">#&gt; 17             Global NGFS2023GCAM_CP         168.6589      baseline   Coal</span></span>
-<span><span class="co">#&gt; 18             Global NGFS2023GCAM_CP         169.1487      baseline   Coal</span></span>
-<span><span class="co">#&gt; 19             Global NGFS2023GCAM_CP         169.6385      baseline   Coal</span></span>
-<span><span class="co">#&gt; 20             Global NGFS2023GCAM_CP         169.6492      baseline   Coal</span></span>
-<span><span class="co">#&gt; 21             Global NGFS2023GCAM_CP         169.6599      baseline   Coal</span></span>
-<span><span class="co">#&gt; 22             Global NGFS2023GCAM_CP         169.6706      baseline   Coal</span></span>
-<span><span class="co">#&gt; 23             Global NGFS2023GCAM_CP         169.6813      baseline   Coal</span></span>
-<span><span class="co">#&gt; 24             Global NGFS2023GCAM_CP         169.6920      baseline   Coal</span></span>
-<span><span class="co">#&gt; 25             Global NGFS2023GCAM_CP         169.3689      baseline   Coal</span></span>
-<span><span class="co">#&gt; 26             Global NGFS2023GCAM_CP         169.0457      baseline   Coal</span></span>
-<span><span class="co">#&gt; 27             Global NGFS2023GCAM_CP         168.7226      baseline   Coal</span></span>
-<span><span class="co">#&gt; 28             Global NGFS2023GCAM_CP         168.3994      baseline   Coal</span></span>
-<span><span class="co">#&gt; 29             Global NGFS2023GCAM_CP         168.0763      baseline   Coal</span></span>
-<span><span class="co">#&gt; 30             Global NGFS2023GCAM_CP         167.9941      baseline   Coal</span></span>
-<span><span class="co">#&gt; 31             Global NGFS2023GCAM_CP         167.9119      baseline   Coal</span></span>
-<span><span class="co">#&gt; 32             Global NGFS2023GCAM_CP         167.8298      baseline   Coal</span></span>
-<span><span class="co">#&gt; 33             Global NGFS2023GCAM_CP         167.7476      baseline   Coal</span></span>
-<span><span class="co">#&gt; 34             Global NGFS2023GCAM_CP         167.6655      baseline   Coal</span></span>
-<span><span class="co">#&gt; 35             Global NGFS2023GCAM_CP         167.3440      baseline   Coal</span></span>
-<span><span class="co">#&gt; 36             Global NGFS2023GCAM_CP         167.0226      baseline   Coal</span></span>
-<span><span class="co">#&gt; 37             Global NGFS2023GCAM_CP         166.7011      baseline   Coal</span></span>
-<span><span class="co">#&gt; 38             Global NGFS2023GCAM_CP         166.3796      baseline   Coal</span></span>
-<span><span class="co">#&gt; 39             Global NGFS2023GCAM_CP         166.0582      baseline   Coal</span></span>
-<span><span class="co">#&gt; 40             Global NGFS2023GCAM_CP         165.4385      baseline   Coal</span></span>
-<span><span class="co">#&gt; 41             Global NGFS2023GCAM_CP         164.8189      baseline   Coal</span></span>
-<span><span class="co">#&gt; 42             Global NGFS2023GCAM_CP         164.1992      baseline   Coal</span></span>
-<span><span class="co">#&gt; 43             Global NGFS2023GCAM_CP         163.5796      baseline   Coal</span></span>
-<span><span class="co">#&gt; 44             Global NGFS2023GCAM_CP         162.9599      baseline   Coal</span></span>
-<span><span class="co">#&gt; 45             Global NGFS2023GCAM_CP         161.8002      baseline   Coal</span></span>
-<span><span class="co">#&gt; 46             Global NGFS2023GCAM_CP         160.6404      baseline   Coal</span></span>
-<span><span class="co">#&gt; 47             Global NGFS2023GCAM_CP         159.4807      baseline   Coal</span></span>
-<span><span class="co">#&gt; 48             Global NGFS2023GCAM_CP         158.3210      baseline   Coal</span></span>
-<span><span class="co">#&gt; 49             Global NGFS2023GCAM_CP         157.1612      baseline   Coal</span></span>
-<span><span class="co">#&gt; 50             Global NGFS2023GCAM_CP         156.1628      baseline   Coal</span></span>
-<span><span class="co">#&gt;    technology scenario_year scenario_price price_unit pathway_unit</span></span>
-<span><span class="co">#&gt; 1        Coal          2022       57.03917   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 2        Coal          2023       57.35451   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 3        Coal          2024       57.66985   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 4        Coal          2025       57.98520   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 5        Coal          2026       58.41776   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 6        Coal          2027       58.85032   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 7        Coal          2028       59.28289   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 8        Coal          2029       59.71545   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 9        Coal          2030       60.14802   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 10       Coal          2031       60.53991   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 11       Coal          2032       60.93181   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 12       Coal          2033       61.32370   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 13       Coal          2034       61.71560   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 14       Coal          2035       62.10749   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 15       Coal          2036       62.28684   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 16       Coal          2037       62.46619   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 17       Coal          2038       62.64553   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 18       Coal          2039       62.82488   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 19       Coal          2040       63.00422   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 20       Coal          2041       63.11835   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 21       Coal          2042       63.23248   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 22       Coal          2043       63.34661   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 23       Coal          2044       63.46074   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 24       Coal          2045       63.57487   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 25       Coal          2046       63.60577   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 26       Coal          2047       63.63667   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 27       Coal          2048       63.66757   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 28       Coal          2049       63.69847   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 29       Coal          2050       63.72937   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 30       Coal          2051       63.73330   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 31       Coal          2052       63.73723   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 32       Coal          2053       63.74115   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 33       Coal          2054       63.74508   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 34       Coal          2055       63.74900   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 35       Coal          2056       63.66008   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 36       Coal          2057       63.57115   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 37       Coal          2058       63.48223   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 38       Coal          2059       63.39331   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 39       Coal          2060       63.30438   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 40       Coal          2061       63.18854   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 41       Coal          2062       63.07270   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 42       Coal          2063       62.95686   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 43       Coal          2064       62.84101   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 44       Coal          2065       62.72517   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 45       Coal          2066       62.58408   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 46       Coal          2067       62.44300   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 47       Coal          2068       62.30191   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 48       Coal          2069       62.16082   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 49       Coal          2070       62.01973   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt; 50       Coal          2071       61.87448   $/tonnes        EJ/yr</span></span>
-<span><span class="co">#&gt;    scenario_capacity_factor technology_type capacity_factor_unit</span></span>
-<span><span class="co">#&gt; 1                         1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 2                         1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 3                         1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 4                         1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 5                         1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 6                         1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 7                         1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 8                         1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 9                         1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 10                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 11                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 12                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 13                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 14                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 15                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 16                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 17                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 18                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 19                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 20                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 21                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 22                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 23                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 24                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 25                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 26                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 27                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 28                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 29                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 30                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 31                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 32                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 33                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 34                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 35                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 36                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 37                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 38                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 39                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 40                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 41                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 42                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 43                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 44                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 45                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 46                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 47                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 48                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 49                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt; 50                        1      carbontech                   NA</span></span>
-<span><span class="co">#&gt;    price_indicator</span></span>
-<span><span class="co">#&gt; 1               NA</span></span>
-<span><span class="co">#&gt; 2               NA</span></span>
-<span><span class="co">#&gt; 3               NA</span></span>
-<span><span class="co">#&gt; 4               NA</span></span>
-<span><span class="co">#&gt; 5               NA</span></span>
-<span><span class="co">#&gt; 6               NA</span></span>
-<span><span class="co">#&gt; 7               NA</span></span>
-<span><span class="co">#&gt; 8               NA</span></span>
-<span><span class="co">#&gt; 9               NA</span></span>
-<span><span class="co">#&gt; 10              NA</span></span>
-<span><span class="co">#&gt; 11              NA</span></span>
-<span><span class="co">#&gt; 12              NA</span></span>
-<span><span class="co">#&gt; 13              NA</span></span>
-<span><span class="co">#&gt; 14              NA</span></span>
-<span><span class="co">#&gt; 15              NA</span></span>
-<span><span class="co">#&gt; 16              NA</span></span>
-<span><span class="co">#&gt; 17              NA</span></span>
-<span><span class="co">#&gt; 18              NA</span></span>
-<span><span class="co">#&gt; 19              NA</span></span>
-<span><span class="co">#&gt; 20              NA</span></span>
-<span><span class="co">#&gt; 21              NA</span></span>
-<span><span class="co">#&gt; 22              NA</span></span>
-<span><span class="co">#&gt; 23              NA</span></span>
-<span><span class="co">#&gt; 24              NA</span></span>
-<span><span class="co">#&gt; 25              NA</span></span>
-<span><span class="co">#&gt; 26              NA</span></span>
-<span><span class="co">#&gt; 27              NA</span></span>
-<span><span class="co">#&gt; 28              NA</span></span>
-<span><span class="co">#&gt; 29              NA</span></span>
-<span><span class="co">#&gt; 30              NA</span></span>
-<span><span class="co">#&gt; 31              NA</span></span>
-<span><span class="co">#&gt; 32              NA</span></span>
-<span><span class="co">#&gt; 33              NA</span></span>
-<span><span class="co">#&gt; 34              NA</span></span>
-<span><span class="co">#&gt; 35              NA</span></span>
-<span><span class="co">#&gt; 36              NA</span></span>
-<span><span class="co">#&gt; 37              NA</span></span>
-<span><span class="co">#&gt; 38              NA</span></span>
-<span><span class="co">#&gt; 39              NA</span></span>
-<span><span class="co">#&gt; 40              NA</span></span>
-<span><span class="co">#&gt; 41              NA</span></span>
-<span><span class="co">#&gt; 42              NA</span></span>
-<span><span class="co">#&gt; 43              NA</span></span>
-<span><span class="co">#&gt; 44              NA</span></span>
-<span><span class="co">#&gt; 45              NA</span></span>
-<span><span class="co">#&gt; 46              NA</span></span>
-<span><span class="co">#&gt; 47              NA</span></span>
-<span><span class="co">#&gt; 48              NA</span></span>
-<span><span class="co">#&gt; 49              NA</span></span>
-<span><span class="co">#&gt; 50              NA</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">scenarios_testdata</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>bootstrap_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kableExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/scroll_box.html" class="external-link">scroll_box</a></span><span class="op">(</span>width <span class="op">=</span> <span class="st">"200%"</span>, height <span class="op">=</span> <span class="st">"400px"</span><span class="op">)</span></span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:200%; ">
+<table class="table table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+scenario_geography
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+scenario
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+scenario_pathway
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+scenario_type
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+sector
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+technology
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+scenario_year
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+scenario_price
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+price_unit
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+pathway_unit
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+scenario_capacity_factor
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+technology_type
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+capacity_factor_unit
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+price_indicator
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+159.4468
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2022
+</td>
+<td style="text-align:right;">
+57.03917
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+160.4324
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2023
+</td>
+<td style="text-align:right;">
+57.35451
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+161.4180
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2024
+</td>
+<td style="text-align:right;">
+57.66985
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+162.4035
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2025
+</td>
+<td style="text-align:right;">
+57.98520
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+162.4545
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2026
+</td>
+<td style="text-align:right;">
+58.41776
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+162.5055
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2027
+</td>
+<td style="text-align:right;">
+58.85032
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+162.5565
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2028
+</td>
+<td style="text-align:right;">
+59.28289
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+162.6075
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2029
+</td>
+<td style="text-align:right;">
+59.71545
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+162.6585
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2030
+</td>
+<td style="text-align:right;">
+60.14802
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+163.5647
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2031
+</td>
+<td style="text-align:right;">
+60.53991
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+164.4709
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2032
+</td>
+<td style="text-align:right;">
+60.93181
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+165.3771
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2033
+</td>
+<td style="text-align:right;">
+61.32370
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+166.2833
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2034
+</td>
+<td style="text-align:right;">
+61.71560
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+167.1895
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2035
+</td>
+<td style="text-align:right;">
+62.10749
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+167.6793
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2036
+</td>
+<td style="text-align:right;">
+62.28684
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+168.1691
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2037
+</td>
+<td style="text-align:right;">
+62.46619
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+168.6589
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2038
+</td>
+<td style="text-align:right;">
+62.64553
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+169.1487
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2039
+</td>
+<td style="text-align:right;">
+62.82488
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+169.6385
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2040
+</td>
+<td style="text-align:right;">
+63.00422
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+169.6492
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2041
+</td>
+<td style="text-align:right;">
+63.11835
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+169.6599
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2042
+</td>
+<td style="text-align:right;">
+63.23248
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+169.6706
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2043
+</td>
+<td style="text-align:right;">
+63.34661
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+169.6813
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2044
+</td>
+<td style="text-align:right;">
+63.46074
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+169.6920
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2045
+</td>
+<td style="text-align:right;">
+63.57487
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+169.3689
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2046
+</td>
+<td style="text-align:right;">
+63.60577
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+169.0457
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2047
+</td>
+<td style="text-align:right;">
+63.63667
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+168.7226
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2048
+</td>
+<td style="text-align:right;">
+63.66757
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+168.3994
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2049
+</td>
+<td style="text-align:right;">
+63.69847
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+168.0763
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2050
+</td>
+<td style="text-align:right;">
+63.72937
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+167.9941
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2051
+</td>
+<td style="text-align:right;">
+63.73330
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+167.9119
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2052
+</td>
+<td style="text-align:right;">
+63.73723
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+167.8298
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2053
+</td>
+<td style="text-align:right;">
+63.74115
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+167.7476
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2054
+</td>
+<td style="text-align:right;">
+63.74508
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+167.6655
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2055
+</td>
+<td style="text-align:right;">
+63.74900
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+167.3440
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2056
+</td>
+<td style="text-align:right;">
+63.66008
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+167.0226
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2057
+</td>
+<td style="text-align:right;">
+63.57115
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+166.7011
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2058
+</td>
+<td style="text-align:right;">
+63.48223
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+166.3796
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2059
+</td>
+<td style="text-align:right;">
+63.39331
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+166.0582
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2060
+</td>
+<td style="text-align:right;">
+63.30438
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+165.4385
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2061
+</td>
+<td style="text-align:right;">
+63.18854
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+164.8189
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2062
+</td>
+<td style="text-align:right;">
+63.07270
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+164.1992
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2063
+</td>
+<td style="text-align:right;">
+62.95686
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+163.5796
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2064
+</td>
+<td style="text-align:right;">
+62.84101
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+162.9599
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2065
+</td>
+<td style="text-align:right;">
+62.72517
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+161.8002
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2066
+</td>
+<td style="text-align:right;">
+62.58408
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+160.6404
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2067
+</td>
+<td style="text-align:right;">
+62.44300
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+159.4807
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2068
+</td>
+<td style="text-align:right;">
+62.30191
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+158.3210
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2069
+</td>
+<td style="text-align:right;">
+62.16082
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+157.1612
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2070
+</td>
+<td style="text-align:right;">
+62.01973
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:left;">
+NGFS2023GCAM_CP
+</td>
+<td style="text-align:right;">
+156.1628
+</td>
+<td style="text-align:left;">
+baseline
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:left;">
+Coal
+</td>
+<td style="text-align:right;">
+2071
+</td>
+<td style="text-align:right;">
+61.87448
+</td>
+<td style="text-align:left;">
+$/tonnes
+</td>
+<td style="text-align:left;">
+EJ/yr
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+carbontech
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>

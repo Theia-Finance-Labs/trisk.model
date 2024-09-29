@@ -87,9 +87,9 @@ structured as follows:</p>
 <span><span class="va">baseline_scenario</span> <span class="op">&lt;-</span> <span class="st">"NGFS2023GCAM_CP"</span></span>
 <span><span class="va">target_scenario</span> <span class="op">&lt;-</span> <span class="st">"NGFS2023GCAM_NZ2050"</span></span>
 <span><span class="va">scenario_geography</span> <span class="op">&lt;-</span> <span class="st">"Global"</span></span></code></pre></div>
+<p>Run the model with the downloaded data :</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Run the model with the provided data</span></span>
-<span><span class="va">saved_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_trisk.html">run_trisk</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">saved_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_trisk.html">run_trisk</a></span><span class="op">(</span></span>
 <span>  input_path <span class="op">=</span> <span class="va">trisk_input_dir</span>,</span>
 <span>  output_path <span class="op">=</span> <span class="va">trisk_output_dir</span>,</span>
 <span>  baseline_scenario <span class="op">=</span> <span class="va">baseline_scenario</span>,</span>
@@ -102,28 +102,29 @@ structured as follows:</p>
 <span><span class="co">#&gt; -- Calculating net profits. </span></span>
 <span><span class="co">#&gt; -- Calculating market risk. </span></span>
 <span><span class="co">#&gt; -- Calculating credit risk. </span></span>
-<span><span class="co">#&gt; [1] "Outputs saved in folder: ./trisk_outputs/20240927_120126__773baab8-68fb-4828-81aa-ea88bf8ce976"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "Outputs saved in folder: ./trisk_outputs/20240929_062847__677b81e3-4002-4d54-b904-85a8a3bddccd"</span></span></code></pre></div>
+<p>Results are saved in this folder :</p>
+<pre><code><span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">./trisk_outputs/20240929_062847__677b81e3-4002-4d54-b904-85a8a3bddccd</span></span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="output-folder-structure">Output folder structure<a class="anchor" aria-label="anchor" href="#output-folder-structure"></a>
 </h2>
 <p>The generated outputs are saved in the <code>trisk_outputs</code>
 folder, structured as:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dir_tree</span><span class="op">(</span><span class="va">trisk_output_dir</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">./trisk_outputs</span></span></span>
-<span><span class="co">#&gt; └── <span style="color: #0000BB; font-weight: bold;">20240927_120126__773baab8-68fb-4828-81aa-ea88bf8ce976</span></span></span>
+<span><span class="co">#&gt; └── <span style="color: #0000BB; font-weight: bold;">20240929_062847__677b81e3-4002-4d54-b904-85a8a3bddccd</span></span></span>
 <span><span class="co">#&gt;     ├── company_trajectories.csv</span></span>
 <span><span class="co">#&gt;     ├── npv_results.csv</span></span>
 <span><span class="co">#&gt;     ├── params.csv</span></span>
 <span><span class="co">#&gt;     └── pd_results.csv</span></span></code></pre></div>
 <p>Each new run generates a folder with a unique name. The folders are
 named following this convention : DATE_TIME__RUNID</p>
-<p>The full path of the run is :</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Print the normalized path to the saved output files</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span><span class="va">saved_path</span>, mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "/home/runner/work/trisk.model/trisk.model/vignettes/trisk_outputs/20240927_120126__773baab8-68fb-4828-81aa-ea88bf8ce976"</span></span></code></pre></div>
+<p>The normalized path where are saved output files is:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/normalizePath.html" class="external-link">normalizePath</a></span><span class="op">(</span><span class="va">saved_path</span>, mustWork <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "/home/runner/work/trisk.model/trisk.model/vignettes/trisk_outputs/20240929_062847__677b81e3-4002-4d54-b904-85a8a3bddccd"</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
