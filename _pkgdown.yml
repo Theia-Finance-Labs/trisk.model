@@ -1,6 +1,10 @@
 title: "trisk.model"
 subtitle: "Core TRISK methodology"
 url: ~
+repo:
+  url:
+    home: https://github.com/Theia-Finance-Labs/trisk.model
+    source: https://github.com/Theia-Finance-Labs/trisk.model
 template:
   bootstrap: 5
 
