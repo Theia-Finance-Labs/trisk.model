@@ -43,6 +43,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/Theia-Finance-Labs/trisk.model" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -59,7 +60,7 @@
       <h1>trisk-run-from-folder</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/Theia-Finance-Labs/trisk.model/vignettes/trisk-run-from-folder.Rmd" class="external-link"><code>vignettes/trisk-run-from-folder.Rmd</code></a></small>
       <div class="d-none name"><code>trisk-run-from-folder.Rmd</code></div>
     </div>
 
@@ -102,11 +103,11 @@ structured as follows:</p>
 <span><span class="co">#&gt; -- Calculating net profits. </span></span>
 <span><span class="co">#&gt; -- Calculating market risk. </span></span>
 <span><span class="co">#&gt; -- Calculating credit risk. </span></span>
-<span><span class="co">#&gt; [1] "Outputs saved in folder: ./trisk_outputs/20241003_063505__c02561d1-e86e-48ce-9777-be60655875b8"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "Outputs saved in folder: ./trisk_outputs/20241003_095123__1f23b48e-7c97-4f24-88ac-cbff321bfd87"</span></span></code></pre></div>
 <p>Each new run generates a folder with a unique name. The folders are
 named following this convention : DATE_TIME__RUNID. The full path of
 this run is :</p>
-<pre><code><span><span class="co">#&gt; [1] "/home/runner/work/trisk.model/trisk.model/vignettes/trisk_outputs/20241003_063505__c02561d1-e86e-48ce-9777-be60655875b8"</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; [1] "/home/runner/work/trisk.model/trisk.model/vignettes/trisk_outputs/20241003_095123__1f23b48e-7c97-4f24-88ac-cbff321bfd87"</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="output-folder-structure">Output folder structure<a class="anchor" aria-label="anchor" href="#output-folder-structure"></a>
@@ -116,7 +117,7 @@ folder, structured as:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dir_tree</span><span class="op">(</span><span class="va">trisk_output_dir</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">./trisk_outputs</span></span></span>
-<span><span class="co">#&gt; └── <span style="color: #0000BB; font-weight: bold;">20241003_063505__c02561d1-e86e-48ce-9777-be60655875b8</span></span></span>
+<span><span class="co">#&gt; └── <span style="color: #0000BB; font-weight: bold;">20241003_095123__1f23b48e-7c97-4f24-88ac-cbff321bfd87</span></span></span>
 <span><span class="co">#&gt;     ├── company_trajectories.csv</span></span>
 <span><span class="co">#&gt;     ├── npv_results.csv</span></span>
 <span><span class="co">#&gt;     ├── params.csv</span></span>
