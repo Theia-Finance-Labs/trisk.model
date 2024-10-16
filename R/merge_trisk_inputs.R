@@ -1,9 +1,18 @@
 merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
+  technologies_filter <- scenarios_data %>% dplyr::distinct(.data$technology)
+
   assets_data_filtered <- assets_data %>%
     dplyr::inner_join(
-      scenarios_data %>% dplyr::distinct(.data$technology),
+      technologies_filter,
       by = c("technology")
     )
+
+  countries_filter <- scenarios_data %>% dplyr::distinct(.data$country_iso2_list) %>% dplyr::pull()
+  if (!is.na(countries_filter)){
+    countries_filter <- strsplit(countries_filter, ",")[[1]]
+    assets_data_filtered <-  assets_data_filtered %>%
+      dplyr::filter(.data$country_iso2 %in% countries_filter)
+  }
 
   stopifnot(nrow(assets_data_filtered) > 0)
 
