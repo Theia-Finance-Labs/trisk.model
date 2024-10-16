@@ -1,5 +1,4 @@
-process_trisk_input <- function(assets_scenarios,
-                                target_scenario) {
+process_trisk_input <- function(assets_scenarios) {
   assets_scenarios_productions <- create_base_production_trajectories(data = assets_scenarios)
 
   assets_scenarios_production_lagged <- lag_scenario_productions(data = assets_scenarios_productions)

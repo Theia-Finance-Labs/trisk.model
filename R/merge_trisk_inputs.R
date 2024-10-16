@@ -1,11 +1,5 @@
 merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
-  assets_data_filtered <- assets_data %>%
-    dplyr::inner_join(
-      scenarios_data %>% dplyr::distinct(.data$technology),
-      by = c("technology")
-    )
-
-  stopifnot(nrow(assets_data_filtered) > 0)
+  assets_data_filtered <- filter_assets_on_scenario_perimeter(assets_data, scenarios_data)
 
   start_analysis <- min(scenarios_data$scenario_year)
   end_analysis <- min(max(scenarios_data$scenario_year), MAX_POSSIBLE_YEAR)
@@ -19,12 +13,23 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
     by = c("sector", "technology", "production_year" = "scenario_year")
   ) %>%
     dplyr::rename(year = .data$production_year)
-
+browser() # TODO FIX FAIR SHARE PERC BEING 0
   return(assets_scenarios)
 }
 
 
+filter_assets_on_scenario_perimeter <- function(assets_data, scenarios_data) {
+    technologies_filter <- scenarios_data %>% dplyr::distinct(.data$technology)
 
+  assets_data_filtered <- assets_data %>%
+    dplyr::inner_join(
+      scenarios_data %>% dplyr::distinct(.data$technology),
+      by = c("technology")
+    )
+
+  stopifnot(nrow(assets_data_filtered) > 0)
+  return(assets_data_filtered)
+}
 
 #' Extend the dataframe containing the production and production summaries to
 #' cover the whole timeframe of the analysis, filling variables downwards where
