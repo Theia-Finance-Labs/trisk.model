@@ -17,10 +17,10 @@ add_market_fair_share_percentage <- function(data) {
     dplyr::group_by(.data$scenario, .data$sector, .data$scenario_geography, .data$technology) %>%
     dplyr::mutate(
       smsp = (.data$scenario_pathway - dplyr::first(.data$scenario_pathway)) /
-        dplyr::first(.data$sector_total_by_year),
-      sector_total_by_year = NULL
+        dplyr::first(.data$sector_total_by_year)
     ) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    dplyr::select(-c(.data$sector_total_by_year))
   return(data)
 }
 
@@ -33,7 +33,7 @@ calculate_fair_share_perc <- function(data) {
         TRUE ~ NA_real_ # Use NA_real_ for numeric columns or NA_character_ for character columns
       )
     )
-
+  
   # replace nan fair_share_perc by 0. Nans appear when dividing per 0 in the tmsr computation
   data <- data %>%
     dplyr::mutate(fair_share_perc = dplyr::if_else(is.na(.data$fair_share_perc), 0, .data$fair_share_perc))
