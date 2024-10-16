@@ -180,7 +180,7 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
   flagged_overshoot <- late_sudden_data %>%
     dplyr::inner_join(last_non_na_positions, by = c("asset_id", "company_id", "sector", "technology")) %>%
     dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
-    dplyr::filter(.data$year <= .data$last_non_na_year) %>% 
+    dplyr::filter(.data$year > min(.data$year), .data$year <= .data$last_non_na_year) %>% 
     dplyr::summarise(
       prod_to_follow = sum(.data$production_scenario_target, na.rm = TRUE),
       real_prod = sum(.data$production_plan_company_technology, na.rm = TRUE),
