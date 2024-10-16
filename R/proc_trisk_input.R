@@ -63,7 +63,6 @@ create_base_production_trajectories <- function(data) {
       # Initial value is identical between production and scenario target,
       # can thus be used for both
       initial_technology_production = dplyr::first(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
-      final_technology_production = dplyr::last(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
       initial_sector_production = dplyr::first(.data$plan_sec_prod[!is.na(.data$plan_sec_prod)]),
     ) %>%
     # 1. Apply tmsr / smsp
@@ -90,6 +89,7 @@ create_base_production_trajectories <- function(data) {
       )
     ) %>%
     dplyr::select(-c(.data$plan_sec_prod))
+    
 
   return(data)
 }
@@ -103,6 +103,7 @@ create_base_production_trajectories <- function(data) {
 #'   merged with their respective scenario pthways.
 #' @noRd
 lag_scenario_productions <- function(data) {
+  
   data <- data %>%
     # 3. compute scenario changes
     dplyr::group_by(.data$scenario_type) %>%
