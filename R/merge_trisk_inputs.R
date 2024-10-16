@@ -1,5 +1,25 @@
 merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
-  technologies_filter <- scenarios_data %>% dplyr::distinct(.data$technology)
+  assets_data_filtered <- filter_assets_on_scenario_perimeter(assets_data, scenarios_data)
+
+  start_analysis <- min(scenarios_data$scenario_year)
+  end_analysis <- min(max(scenarios_data$scenario_year), MAX_POSSIBLE_YEAR)
+
+  assets_data_full <- assets_data_filtered %>%
+    extend_to_full_analysis_timeframe(start_analysis = start_analysis, end_analysis = end_analysis)
+
+  # add extend production data with scenario targets
+  assets_scenarios <- dplyr::inner_join(
+    assets_data_full, scenarios_data,
+    by = c("sector", "technology", "production_year" = "scenario_year")
+  ) %>%
+    dplyr::rename(year = .data$production_year)
+browser() # TODO FIX FAIR SHARE PERC BEING 0
+  return(assets_scenarios)
+}
+
+
+filter_assets_on_scenario_perimeter <- function(assets_data, scenarios_data) {
+    technologies_filter <- scenarios_data %>% dplyr::distinct(.data$technology)
 
   assets_data_filtered <- assets_data %>%
     dplyr::inner_join(
@@ -15,25 +35,8 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
   }
 
   stopifnot(nrow(assets_data_filtered) > 0)
-
-  start_analysis <- min(scenarios_data$scenario_year)
-  end_analysis <- min(max(scenarios_data$scenario_year), MAX_POSSIBLE_YEAR)
-
-  assets_data_full <- assets_data_filtered %>%
-    extend_to_full_analysis_timeframe(start_analysis = start_analysis, end_analysis = end_analysis)
-
-  # add extend production data with scenario targets
-  assets_scenarios <- dplyr::inner_join(
-    assets_data_full, scenarios_data,
-    by = c("sector", "technology", "production_year" = "scenario_year")
-  ) %>%
-    dplyr::rename(year = .data$production_year)
-
-  return(assets_scenarios)
+  return(assets_data_filtered)
 }
-
-
-
 
 #' Extend the dataframe containing the production and production summaries to
 #' cover the whole timeframe of the analysis, filling variables downwards where
