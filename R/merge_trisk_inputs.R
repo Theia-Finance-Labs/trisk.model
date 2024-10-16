@@ -1,11 +1,5 @@
 merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
-  assets_data_filtered <- assets_data %>%
-    dplyr::inner_join(
-      scenarios_data %>% dplyr::distinct(.data$technology),
-      by = c("technology")
-    )
-
-  stopifnot(nrow(assets_data_filtered) > 0)
+  assets_data_filtered <- filter_assets_on_scenario_perimeter(assets_data, scenarios_data)
 
   start_analysis <- min(scenarios_data$scenario_year)
   end_analysis <- min(max(scenarios_data$scenario_year), MAX_POSSIBLE_YEAR)
@@ -24,7 +18,18 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
 }
 
 
+filter_assets_on_scenario_perimeter <- function(assets_data, scenarios_data) {
+    technologies_filter <- scenarios_data %>% dplyr::distinct(.data$technology)
 
+  assets_data_filtered <- assets_data %>%
+    dplyr::inner_join(
+      scenarios_data %>% dplyr::distinct(.data$technology),
+      by = c("technology")
+    )
+
+  stopifnot(nrow(assets_data_filtered) > 0)
+  return(assets_data_filtered)
+}
 
 #' Extend the dataframe containing the production and production summaries to
 #' cover the whole timeframe of the analysis, filling variables downwards where
@@ -35,9 +40,11 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
 #' @param start_analysis Start of the analysis
 #' @param end_analysis End of the analysis
 #' @noRd
-extend_to_full_analysis_timeframe <- function(data,
-                                              start_analysis,
-                                              end_analysis) {
+extend_to_full_analysis_timeframe <- function(data,start_analysis,end_analysis) {
+  
+  # the first production year should start before the first scenario year
+  stopifnot(min(data$production_year) <= start_analysis)
+
   data <- data %>%
     tidyr::complete(
       production_year = seq(start_analysis, end_analysis),
