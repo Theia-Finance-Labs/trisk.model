@@ -25,6 +25,7 @@ calculate_net_profits <- function(data,
                                   carbon_data,
                                   shock_year,
                                   market_passthrough) {
+  
   data <- data %>%
     calculate_proximity_to_target()
 
@@ -124,6 +125,9 @@ calculate_proximity_to_target <- function(data) {
         TRUE ~ .data$ratio_realised_required
       )
     ) %>%
+    dplyr::mutate(
+      proximity_to_target = if_else(is.na(.data$proximity_to_target), 0, .data$proximity_to_target)
+      ) %>%
     dplyr::select(
       -dplyr::all_of(c("sum_required_change", "sum_realised_change", "ratio_realised_required"))
     )

@@ -13,7 +13,7 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
     by = c("sector", "technology", "production_year" = "scenario_year")
   ) %>%
     dplyr::rename(year = .data$production_year)
-browser() # TODO FIX FAIR SHARE PERC BEING 0
+
   return(assets_scenarios)
 }
 
@@ -40,9 +40,11 @@ filter_assets_on_scenario_perimeter <- function(assets_data, scenarios_data) {
 #' @param start_analysis Start of the analysis
 #' @param end_analysis End of the analysis
 #' @noRd
-extend_to_full_analysis_timeframe <- function(data,
-                                              start_analysis,
-                                              end_analysis) {
+extend_to_full_analysis_timeframe <- function(data,start_analysis,end_analysis) {
+  
+  # the first production year should start before the first scenario year
+  stopifnot(min(data$production_year) <= start_analysis)
+
   data <- data %>%
     tidyr::complete(
       production_year = seq(start_analysis, end_analysis),
