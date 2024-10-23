@@ -79,17 +79,6 @@ create_base_production_trajectories <- function(data) {
     dplyr::mutate(
       production_scenario = ifelse(.data$production_scenario < 0, 0, .data$production_scenario)
     ) %>%
-    # 2. Apply capacity factors
-    dplyr::mutate(
-      production_plan_company_technology = ifelse(.data$sector == "Power",
-        .data$production_plan_company_technology * .data$scenario_capacity_factor * .env$hours_to_year,
-        .data$production_plan_company_technology * .data$scenario_capacity_factor
-      ),
-      production_scenario = ifelse(.data$sector == "Power",
-        .data$production_scenario * .data$scenario_capacity_factor * .env$hours_to_year,
-        .data$production_scenario * .data$scenario_capacity_factor
-      )
-    ) %>%
     dplyr::select(-c(.data$plan_sec_prod))
 
   return(data)
