@@ -155,7 +155,6 @@ The `scenarios_testdata` dataset includes the following columns:
 - `scenario_price`: Price in the scenario.
 - `price_unit`: Unit for the price.
 - `pathway_unit`: Unit of the pathway.
-- `scenario_capacity_factor`: Capacity factor for the scenario.
 - `technology_type`: Type of technology involved.
 - `capacity_factor_unit`: Unit for the capacity factor.
 - `price_indicator`: Indicator for the price path.
