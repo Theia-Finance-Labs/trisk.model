@@ -10,6 +10,7 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
   start_analysis <- min(scenarios_data$scenario_year)
   end_analysis <- min(max(scenarios_data$scenario_year), MAX_POSSIBLE_YEAR)
 
+
   assets_data_full <- assets_data_filtered %>%
     extend_to_full_analysis_timeframe(start_analysis = start_analysis, end_analysis = end_analysis)
 
@@ -35,9 +36,11 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
 #' @param start_analysis Start of the analysis
 #' @param end_analysis End of the analysis
 #' @noRd
-extend_to_full_analysis_timeframe <- function(data,
-                                              start_analysis,
-                                              end_analysis) {
+extend_to_full_analysis_timeframe <- function(data,start_analysis,end_analysis) {
+  
+  # assets' productions must be contained inside the scenario
+  stopifnot((min(data$production_year) >= start_analysis) & (max(data$production_year) <= end_analysis))
+
   data <- data %>%
     tidyr::complete(
       production_year = seq(start_analysis, end_analysis),
