@@ -25,6 +25,7 @@ calculate_net_profits <- function(data,
                                   carbon_data,
                                   shock_year,
                                   market_passthrough) {
+  
   data <- data %>%
     calculate_proximity_to_target()
 
