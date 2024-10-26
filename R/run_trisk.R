@@ -172,7 +172,7 @@ run_trisk_model <- function(assets_data,
     )
 
 
-  npv_results <- tibble::as_tibble(prepare_npv_results(company_technology_npv = company_technology_npv, run_id = run_id))
+  npv_results <- tibble::as_tibble(prepare_npv_results(company_technology_npv = company_technology_npv, trisk_model_input=trisk_model_input, run_id = run_id))
   pd_results <- tibble::as_tibble(prepare_pd_results(company_pd_changes_overall = company_pd_changes_overall, run_id = run_id))
   company_trajectories_results <- tibble::as_tibble(prepare_company_trajectories(company_trajectories = company_annual_profits, run_id = run_id))
 
