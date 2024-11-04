@@ -1,43 +1,43 @@
-"company_id","company_name","plan_sec_prod","country_name","plant_age_years","workforce_size","asset_id","country_iso2","asset_name","production_year","emission_factor","technology","sector","capacity","capacity_factor","production_unit"
-101,"Company 1",5000,NA,NA,NA,101,"DE","Company 1",2022,0.062025881,"Gas","Oil&Gas",5000,1,"GJ"
-101,"Company 1",5423,NA,NA,NA,101,"DE","Company 1",2023,0.062025881,"Gas","Oil&Gas",5423,1,"GJ"
-101,"Company 1",6200,NA,NA,NA,101,"DE","Company 1",2024,0.062025881,"Gas","Oil&Gas",6200,1,"GJ"
-101,"Company 1",7400,NA,NA,NA,101,"DE","Company 1",2025,0.062025881,"Gas","Oil&Gas",7400,1,"GJ"
-101,"Company 1",7800,NA,NA,NA,101,"DE","Company 1",2026,0.062025881,"Gas","Oil&Gas",7800,1,"GJ"
-101,"Company 1",8600,NA,NA,NA,101,"DE","Company 1",2027,0.062025881,"Gas","Oil&Gas",8600,1,"GJ"
-102,"Company 2",187700,NA,NA,NA,102,"DE","Company 2",2022,1.830537149,"Coal","Coal",187700,1,"t coal"
-102,"Company 2",187700,NA,NA,NA,102,"DE","Company 2",2023,1.830537149,"Coal","Coal",187700,1,"t coal"
-102,"Company 2",187700,NA,NA,NA,102,"DE","Company 2",2024,1.830537149,"Coal","Coal",187700,1,"t coal"
-102,"Company 2",187700,NA,NA,NA,102,"DE","Company 2",2025,1.830537149,"Coal","Coal",187700,1,"t coal"
-102,"Company 2",187700,NA,NA,NA,102,"DE","Company 2",2026,1.830537149,"Coal","Coal",187700,1,"t coal"
-102,"Company 2",187700,NA,NA,NA,102,"DE","Company 2",2027,1.830537149,"Coal","Coal",187700,1,"t coal"
-103,"Company 3",4278949.774,NA,NA,NA,103,"DE","Company 3",2022,0.062211646,"Gas","Oil&Gas",4278949.774,1,"GJ"
-103,"Company 3",4289824.319,NA,NA,NA,103,"DE","Company 3",2023,0.062231438,"Gas","Oil&Gas",4289824.319,1,"GJ"
-103,"Company 3",4272507.878,NA,NA,NA,103,"DE","Company 3",2024,0.062255613,"Gas","Oil&Gas",4272507.878,1,"GJ"
-103,"Company 3",4300201.535,NA,NA,NA,103,"DE","Company 3",2025,0.06227745,"Gas","Oil&Gas",4300201.535,1,"GJ"
-103,"Company 3",4310236.191,NA,NA,NA,103,"DE","Company 3",2026,0.06227991,"Gas","Oil&Gas",4310236.191,1,"GJ"
-103,"Company 3",4372896.386,NA,NA,NA,103,"DE","Company 3",2027,0.062289842,"Gas","Oil&Gas",4372896.386,1,"GJ"
-104,"Company 4",660,NA,NA,NA,104,"DE","Company 4",2022,0,"RenewablesCap","Power",660,1,"MW"
-104,"Company 4",660,NA,NA,NA,104,"DE","Company 4",2023,0,"RenewablesCap","Power",660,1,"MW"
-104,"Company 4",660,NA,NA,NA,104,"DE","Company 4",2024,0,"RenewablesCap","Power",660,1,"MW"
-104,"Company 4",710,NA,NA,NA,104,"DE","Company 4",2025,0,"RenewablesCap","Power",710,1,"MW"
-104,"Company 4",730,NA,NA,NA,104,"DE","Company 4",2026,0,"RenewablesCap","Power",730,1,"MW"
-104,"Company 4",750,NA,NA,NA,104,"DE","Company 4",2027,0,"RenewablesCap","Power",740,1,"MW"
-105,"Company 5",232.932,NA,NA,NA,105,"DE","Company 5",2022,0.974352332,"CoalCap","Power",141.3945,1,"MW"
-105,"Company 5",232.932,NA,NA,NA,105,"DE","Company 5",2022,1.199869533,"OilCap","Power",41.121,1,"MW"
-105,"Company 5",232.932,NA,NA,NA,105,"DE","Company 5",2022,0,"RenewablesCap","Power",50.4165,1,"MW"
-105,"Company 5",288.8745,NA,NA,NA,105,"DE","Company 5",2023,0.968127486,"CoalCap","Power",141.3945,1,"MW"
-105,"Company 5",288.8745,NA,NA,NA,105,"DE","Company 5",2023,1.177407169,"OilCap","Power",41.121,1,"MW"
-105,"Company 5",288.8745,NA,NA,NA,105,"DE","Company 5",2023,0,"RenewablesCap","Power",106.359,1,"MW"
-105,"Company 5",324.192,NA,NA,NA,105,"DE","Company 5",2024,0.957555403,"CoalCap","Power",128.4225,1,"MW"
-105,"Company 5",324.192,NA,NA,NA,105,"DE","Company 5",2024,1.154490839,"OilCap","Power",41.121,1,"MW"
-105,"Company 5",324.192,NA,NA,NA,105,"DE","Company 5",2024,0,"RenewablesCap","Power",154.6485,1,"MW"
-105,"Company 5",324.192,NA,NA,NA,105,"DE","Company 5",2025,0.951898914,"CoalCap","Power",128.4225,1,"MW"
-105,"Company 5",324.192,NA,NA,NA,105,"DE","Company 5",2025,1.131106754,"OilCap","Power",41.121,1,"MW"
-105,"Company 5",324.192,NA,NA,NA,105,"DE","Company 5",2025,0,"RenewablesCap","Power",154.6485,1,"MW"
-105,"Company 5",518.772,NA,NA,NA,105,"DE","Company 5",2026,0.939065902,"CoalCap","Power",323.0025,1,"MW"
-105,"Company 5",518.772,NA,NA,NA,105,"DE","Company 5",2026,1.117460448,"OilCap","Power",41.121,1,"MW"
-105,"Company 5",518.772,NA,NA,NA,105,"DE","Company 5",2026,0,"RenewablesCap","Power",154.6485,1,"MW"
-105,"Company 5",518.772,NA,NA,NA,105,"DE","Company 5",2027,0.934471692,"CoalCap","Power",323.0025,1,"MW"
-105,"Company 5",518.772,NA,NA,NA,105,"DE","Company 5",2027,1.1036415,"OilCap","Power",41.121,1,"MW"
-105,"Company 5",518.772,NA,NA,NA,105,"DE","Company 5",2027,0,"RenewablesCap","Power",154.6485,1,"MW"
+company_id,company_name,asset_id,country_iso2,asset_name,production_year,emission_factor,technology,sector,capacity,capacity_factor,production_unit
+101,Company 1,101,DE,Company 1,2022,0.062025881,Gas,Oil&Gas,8600,0.5813953488372093,GJ
+101,Company 1,101,DE,Company 1,2023,0.062025881,Gas,Oil&Gas,8600,0.6305813953488372,GJ
+101,Company 1,101,DE,Company 1,2024,0.062025881,Gas,Oil&Gas,8600,0.7209302325581395,GJ
+101,Company 1,101,DE,Company 1,2025,0.062025881,Gas,Oil&Gas,8600,0.8604651162790697,GJ
+101,Company 1,101,DE,Company 1,2026,0.062025881,Gas,Oil&Gas,8600,0.9069767441860465,GJ
+101,Company 1,101,DE,Company 1,2027,0.062025881,Gas,Oil&Gas,8600,1,GJ
+102,Company 2,102,DE,Company 2,2022,1.830537149,Coal,Coal,187700,1,t coal
+102,Company 2,102,DE,Company 2,2023,1.830537149,Coal,Coal,187700,1,t coal
+102,Company 2,102,DE,Company 2,2024,1.830537149,Coal,Coal,187700,1,t coal
+102,Company 2,102,DE,Company 2,2025,1.830537149,Coal,Coal,187700,1,t coal
+102,Company 2,102,DE,Company 2,2026,1.830537149,Coal,Coal,187700,1,t coal
+102,Company 2,102,DE,Company 2,2027,1.830537149,Coal,Coal,187700,1,t coal
+103,Company 3,103,DE,Company 3,2022,0.062211646,Gas,Oil&Gas,4372896.386,0.9785161586950074,GJ
+103,Company 3,103,DE,Company 3,2023,0.062231438,Gas,Oil&Gas,4372896.386,0.9810029647018488,GJ
+103,Company 3,103,DE,Company 3,2024,0.062255613,Gas,Oil&Gas,4372896.386,0.9770430169986652,GJ
+103,Company 3,103,DE,Company 3,2025,0.06227745,Gas,Oil&Gas,4372896.386,0.9833760408243984,GJ
+103,Company 3,103,DE,Company 3,2026,0.06227991,Gas,Oil&Gas,4372896.386,0.9856707798518599,GJ
+103,Company 3,103,DE,Company 3,2027,0.062289842,Gas,Oil&Gas,4372896.386,1,GJ
+104,Company 4,104,DE,Company 4,2022,0,RenewablesCap,Power,740,0.8918918918918919,MW
+104,Company 4,104,DE,Company 4,2023,0,RenewablesCap,Power,740,0.8918918918918919,MW
+104,Company 4,104,DE,Company 4,2024,0,RenewablesCap,Power,740,0.8918918918918919,MW
+104,Company 4,104,DE,Company 4,2025,0,RenewablesCap,Power,740,0.9594594594594594,MW
+104,Company 4,104,DE,Company 4,2026,0,RenewablesCap,Power,740,0.9864864864864865,MW
+104,Company 4,104,DE,Company 4,2027,0,RenewablesCap,Power,740,1,MW
+105,Company 5,105,DE,Company 5,2022,0.974352332,CoalCap,Power,323.0025,0.4377504818074163,MW
+105,Company 5,105,DE,Company 5,2022,1.199869533,OilCap,Power,41.121,1,MW
+105,Company 5,105,DE,Company 5,2022,0,RenewablesCap,Power,154.6485,0.3260070417753809,MW
+105,Company 5,105,DE,Company 5,2023,0.968127486,CoalCap,Power,323.0025,0.4377504818074163,MW
+105,Company 5,105,DE,Company 5,2023,1.177407169,OilCap,Power,41.121,1,MW
+105,Company 5,105,DE,Company 5,2023,0,RenewablesCap,Power,154.6485,0.6877467288722489,MW
+105,Company 5,105,DE,Company 5,2024,0.957555403,CoalCap,Power,323.0025,0.39758980193651755,MW
+105,Company 5,105,DE,Company 5,2024,1.154490839,OilCap,Power,41.121,1,MW
+105,Company 5,105,DE,Company 5,2024,0,RenewablesCap,Power,154.6485,1,MW
+105,Company 5,105,DE,Company 5,2025,0.951898914,CoalCap,Power,323.0025,0.39758980193651755,MW
+105,Company 5,105,DE,Company 5,2025,1.131106754,OilCap,Power,41.121,1,MW
+105,Company 5,105,DE,Company 5,2025,0,RenewablesCap,Power,154.6485,1,MW
+105,Company 5,105,DE,Company 5,2026,0.939065902,CoalCap,Power,323.0025,1,MW
+105,Company 5,105,DE,Company 5,2026,1.117460448,OilCap,Power,41.121,1,MW
+105,Company 5,105,DE,Company 5,2026,0,RenewablesCap,Power,154.6485,1,MW
+105,Company 5,105,DE,Company 5,2027,0.934471692,CoalCap,Power,323.0025,1,MW
+105,Company 5,105,DE,Company 5,2027,1.1036415,OilCap,Power,41.121,1,MW
+105,Company 5,105,DE,Company 5,2027,0,RenewablesCap,Power,154.6485,1,MW

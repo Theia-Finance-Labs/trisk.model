@@ -53,7 +53,7 @@ write_results <- function(npv_results, pd_results, company_trajectories, trisk_p
 
 prepare_npv_results <- function(company_technology_npv, trisk_model_input, run_id) {
   asset_countries <- trisk_model_input %>% 
-    dplyr::distinct(asset_id, country_iso2)
+    dplyr::distinct(.data$asset_id, .data$country_iso2)
 
   npv_results <- company_technology_npv %>%
     dplyr::inner_join(asset_countries, by=c("asset_id")) %>%
