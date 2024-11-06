@@ -26,9 +26,7 @@ calculate_annual_profits <- function(data,
     calculate_terminal_value(
       end_year = end_year,
       growth_rate = growth_rate,
-      discount_rate = discount_rate,
-      baseline_scenario = baseline_scenario,
-      shock_scenario = shock_scenario
+      discount_rate = discount_rate
     )
 
   return(data)
@@ -67,9 +65,7 @@ dividend_discount_model <- function(data, discount_rate) {
 calculate_terminal_value <- function(data,
                                      end_year,
                                      growth_rate,
-                                     discount_rate,
-                                     baseline_scenario,
-                                     shock_scenario) {
+                                     discount_rate) {
   # the calculation follows the formula described in the 2DII paper "Limited
   # Visibility", available under https://2degrees-investing.org/resource/limited-visibility-the-current-state-of-corporate-disclosure-on-long-term-risks/
   terminal_value <- data %>%
@@ -82,18 +78,26 @@ calculate_terminal_value <- function(data,
         (.env$discount_rate - .env$growth_rate),
       discounted_net_profit_ls = .data$net_profits_ls /
         (.env$discount_rate - .env$growth_rate)
-    ) %>%
+    )%>%
     # ADO3112: All columns that reflect a change over time are set to NA, as
     # they cannot be extrapolated from the start_year to end_year period. All
     # columns that are time invariant are kept.
     dplyr::mutate(
-      !!rlang::sym(baseline_scenario) := NA_real_,
-      !!rlang::sym(shock_scenario) := NA_real_,
-      baseline = NA_real_,
+      production_plan_company_technology = NA_real_,
+      production_scenario_baseline = NA_real_,
+      production_scenario_target = NA_real_,
+      production_change_scenario_baseline = NA_real_,
+      production_change_scenario_target = NA_real_,
+      production_asset_baseline = NA_real_,
       late_sudden = NA_real_,
       scenario_price_baseline = NA_real_,
+      scenario_price_target = NA_real_,
       late_sudden_price = NA_real_,
-      production_compensation = NA_real_
+      net_profits_baseline = NA_real_,
+      net_profits_ls = NA_real_,
+      discounted_net_profit_baseline = NA_real_,
+      discounted_net_profit_ls = NA_real_
+
     )
 
   data <- data %>%
