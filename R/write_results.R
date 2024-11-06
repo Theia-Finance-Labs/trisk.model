@@ -112,8 +112,8 @@ prepare_company_trajectories <- function(company_trajectories, run_id) {
       discounted_net_profits_shock_scenario = .data$discounted_net_profit_ls
     ) %>%
     dplyr::select(
-      .data$run_id, .data$asset_id, .data$asset_name, .data$company_id, .data$company_name, .data$year,
-      .data$sector, .data$technology,
+      .data$run_id, .data$asset_id, .data$asset_name, .data$company_id, .data$company_name, .data$country_iso2,
+      .data$sector, .data$technology, .data$year,
       .data$production_plan_company_technology, .data$production_baseline_scenario,
       .data$production_target_scenario, .data$production_shock_scenario, .data$company_id,
       .data$pd, .data$net_profit_margin, .data$debt_equity_ratio,
