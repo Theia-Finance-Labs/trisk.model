@@ -60,8 +60,12 @@ prepare_npv_results <- function(company_technology_npv, trisk_model_input, run_i
     dplyr::mutate(run_id = .env$run_id) %>%
     dplyr::rename(
       net_present_value_baseline = .data$total_disc_npv_baseline,
-      net_present_value_shock = .data$total_disc_npv_ls,
+      net_present_value_shock = .data$total_disc_npv_ls
     ) %>%
+    dplyr::mutate(
+      net_present_value_difference = .data$net_present_value_shock - .data$net_present_value_baseline,
+      net_present_value_change = .data$net_present_value_difference / .data$net_present_value_baseline
+    )%>%
     dplyr::select(
       .data$run_id,
       .data$company_id,
@@ -73,6 +77,8 @@ prepare_npv_results <- function(company_technology_npv, trisk_model_input, run_i
       .data$country_iso2,
       .data$net_present_value_baseline,
       .data$net_present_value_shock,
+      .data$net_present_value_difference,
+      .data$net_present_value_change
     )
   return(npv_results)
 }
