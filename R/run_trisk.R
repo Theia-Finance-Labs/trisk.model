@@ -111,9 +111,7 @@ run_trisk_model <- function(assets_data,
   assets_scenarios <- merge_assets_and_scenarios_data(assets_data = processed_assets_data, scenarios_data = scenarios_data)
 
   trisk_model_input <- process_trisk_input(
-    assets_scenarios = assets_scenarios,
-    target_scenario = target_scenario
-  )
+    assets_scenarios = assets_scenarios  )
 
   start_year <- min(trisk_model_input$year)
   end_analysis <- max(trisk_model_input$year)
