@@ -111,9 +111,7 @@ run_trisk_model <- function(assets_data,
   assets_scenarios <- merge_assets_and_scenarios_data(assets_data = processed_assets_data, scenarios_data = scenarios_data)
 
   trisk_model_input <- process_trisk_input(
-    assets_scenarios = assets_scenarios,
-    target_scenario = target_scenario
-  )
+    assets_scenarios = assets_scenarios  )
 
   start_year <- min(trisk_model_input$year)
   end_analysis <- max(trisk_model_input$year)
@@ -173,7 +171,7 @@ run_trisk_model <- function(assets_data,
     )
 
 
-  npv_results <- tibble::as_tibble(prepare_npv_results(company_technology_npv = company_technology_npv, run_id = run_id))
+  npv_results <- tibble::as_tibble(prepare_npv_results(company_technology_npv = company_technology_npv, trisk_model_input=trisk_model_input, run_id = run_id))
   pd_results <- tibble::as_tibble(prepare_pd_results(company_pd_changes_overall = company_pd_changes_overall, run_id = run_id))
   company_trajectories_results <- tibble::as_tibble(prepare_company_trajectories(company_trajectories = company_annual_profits, run_id = run_id))
 
