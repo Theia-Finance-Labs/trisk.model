@@ -21,7 +21,8 @@ process_trisk_input <- function(assets_scenarios,
       .data$scenario_geography,
       .data$year,
       .data$emission_factor,
-      .data$volatility
+      .data$volatility,
+      .data$plant_age_rank
     ) %>%
     dplyr::inner_join(
       assets_scenarios_production_pivoted,

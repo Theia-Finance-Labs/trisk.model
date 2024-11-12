@@ -18,7 +18,7 @@ calculate_asset_value_at_risk <- function(data,
                                           crispy = FALSE) {
   data <- data %>%
     dplyr::filter(
-      .data$year >= shock_year,
+      .data$year >= (.env$shock_year + .data$plant_age_rank),
       !is.na(.data$discounted_net_profit_ls),
       !is.na(.data$discounted_net_profit_baseline)
     ) %>%
@@ -47,8 +47,8 @@ calculate_asset_value_at_risk <- function(data,
 
   data <- data %>%
     dplyr::mutate(
-      duration_of_shock = shock_year - start_year,
-      year_of_shock = shock_year
+      duration_of_shock = (.env$shock_year + .data$plant_age_rank) - start_year,
+      year_of_shock = (.env$shock_year + .data$plant_age_rank)
     )
 
   return(data)

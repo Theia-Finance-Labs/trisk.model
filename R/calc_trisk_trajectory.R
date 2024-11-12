@@ -128,11 +128,9 @@ set_baseline_trajectory <- function(data) {
 set_trisk_trajectory <- function(data,
                                  start_year,
                                  shock_year) {
-  year_of_shock <- shock_year
-  duration_of_shock <- shock_year - start_year
 
   late_sudden_df <- calc_late_sudden_traj(data,
-    year_of_shock = year_of_shock
+    year_of_shock = shock_year
   )
 
   data <- data %>%
@@ -209,11 +207,11 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
 
     ls_pre_clean_to_compensate <- ls_data_to_compensate %>%
       dplyr::mutate(
-        late_sudden = ifelse(.data$year <= .env$year_of_shock, .data$production_plan_company_technology_filled + .data$scenario_change_baseline_cumsum, 0)
+        late_sudden = ifelse(.data$year <= (.env$year_of_shock + .data$plant_age_rank), .data$production_plan_company_technology_filled + .data$scenario_change_baseline_cumsum, 0)
       )
 
     ls_pre_shock_to_compensate <- ls_pre_clean_to_compensate %>%
-      dplyr::filter(.data$year <= .env$year_of_shock - 1) %>%
+      dplyr::filter(.data$year <= (.env$year_of_shock  - 1 + .data$plant_age_rank)) %>%
       dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
       dplyr::summarize(
         late_sudden_pre_shock_val = dplyr::last(.data$late_sudden),
@@ -225,7 +223,7 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
       dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
       dplyr::summarize(
         production_scenario_target_total_sum = sum(.data$production_scenario_target),
-        n_shocked_years = dplyr::last(.data$year) - .env$year_of_shock + 1,
+        n_shocked_years = dplyr::last(.data$year) - (.env$year_of_shock  + 1 + .data$plant_age_rank),
         .groups = "drop"
       )
 
@@ -242,13 +240,13 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
     ls_overshoot_compensated <-
       dplyr::bind_rows(
         ls_pre_clean_to_compensate %>%
-          dplyr::filter(.data$year < .env$year_of_shock),
+          dplyr::filter(.data$year <  (.env$year_of_shock + .data$plant_age_rank)),
         ls_pre_clean_to_compensate %>%
-          dplyr::filter(.data$year >= .env$year_of_shock) %>%
+          dplyr::filter(.data$year >=  (.env$year_of_shock + .data$plant_age_rank)) %>%
           dplyr::left_join(ls_pre_shock_to_compensate, by = c("asset_id", "company_id", "sector", "technology")) %>%
           dplyr::left_join(x_integral_to_compensate, by = c("asset_id", "company_id", "sector", "technology")) %>%
           dplyr::mutate(
-            year_diff = .data$year - .env$year_of_shock + 1,
+            year_diff = .data$year -  (.env$year_of_shock  + 1 + .data$plant_age_rank),
             late_sudden = .data$late_sudden_pre_shock_val - pmax(.data$year_diff, 0) * .data$x
           )
       ) %>%

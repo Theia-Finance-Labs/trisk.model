@@ -14,12 +14,12 @@
 apply_scenario_prices <- function(data, shock_year) {
   # Part 1: Process for years <= shock_year
   before_shock <- data %>%
-    dplyr::filter(.data$year <= shock_year) %>%
+    dplyr::filter(.data$year <= (.env$shock_year + .data$plant_age_rank)) %>%
     dplyr::mutate(late_sudden_price = .data$scenario_price_baseline)
 
   # Part 2: Process for years > shock_year
   after_shock <- data %>%
-    dplyr::filter(.data$year > shock_year - 1) %>%
+    dplyr::filter(.data$year > (.env$shock_year  - 1 + .data$plant_age_rank)) %>%
     dplyr::group_by(.data$asset_id, .data$company_id, .data$technology) %>%
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
     dplyr::summarise(
