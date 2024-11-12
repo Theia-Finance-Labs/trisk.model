@@ -14,6 +14,27 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
       dplyr::filter(.data$country_iso2 %in% countries_filter)
   }
 
+  # TODO ONLY FOR DEBUG
+  assets_data_filtered <- assets_data_filtered %>% 
+    dplyr::group_by(
+      company_id, company_name, technology, sector, production_year) %>%
+    dplyr::summarise(
+      production_plan_company_technology=sum(production_plan_company_technology),
+      asset_capacity=sum(asset_capacity),
+      emission_factor=median(emission_factor),
+      plan_sec_prod=sum(plan_sec_prod),
+      pd=median(pd), 
+      net_profit_margin=median(net_profit_margin),
+      debt_equity_ratio=median(debt_equity_ratio), 
+      volatility=median(volatility),
+    .groups="drop") %>% 
+    dplyr::mutate(
+      asset_id=company_id,
+      asset_name=company_name,
+      country_iso2=NA
+    )
+
+
   stopifnot(nrow(assets_data_filtered) > 0)
 
   start_analysis <- min(scenarios_data$scenario_year)

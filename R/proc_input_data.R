@@ -7,7 +7,6 @@ process_scenarios_data <- function(scenarios_data, baseline_scenario, target_sce
     add_market_fair_share_percentage() %>%
     calculate_fair_share_perc()
 
-
   return(scenarios_data)
 }
 
@@ -17,9 +16,10 @@ process_assets_data <- function(assets_data, financial_data) {
     financial_data,
     by = "company_id"
   ) %>%
-    dplyr::mutate(
-      production_plan_company_technology = .data$plan_tech_prod
-    ) 
+  dplyr::mutate(
+    production_plan_company_technology = .data$plan_tech_prod
+  ) 
+  
   assets_data <- production_financial_data %>%
     remove_sectors_with_missing_production_start_year() %>%
     compute_plan_sec_prod()
