@@ -99,7 +99,8 @@ read_production_data <- function(path = NULL) {
         technology = "c",
         capacity = "d",
         capacity_factor = "d",
-        emission_factor = "d"
+        emission_factor = "d",
+        plant_age_rank="d",
       )
     )
 
