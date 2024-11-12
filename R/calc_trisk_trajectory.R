@@ -26,7 +26,7 @@ extend_assets_trajectories <- function(
       "production_plan_company_technology", "production_scenario_baseline", "production_scenario_target",
       "production_change_scenario_baseline", "production_change_scenario_target",
       "production_asset_baseline", "late_sudden", "overshoot_direction",
-      "scenario_price_baseline", "scenario_price_target", "late_sudden_price"
+      "scenario_price_baseline", "scenario_price_target", "late_sudden_price", "asset_capacity", "capacity_scenario_target"
     ))
 
 

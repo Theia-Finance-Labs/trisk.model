@@ -18,9 +18,8 @@ process_assets_data <- function(assets_data, financial_data) {
     by = "company_id"
   ) %>%
     dplyr::mutate(
-      production_plan_company_technology = .data$capacity * .data$capacity_factor
-    ) %>%
-    dplyr::select(-c(.data$capacity, .data$capacity_factor))
+      production_plan_company_technology = .data$plan_tech_prod
+    ) 
   assets_data <- production_financial_data %>%
     remove_sectors_with_missing_production_start_year() %>%
     compute_plan_sec_prod()

@@ -84,11 +84,12 @@ calculate_net_profits <- function(data,
 #'
 #' @noRd
 calculate_proximity_to_target <- function(data) {
+  
   # Identify the position of the first non-NA value per group
   first_non_na_positions <- data %>%
     dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
-    dplyr::summarise(last_non_na_year = max(.data$year[!is.na(.data$production_plan_company_technology)], na.rm = TRUE)) %>%
+    dplyr::summarise(last_non_na_year = max(.data$year[!is.na(.data$asset_capacity)], na.rm = TRUE)) %>%
     dplyr::ungroup()
 
   # Filter the data based on the identified positions
@@ -104,9 +105,9 @@ calculate_proximity_to_target <- function(data) {
     ) %>%
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
     dplyr::mutate(
-      initial_technology_production = dplyr::first(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
-      required_change = .data$production_scenario_target - .data$initial_technology_production,
-      realised_change = .data$production_plan_company_technology - .data$initial_technology_production
+      initial_technology_production = dplyr::first(.data$asset_capacity[!is.na(.data$asset_capacity)]),
+      required_change = .data$capacity_scenario_target - .data$initial_technology_production,
+      realised_change = .data$asset_capacity - .data$initial_technology_production
     ) %>%
     dplyr::ungroup() %>%
     dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%

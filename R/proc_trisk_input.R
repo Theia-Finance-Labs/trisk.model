@@ -21,7 +21,8 @@ process_trisk_input <- function(assets_scenarios,
       .data$scenario_geography,
       .data$year,
       .data$emission_factor,
-      .data$volatility
+      .data$volatility,
+      .data$asset_capacity
     ) %>%
     dplyr::inner_join(
       assets_scenarios_production_pivoted,
@@ -80,6 +81,9 @@ create_base_production_trajectories <- function(data) {
     dplyr::mutate(
       production_scenario = ifelse(.data$production_scenario < 0, 0, .data$production_scenario)
     ) %>%
+    dplyr::mutate(
+      capacity_scenario = .data$production_scenario
+    )%>%
     # 2. Apply capacity factors
     dplyr::mutate(
       production_plan_company_technology = ifelse(.data$sector == "Power",
@@ -127,7 +131,7 @@ lag_scenario_productions <- function(data) {
 
 pivot_to_baseline_target_columns <- function(data) {
   index_cols <- c("asset_id", "company_id", "sector", "technology", "year")
-  to_pivot <- c("production_scenario", "scenario_price", "production_plan_company_technology", "production_change_scenario")
+  to_pivot <- c("capacity_scenario","production_scenario", "scenario_price", "production_plan_company_technology", "production_change_scenario")
 
   # Filter baseline scenario
   baseline_data <- data %>%

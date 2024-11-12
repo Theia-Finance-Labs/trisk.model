@@ -126,6 +126,7 @@ prepare_company_trajectories <- function(company_trajectories, run_id) {
       .data$volatility, .data$scenario_price_baseline, .data$price_shock_scenario,
       .data$net_profits_baseline_scenario, .data$net_profits_shock_scenario,
       .data$discounted_net_profits_baseline_scenario, .data$discounted_net_profits_shock_scenario,
+      .data$asset_capacity, .data$capacity_scenario_target
     )
   return(company_trajectories)
 }
