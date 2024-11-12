@@ -26,7 +26,7 @@ extend_assets_trajectories <- function(
       "production_plan_company_technology", "production_scenario_baseline", "production_scenario_target",
       "production_change_scenario_baseline", "production_change_scenario_target",
       "production_asset_baseline", "late_sudden", "overshoot_direction",
-      "scenario_price_baseline", "scenario_price_target", "late_sudden_price"
+      "scenario_price_baseline", "scenario_price_target", "late_sudden_price", "plant_age_rank"
     ))
 
 
@@ -141,10 +141,11 @@ set_trisk_trajectory <- function(data,
 }
 
 calc_late_sudden_traj <- function(data, year_of_shock) {
+  
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
     dplyr::select_at(c(
-      "asset_id", "company_id", "year", "sector", "technology",
+      "asset_id", "company_id", "year", "sector", "technology", "plant_age_rank",
       "production_plan_company_technology", "production_scenario_target", "production_change_scenario_target", "production_change_scenario_baseline"
     )) %>%
     dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
