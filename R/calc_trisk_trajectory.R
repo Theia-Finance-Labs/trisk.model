@@ -29,6 +29,7 @@ extend_assets_trajectories <- function(
       "scenario_price_baseline", "scenario_price_target", "late_sudden_price"
     ))
 
+  
 
   # attach the necessary columns for the rest
   trisk_model_output <- trajectories %>%
@@ -133,6 +134,13 @@ set_trisk_trajectory <- function(data,
   late_sudden_df <- calc_late_sudden_traj(data,
     year_of_shock = year_of_shock
   )
+
+  # Forces all late_sudden to be 0, after the first year it reaches 0, if it is ever reached.
+  late_sudden_df <- late_sudden_df %>%
+    dplyr::group_by(.data$company_id, .data$technology) %>%
+    dplyr::mutate(late_sudden = dplyr::if_else(cumsum(.data$late_sudden == 0) > 0, 0, .data$late_sudden)) %>%
+    dplyr::ungroup()
+
 
   data <- data %>%
     dplyr::ungroup() %>%
