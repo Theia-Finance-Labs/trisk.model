@@ -25,8 +25,6 @@ calculate_net_profits <- function(data,
                                   carbon_data,
                                   shock_year,
                                   market_passthrough) {
-  data <- data %>%
-    calculate_proximity_to_target()
 
   baseline <- calculate_net_profits_baseline(data) %>%
     dplyr::select(
@@ -84,6 +82,7 @@ calculate_net_profits <- function(data,
 #'
 #' @noRd
 calculate_proximity_to_target <- function(data) {
+  
   # Identify the position of the first non-NA value per group
   first_non_na_positions <- data %>%
     dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
@@ -97,7 +96,8 @@ calculate_proximity_to_target <- function(data) {
       by = c("asset_id", "company_id", "sector", "technology")
     ) %>%
     dplyr::filter(
-      .data$year <= .data$last_non_na_year
+      .data$year <= .data$last_non_na_year,
+      scenario_type == "target"
     ) %>%
     dplyr::group_by(
       .data$asset_id, .data$company_id, .data$sector, .data$technology
@@ -105,7 +105,7 @@ calculate_proximity_to_target <- function(data) {
     dplyr::arrange(.data$year, .by_group = TRUE) %>%
     dplyr::mutate(
       initial_technology_production = dplyr::first(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
-      required_change = .data$production_scenario_target - .data$initial_technology_production,
+      required_change = .data$production_scenario - .data$initial_technology_production,
       realised_change = .data$production_plan_company_technology - .data$initial_technology_production
     ) %>%
     dplyr::ungroup() %>%
@@ -125,13 +125,11 @@ calculate_proximity_to_target <- function(data) {
       )
     ) %>%
     dplyr::select(
-      -dplyr::all_of(c("sum_required_change", "sum_realised_change", "ratio_realised_required"))
+      -dplyr::all_of(c( "sum_required_change", "sum_realised_change", "ratio_realised_required"))
     )
-browser()
-  data <- data %>%
-    dplyr::inner_join(production_changes, by = c("asset_id", "company_id", "sector", "technology"))
 
-  return(data)
+
+  return(production_changes)
 }
 
 

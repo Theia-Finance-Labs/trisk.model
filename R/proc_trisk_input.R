@@ -1,7 +1,8 @@
 process_trisk_input <- function(assets_scenarios,
                                 target_scenario) {
-  assets_scenarios_productions <- create_base_production_trajectories(data = assets_scenarios)
-
+  outputs  <- create_base_production_trajectories(data = assets_scenarios)
+  assets_scenarios_productions <- outputs$data
+  proximity_to_target_df = outputs$proximity_to_target 
   assets_scenarios_production_lagged <- lag_scenario_productions(data = assets_scenarios_productions)
   assets_scenarios_production_pivoted <- pivot_to_baseline_target_columns(data = assets_scenarios_production_lagged)
 
@@ -27,7 +28,7 @@ process_trisk_input <- function(assets_scenarios,
       by = c("asset_id", "company_id", "sector", "technology", "year")
     )
 
-  return(trisk_model_input)
+  return(list("trisk_model_input"=trisk_model_input, "proximity_to_target_df"=proximity_to_target_df))
 }
 
 
@@ -78,7 +79,11 @@ create_base_production_trajectories <- function(data) {
     dplyr::ungroup() %>%
     dplyr::mutate(
       production_scenario = ifelse(.data$production_scenario < 0, 0, .data$production_scenario)
-    ) %>%
+    ) 
+    
+    proximity_to_target <- calculate_proximity_to_target(data)
+    
+    data  <-  data %>%
     # 2. Apply capacity factors
     dplyr::mutate(
       production_plan_company_technology = ifelse(.data$sector == "Power",
@@ -92,7 +97,7 @@ create_base_production_trajectories <- function(data) {
     ) %>%
     dplyr::select(-c(.data$plan_sec_prod))
 
-  return(data)
+  return(list("data"=data, "proximity_to_target"=proximity_to_target))
 }
 
 
