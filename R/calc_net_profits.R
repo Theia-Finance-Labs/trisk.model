@@ -170,7 +170,7 @@ calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, 
     dplyr::filter(.data$overshoot_direction == "Increasing") %>%
     dplyr::mutate(
       production_compensation = .data$late_sudden - .data$production_asset_baseline,
-      carbon_tax = ifelse(.data$year < shock_year, 0, .data$carbon_tax),
+      carbon_tax = ifelse(.data$year < (.env$shock_year + .data$plant_age_rank), 0, .data$carbon_tax),
       net_profits_ls = .data$late_sudden * (.data$late_sudden_price -
         (1 - market_passthrough) * .data$carbon_tax * .data$emission_factor) * .data$net_profit_margin -
         .data$production_compensation * .data$late_sudden_price * .data$net_profit_margin * (1 - .data$proximity_to_target)
@@ -182,7 +182,7 @@ calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, 
     dplyr::filter(.data$overshoot_direction == "Decreasing") %>%
     dplyr::mutate(
       production_compensation = 0,
-      carbon_tax = ifelse(.data$year < shock_year, 0, .data$carbon_tax),
+      carbon_tax = ifelse(.data$year < (.env$shock_year + .data$plant_age_rank), 0, .data$carbon_tax),
       net_profits_ls = .data$late_sudden * (.data$late_sudden_price -
         (1 - market_passthrough) * .data$carbon_tax * .data$emission_factor) * .data$net_profit_margin - -
         .data$production_compensation * .data$late_sudden_price * .data$net_profit_margin * (1 - .data$proximity_to_target)
