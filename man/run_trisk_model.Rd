@@ -18,7 +18,8 @@ run_trisk_model(
   growth_rate = 0.03,
   div_netprofit_prop_coef = 1,
   shock_year = 2030,
-  market_passthrough = 0
+  market_passthrough = 0,
+  run_id = NULL
 )
 }
 \arguments{
@@ -49,12 +50,14 @@ run_trisk_model(
 \item{shock_year}{Numeric value specifying the year when the shock is applied. Default is 2030.}
 
 \item{market_passthrough}{Numeric value representing the firm's ability to pass carbon tax onto the consumer. Default is 0.}
+
+\item{run_id}{(Optional) Character value representing the ID of current Trisk's iteration}
 }
 \value{
 A list containing:
-\item{company_pd_changes_overall}{Data frame of overall probability of default changes}
+\item{pd_results}{Data frame of overall probability of default changes}
 \item{company_trajectories}{Data frame of company annual profits}
-\item{company_technology_npv}{Data frame of company technology net present values}
+\item{npv_results}{Data frame of company technology net present values}
 }
 \description{
 This function executes the core transition risk stress test model calculations.

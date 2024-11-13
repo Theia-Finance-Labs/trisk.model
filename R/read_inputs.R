@@ -97,9 +97,9 @@ read_production_data <- function(path = NULL) {
         production_year = "d",
         sector = "c",
         technology = "c",
-        capacity = "d",
-        capacity_factor = "d",
-        emission_factor = "d"
+        emission_factor = "d",
+        plan_tech_prod="d",
+        plan_sec_prod="d"
       )
     )
 
@@ -126,10 +126,7 @@ read_scenario_data <- function(path) {
         technology = "c",
         scenario_year = "d",
         scenario_type = "c",
-        # price_unit = "c",
-        price_indicator = "c",
         scenario_price = "d",
-        capacity_factor_unit = "c",
         scenario_capacity_factor = "d",
         scenario_pathway = "d",
         country_iso2_list="c"

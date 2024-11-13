@@ -127,7 +127,7 @@ calculate_proximity_to_target <- function(data) {
     dplyr::select(
       -dplyr::all_of(c("sum_required_change", "sum_realised_change", "ratio_realised_required"))
     )
-
+browser()
   data <- data %>%
     dplyr::inner_join(production_changes, by = c("asset_id", "company_id", "sector", "technology"))
 
