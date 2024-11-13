@@ -22,6 +22,7 @@ st_read_agnostic <- function(dir) {
 }
 
 
+
 #' Read in carbon price data from ngfs data
 #'
 #'
@@ -130,7 +131,8 @@ read_scenario_data <- function(path) {
         scenario_price = "d",
         capacity_factor_unit = "c",
         scenario_capacity_factor = "d",
-        scenario_pathway = "d"
+        scenario_pathway = "d",
+        country_iso2_list="c"
       )
     )
 
@@ -214,4 +216,30 @@ check_valid_financial_data_values <- function(financial_data) {
   if (any(financial_data$volatility < 0)) {
     stop("Implausibe value(s) < 0 for volatility detected. Please check.")
   }
+}
+
+
+
+
+
+#' Process data of type indicated by function name
+#'
+#' @inheritParams process_production_data
+#'
+#' @return A tibble of data as indicated by function name.
+#' @noRd
+process_carbon_data <- function(data, start_year, end_year, carbon_price_model) {
+  data_processed <- data
+
+  ## dataframe will be NULL for lrisk this is the case as lrisk does not read in and use carbon prices
+  if (is.null(data_processed)) {
+    data_processed <- NULL
+  } else {
+    data_processed <- data_processed %>%
+      dplyr::filter(dplyr::between(.data$year, .env$start_year, .env$end_year)) %>%
+      dplyr::select(-c(.data$scenario_geography)) %>%
+      dplyr::filter(.data$scenario %in% .env$carbon_price_model)
+  }
+
+  return(data_processed)
 }
