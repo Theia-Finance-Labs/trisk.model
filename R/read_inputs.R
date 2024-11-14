@@ -127,7 +127,6 @@ read_scenario_data <- function(path) {
         scenario_year = "d",
         scenario_type = "c",
         scenario_price = "d",
-        scenario_capacity_factor = "d",
         scenario_pathway = "d",
         country_iso2_list="c"
       )
