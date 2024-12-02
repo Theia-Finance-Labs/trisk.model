@@ -41,7 +41,7 @@ extend_assets_trajectories <- function(
           .data$net_profit_margin, .data$pd, .data$volatility, .data$country_iso2
         ),
       by = c("asset_id", "company_id", "sector", "technology", "year")
-    ) 
+    )
 
 
   return(trisk_model_output)
@@ -255,8 +255,8 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
       dplyr::select(.data$asset_id, .data$company_id, .data$sector, .data$technology, .data$year, .data$late_sudden)
   } else {
     ls_overshoot_compensated <- dplyr::tibble(
-      company_id = character(),
-      asset_id = character(),
+      company_id = integer(),
+      asset_id = integer(),
       sector = character(),
       technology = character(),
       year = integer(),
@@ -276,8 +276,8 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
       dplyr::select(.data$asset_id, .data$company_id, .data$sector, .data$technology, .data$year, .data$late_sudden)
   } else {
     ls_post_prod_not_compensated <- dplyr::tibble(
-      company_id = character(),
-      asset_id = character(),
+      company_id = integer(),
+      asset_id = integer(),
       sector = character(),
       technology = character(),
       year = integer(),

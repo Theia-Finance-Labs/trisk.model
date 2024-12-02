@@ -4,7 +4,6 @@ process_scenarios_data <- function(scenarios_data, baseline_scenario, target_sce
     dplyr::filter(.data$scenario_geography %in% .env$scenario_geography) %>%
     dplyr::arrange(.data$scenario_year, .by_group = TRUE) %>%
     add_technology_fair_share_ratio() %>%
-    add_market_fair_share_percentage() %>%
     calculate_fair_share_perc()
 
 
