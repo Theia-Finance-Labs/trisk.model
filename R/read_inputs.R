@@ -97,9 +97,9 @@ read_production_data <- function(path = NULL) {
         production_year = "d",
         sector = "c",
         technology = "c",
-        emission_factor = "d",
-        plan_tech_prod="d",
-        plan_sec_prod="d"
+        capacity = "d",
+        capacity_factor = "d",
+        emission_factor = "d"
       )
     )
 

@@ -29,7 +29,7 @@ extend_assets_trajectories <- function(
       "scenario_price_baseline", "scenario_price_target", "late_sudden_price"
     ))
 
-  
+
 
   # attach the necessary columns for the rest
   trisk_model_output <- trajectories %>%
@@ -38,10 +38,10 @@ extend_assets_trajectories <- function(
         dplyr::distinct(
           .data$asset_id, .data$company_id, .data$sector, .data$technology, .data$technology_type,
           .data$scenario_geography, .data$year, .data$emission_factor, .data$debt_equity_ratio,
-          .data$net_profit_margin, .data$pd, .data$volatility
+          .data$net_profit_margin, .data$pd, .data$volatility, .data$country_iso2
         ),
       by = c("asset_id", "company_id", "sector", "technology", "year")
-    )
+    ) 
 
 
   return(trisk_model_output)

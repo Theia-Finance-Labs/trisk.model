@@ -52,8 +52,11 @@ write_results <- function(npv_results, pd_results, company_trajectories, trisk_p
 }
 
 prepare_npv_results <- function(company_technology_npv, trisk_model_input, run_id) {
+  asset_countries <- trisk_model_input %>% 
+    dplyr::distinct(asset_id, country_iso2)
 
   npv_results <- company_technology_npv %>%
+    dplyr::inner_join(asset_countries, by=c("asset_id")) %>%
     dplyr::mutate(run_id = .env$run_id) %>%
     dplyr::rename(
       net_present_value_baseline = .data$total_disc_npv_baseline,
@@ -71,6 +74,7 @@ prepare_npv_results <- function(company_technology_npv, trisk_model_input, run_i
       .data$asset_name,
       .data$sector,
       .data$technology,
+      .data$country_iso2,
       .data$net_present_value_baseline,
       .data$net_present_value_shock,
       .data$net_present_value_difference,
@@ -114,7 +118,7 @@ prepare_company_trajectories <- function(company_trajectories, run_id) {
       discounted_net_profits_shock_scenario = .data$discounted_net_profit_ls
     ) %>%
     dplyr::select(
-      .data$run_id, .data$asset_id, .data$asset_name, .data$company_id, .data$company_name, 
+      .data$run_id, .data$asset_id, .data$asset_name, .data$company_id, .data$company_name, .data$country_iso2,
       .data$sector, .data$technology, .data$year,
       .data$production_plan_company_technology, .data$production_baseline_scenario,
       .data$production_target_scenario, .data$production_shock_scenario, .data$company_id,
