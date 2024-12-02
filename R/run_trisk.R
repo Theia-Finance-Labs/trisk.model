@@ -110,10 +110,15 @@ run_trisk_model <- function(assets_data,
 
   assets_scenarios <- merge_assets_and_scenarios_data(assets_data = processed_assets_data, scenarios_data = scenarios_data)
 
-  trisk_model_input <- process_trisk_input(
+  
+
+  output <- process_trisk_input(
     assets_scenarios = assets_scenarios,
     target_scenario = target_scenario
   )
+
+  trisk_model_input <- output$trisk_model_input
+  proximity_to_target_df <- output$proximity_to_target_df
 
   start_year <- min(trisk_model_input$year)
   end_analysis <- max(trisk_model_input$year)
@@ -134,7 +139,9 @@ run_trisk_model <- function(assets_data,
     end_year = end_analysis,
     carbon_price_model = carbon_price_model
   )
-
+  
+trisk_model_output <- trisk_model_output %>% 
+  dplyr::inner_join(proximity_to_target_df)
   # calc net profits
   company_net_profits <- calculate_net_profits(
     trisk_model_output,

@@ -126,7 +126,6 @@ read_scenario_data <- function(path) {
         technology = "c",
         scenario_year = "d",
         scenario_type = "c",
-        # price_unit = "c",
         scenario_price = "d",
         scenario_capacity_factor = "d",
         scenario_pathway = "d",
