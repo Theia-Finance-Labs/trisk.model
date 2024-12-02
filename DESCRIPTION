@@ -1,6 +1,6 @@
 Package: trisk.model
-Title: What the Package Does (One Line, Title Case)
-Version: 2.5.1
+Title: Trisk Core Methodology
+Version: 2.6.1
 Authors@R: c(
     person(given = "Jacob",
            family = "Kastl",
@@ -21,17 +21,14 @@ Description: The package provides functions and workflows for conducting
     financial stress tests of listed equity, corporate bond and corporate
     loan portfolios.  It specifically focuses on climate change related
     risks, such as transition/policy risk, litigation risk and physical
-    risk. The methodologies developed by 2DII focus on forward looking
-    approaches and asset based analyses where possible. Some external
-    stress tests are also featured.  This package is currently in the beta
-    stage and not finalised yet. Changes to the methodology will still be
-    made that can and will impact the outcomes of the analysis.  
-License: GPL (>= 3)
+    risk. The methodologies focus on forward looking
+    approaches and asset based analyses. 
+License: LGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Depends:
-    R (>= 3.4)
+    R (>= 3.5)
 Imports: 
     dplyr,
     fs,
@@ -46,9 +43,8 @@ Imports:
     zoo
 Suggests: 
     rmarkdown,
-    r2dii.plot,
     testthat (>= 3.0.0),
-    knitr
+    knitr,
+    kableExtra
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-

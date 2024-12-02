@@ -1,0 +1,103 @@
+---
+title: "trisk-run-from-folder"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{trisk-run-from-folder}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+``` {r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = FALSE # This hides code execution but shows results
+)
+```
+
+``` {r, setup}
+library(trisk.model)
+trisk_input_dir <- file.path(".", "trisk_inputs")
+trisk_output_dir <- file.path(".", "trisk_outputs")
+```
+
+``` {r, echo=FALSE}
+library(fs) # For file system operations like copying
+
+# Define source and destination directories
+source_dir <- system.file("testdata", package = "trisk.model")
+
+# Create destination directory if it doesn't exist
+if (!dir_exists(trisk_input_dir)) {
+  dir_create(trisk_input_dir)
+}
+
+# Define the files to be copied and their new names
+files_to_copy <- c(
+  "assets_testdata.csv", "financial_features_testdata.csv",
+  "ngfs_carbon_price_testdata.csv", "scenarios_testdata.csv"
+)
+
+new_names <- c(
+  "assets.csv", "financial_features.csv",
+  "ngfs_carbon_price.csv", "scenarios.csv"
+)
+
+# Loop through the files, copy them, and rename
+for (i in seq_along(files_to_copy)) {
+  # Construct full file paths
+  source_file <- file.path(source_dir, files_to_copy[i])
+  destination_file <- file.path(trisk_input_dir, new_names[i])
+  # Copy the file to the new location with the new name
+  file_copy(source_file, destination_file, overwrite = TRUE)
+}
+
+# Print a message to indicate the operation is complete
+cat("Files have been copied and renamed in ./trisk_inputs.\n")
+```
+
+# Input folder structure
+The files inside the `trisk_inputs` folder are now structured as follows:
+
+``` {r, echo=TRUE}
+dir_tree(trisk_input_dir)
+```
+
+# Generate outputs using the Trisk model
+
+``` {r, echo=TRUE}
+# Define the scenarios to use
+baseline_scenario <- "NGFS2023GCAM_CP"
+target_scenario <- "NGFS2023GCAM_NZ2050"
+scenario_geography <- "Global"
+```
+
+Run the model with the downloaded data :
+
+``` {r, echo=TRUE}
+saved_path <- run_trisk(
+  input_path = trisk_input_dir,
+  output_path = trisk_output_dir,
+  baseline_scenario = baseline_scenario,
+  target_scenario = target_scenario,
+  scenario_geography = scenario_geography
+)
+```
+
+```{r}
+full_path <- normalizePath(saved_path, mustWork = FALSE)
+```
+
+
+Each new run generates a folder with a unique name. The folders are named following this convention : DATE_TIME__RUNID. The full path of this run is : 
+
+```{r}
+print(full_path)
+```
+
+# Output folder structure
+The generated outputs are saved in the `trisk_outputs` folder, structured as:
+
+``` {r, echo=TRUE}
+dir_tree(trisk_output_dir)
+```

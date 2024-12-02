@@ -1,2 +1,4 @@
 *.html
 *.R
+trisk_inputs/*
+trisk_outputs/*

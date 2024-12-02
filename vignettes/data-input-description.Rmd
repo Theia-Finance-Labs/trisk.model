@@ -1,8 +1,8 @@
 ---
-title: "trisk-data-overview"
+title: "data-input-description"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{trisk-data-overview}
+  %\VignetteIndexEntry{data-input-description}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,8 +16,13 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(trisk.model)
+library(magrittr)
+```
 
 
+Load the internal datasets
+
+```{r}
 assets_testdata <- read.csv(system.file("testdata", "assets_testdata.csv", package = "trisk.model"))
 scenarios_testdata <- read.csv(system.file("testdata", "scenarios_testdata.csv", package = "trisk.model"))
 financial_features_testdata <- read.csv(system.file("testdata", "financial_features_testdata.csv", package = "trisk.model"))
@@ -62,7 +67,10 @@ str(assets_testdata)
 #### Sample Data
 
 ```{r}
-head(assets_testdata)
+knitr::kable(head(assets_testdata)) %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kableExtra::scroll_box(width = "100%", height = "400px") %>%
+  kableExtra::column_spec(1:ncol(assets_testdata), width = "150px")
 ```
 
 ---
@@ -90,7 +98,9 @@ str(financial_features_testdata)
 #### Sample Data
 
 ```{r}
-head(financial_features_testdata)
+knitr::kable(head(financial_features_testdata)) %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kableExtra::scroll_box(width = "100%", height = "400px")
 ```
 
 ---
@@ -120,7 +130,9 @@ str(ngfs_carbon_price_testdata)
 #### Sample Data
 
 ```{r}
-head(ngfs_carbon_price_testdata)
+knitr::kable(head(ngfs_carbon_price_testdata)) %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kableExtra::scroll_box(width = "100%", height = "400px")
 ```
 
 ---
@@ -158,7 +170,9 @@ str(scenarios_testdata)
 
 
 ```{r}
-head(scenarios_testdata, 50)
+knitr::kable(head(scenarios_testdata, 50)) %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  kableExtra::scroll_box(width = "200%", height = "400px")
 ```
 
 ---
