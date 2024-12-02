@@ -8,8 +8,8 @@
 <title>data-output-description • trisk.model</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="data-output-description">
 </head>
 <body>
@@ -105,14 +105,15 @@
 <span><span class="co">#&gt; -- Processing Assets and Scenarios. </span></span>
 <span><span class="co">#&gt; -- Transforming to Trisk model input. </span></span>
 <span><span class="co">#&gt; -- Calculating baseline, target, and shock trajectories. </span></span>
-<span><span class="co">#&gt; -- Calculating net profits. </span></span>
+<span><span class="co">#&gt; -- Calculating net profits.</span></span>
+<span><span class="co">#&gt; Joining with `by = join_by(asset_id, company_id, sector, technology)`</span></span>
 <span><span class="co">#&gt; -- Calculating market risk. </span></span>
 <span><span class="co">#&gt; -- Calculating credit risk.</span></span>
 <span><span class="va">end_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># End time</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">time_taken</span> <span class="op">&lt;-</span> <span class="va">end_time</span> <span class="op">-</span> <span class="va">start_time</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Done in "</span>, <span class="va">time_taken</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Done in  0.738510370254517"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "Done in  0.808576345443726"</span></span></code></pre></div>
 <p>Get result dataframes from function output</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">npv_results</span> <span class="op">&lt;-</span> <span class="va">st_results</span><span class="op">$</span><span class="va">npv_results</span></span>
@@ -158,7 +159,7 @@ the shock scenario.</li>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">npv_results</span><span class="op">)</span></span>
 <span><span class="co">#&gt; tibble [7 × 12] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;  $ run_id                      : chr [1:7] "e0d2f801-42ef-45e5-bc13-258e09e6dec4" "e0d2f801-42ef-45e5-bc13-258e09e6dec4" "e0d2f801-42ef-45e5-bc13-258e09e6dec4" "e0d2f801-42ef-45e5-bc13-258e09e6dec4" ...</span></span>
+<span><span class="co">#&gt;  $ run_id                      : chr [1:7] "697f71f1-7f37-4e43-a199-f670989936a0" "697f71f1-7f37-4e43-a199-f670989936a0" "697f71f1-7f37-4e43-a199-f670989936a0" "697f71f1-7f37-4e43-a199-f670989936a0" ...</span></span>
 <span><span class="co">#&gt;  $ company_id                  : int [1:7] 101 102 103 104 105 105 105</span></span>
 <span><span class="co">#&gt;  $ asset_id                    : int [1:7] 101 102 103 104 105 105 105</span></span>
 <span><span class="co">#&gt;  $ company_name                : chr [1:7] "Company 1" "Company 2" "Company 3" "Company 4" ...</span></span>
@@ -167,9 +168,9 @@ the shock scenario.</li>
 <span><span class="co">#&gt;  $ technology                  : chr [1:7] "Gas" "Coal" "Gas" "RenewablesCap" ...</span></span>
 <span><span class="co">#&gt;  $ country_iso2                : chr [1:7] "DE" "DE" "DE" "DE" ...</span></span>
 <span><span class="co">#&gt;  $ net_present_value_baseline  : num [1:7] 1.73e+05 4.23e+07 9.51e+07 4.97e+08 1.76e+08 ...</span></span>
-<span><span class="co">#&gt;  $ net_present_value_shock     : num [1:7] 1.35e+04 4.32e+06 2.49e+07 7.89e+08 1.19e+07 ...</span></span>
-<span><span class="co">#&gt;  $ net_present_value_difference: num [1:7] -1.59e+05 -3.80e+07 -7.02e+07 2.92e+08 -1.64e+08 ...</span></span>
-<span><span class="co">#&gt;  $ net_present_value_change    : num [1:7] -0.922 -0.898 -0.739 0.588 -0.933 ...</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ net_present_value_shock     : num [1:7] 1.35e+04 4.32e+06 2.49e+07 7.73e+08 1.19e+07 ...</span></span>
+<span><span class="co">#&gt;  $ net_present_value_difference: num [1:7] -1.59e+05 -3.80e+07 -7.02e+07 2.76e+08 -1.64e+08 ...</span></span>
+<span><span class="co">#&gt;  $ net_present_value_change    : num [1:7] -0.922 -0.898 -0.739 0.556 -0.933 ...</span></span></code></pre></div>
 </div>
 <div class="section level5">
 <h5 id="sample-data">Sample Data<a class="anchor" aria-label="anchor" href="#sample-data"></a>
@@ -221,7 +222,7 @@ net_present_value_change
 <tbody>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -259,7 +260,7 @@ DE
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 102
@@ -297,7 +298,7 @@ DE
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 103
@@ -335,7 +336,7 @@ DE
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 104
@@ -362,18 +363,18 @@ DE
 497029538.6
 </td>
 <td style="text-align:right;">
-789241252.58
+773376716.81
 </td>
 <td style="text-align:right;">
-292211714
+276347178
 </td>
 <td style="text-align:right;">
-0.5879162
+0.5559975
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 105
@@ -411,7 +412,7 @@ DE
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 105
@@ -487,7 +488,7 @@ scenario.</li>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">pd_results</span><span class="op">)</span></span>
 <span><span class="co">#&gt; tibble [25 × 7] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;  $ run_id      : chr [1:25] "e0d2f801-42ef-45e5-bc13-258e09e6dec4" "e0d2f801-42ef-45e5-bc13-258e09e6dec4" "e0d2f801-42ef-45e5-bc13-258e09e6dec4" "e0d2f801-42ef-45e5-bc13-258e09e6dec4" ...</span></span>
+<span><span class="co">#&gt;  $ run_id      : chr [1:25] "697f71f1-7f37-4e43-a199-f670989936a0" "697f71f1-7f37-4e43-a199-f670989936a0" "697f71f1-7f37-4e43-a199-f670989936a0" "697f71f1-7f37-4e43-a199-f670989936a0" ...</span></span>
 <span><span class="co">#&gt;  $ company_id  : int [1:25] 101 101 101 101 101 102 102 102 102 102 ...</span></span>
 <span><span class="co">#&gt;  $ company_name: chr [1:25] "Company 1" "Company 1" "Company 1" "Company 1" ...</span></span>
 <span><span class="co">#&gt;  $ sector      : chr [1:25] "Oil&amp;Gas" "Oil&amp;Gas" "Oil&amp;Gas" "Oil&amp;Gas" ...</span></span>
@@ -530,7 +531,7 @@ pd_shock
 <tbody>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -553,7 +554,7 @@ Oil&amp;Gas
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -576,7 +577,7 @@ Oil&amp;Gas
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -599,7 +600,7 @@ Oil&amp;Gas
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -622,7 +623,7 @@ Oil&amp;Gas
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -645,7 +646,7 @@ Oil&amp;Gas
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 102
@@ -747,7 +748,7 @@ profits under the shock scenario.</li>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">company_trajectories</span><span class="op">)</span></span>
 <span><span class="co">#&gt; tibble [210 × 23] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;  $ run_id                                  : chr [1:210] "e0d2f801-42ef-45e5-bc13-258e09e6dec4" "e0d2f801-42ef-45e5-bc13-258e09e6dec4" "e0d2f801-42ef-45e5-bc13-258e09e6dec4" "e0d2f801-42ef-45e5-bc13-258e09e6dec4" ...</span></span>
+<span><span class="co">#&gt;  $ run_id                                  : chr [1:210] "697f71f1-7f37-4e43-a199-f670989936a0" "697f71f1-7f37-4e43-a199-f670989936a0" "697f71f1-7f37-4e43-a199-f670989936a0" "697f71f1-7f37-4e43-a199-f670989936a0" ...</span></span>
 <span><span class="co">#&gt;  $ asset_id                                : int [1:210] 101 101 101 101 101 101 101 101 101 101 ...</span></span>
 <span><span class="co">#&gt;  $ asset_name                              : chr [1:210] "Company 1" "Company 1" "Company 1" "Company 1" ...</span></span>
 <span><span class="co">#&gt;  $ company_id                              : int [1:210] 101 101 101 101 101 101 101 101 101 101 ...</span></span>
@@ -854,7 +855,7 @@ discounted_net_profits_shock_scenario
 <tbody>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -925,7 +926,7 @@ Gas
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -996,7 +997,7 @@ Gas
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -1067,7 +1068,7 @@ Gas
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -1138,7 +1139,7 @@ Gas
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
@@ -1209,7 +1210,7 @@ Gas
 </tr>
 <tr>
 <td style="text-align:left;">
-e0d2f801-42ef-45e5-bc13-258e09e6dec4
+697f71f1-7f37-4e43-a199-f670989936a0
 </td>
 <td style="text-align:right;">
 101
