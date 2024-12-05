@@ -41,7 +41,7 @@ extend_assets_trajectories <- function(
           .data$net_profit_margin, .data$pd, .data$volatility, .data$country_iso2
         ),
       by = c("asset_id", "company_id", "sector", "technology", "year")
-    ) 
+    )
 
 
   return(trisk_model_output)
@@ -167,6 +167,7 @@ data <- data %>%
 }
 
 calc_late_sudden_traj <- function(data, year_of_shock) {
+
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
     dplyr::select_at(c(
