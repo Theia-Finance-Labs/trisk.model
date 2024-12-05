@@ -143,6 +143,7 @@ set_trisk_trajectory <- function(data,
 }
 
 calc_late_sudden_traj <- function(data, year_of_shock) {
+
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
     dplyr::select_at(c(
@@ -255,8 +256,8 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
       dplyr::select(.data$asset_id, .data$company_id, .data$sector, .data$technology, .data$year, .data$late_sudden)
   } else {
     ls_overshoot_compensated <- dplyr::tibble(
-      company_id = integer(),
-      asset_id = integer(),
+      company_id = character(),
+      asset_id = character(),
       sector = character(),
       technology = character(),
       year = integer(),
@@ -276,8 +277,8 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
       dplyr::select(.data$asset_id, .data$company_id, .data$sector, .data$technology, .data$year, .data$late_sudden)
   } else {
     ls_post_prod_not_compensated <- dplyr::tibble(
-      company_id = integer(),
-      asset_id = integer(),
+      company_id = character(),
+      asset_id = character(),
       sector = character(),
       technology = character(),
       year = integer(),
