@@ -66,16 +66,11 @@ create_base_production_trajectories <- function(data) {
       # Initial value is identical between production and scenario target,
       # can thus be used for both
       initial_technology_production = dplyr::first(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
-      final_technology_production = dplyr::last(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
-      initial_sector_production = dplyr::first(.data$plan_sec_prod[!is.na(.data$plan_sec_prod)]),
+      final_technology_production = dplyr::last(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)])
     ) %>%
     # 1. Apply tmsr / smsp
     dplyr::mutate(
-      production_scenario = dplyr::if_else(
-        .data$technology_type == "carbontech",
-        .data$initial_technology_production * (1 + .data$fair_share_perc), # tmsr
-        .data$initial_technology_production + (.data$initial_sector_production * .data$fair_share_perc) # smsp
-      )
+      production_scenario = .data$initial_technology_production * (1 + .data$fair_share_perc)
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
@@ -95,8 +90,7 @@ create_base_production_trajectories <- function(data) {
         .data$production_scenario * .data$scenario_capacity_factor * .env$hours_to_year,
         .data$production_scenario * .data$scenario_capacity_factor
       )
-    ) %>%
-    dplyr::select(-c(.data$plan_sec_prod))
+    ) 
 
   return(list("data"=data, "proximity_to_target"=proximity_to_target))
 }
