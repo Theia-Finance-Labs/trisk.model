@@ -21,8 +21,7 @@ process_assets_data <- function(assets_data, financial_data) {
     ) %>%
     dplyr::select(-c(.data$capacity, .data$capacity_factor))
   assets_data <- production_financial_data %>%
-    remove_sectors_with_missing_production_start_year() %>%
-    compute_plan_sec_prod()
+    remove_sectors_with_missing_production_start_year()
 
   return(assets_data)
 }
@@ -88,13 +87,4 @@ remove_sectors_with_missing_production_start_year <- function(data) {
 
 
   return(data_filtered)
-}
-
-
-compute_plan_sec_prod <- function(data) {
-  data <- data %>%
-    dplyr::group_by(.data$company_id, .data$sector, .data$production_year) %>%
-    dplyr::mutate(plan_sec_prod = sum(.data$production_plan_company_technology, na.rm = TRUE)) %>%
-    dplyr::ungroup()
-  return(data)
 }
