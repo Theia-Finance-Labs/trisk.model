@@ -92,12 +92,7 @@ calculate_terminal_value <- function(data,
       late_sudden = NA_real_,
       scenario_price_baseline = NA_real_,
       scenario_price_target = NA_real_,
-      late_sudden_price = NA_real_,
-      net_profits_baseline = NA_real_,
-      net_profits_ls = NA_real_,
-      discounted_net_profit_baseline = NA_real_,
-      discounted_net_profit_ls = NA_real_
-
+      late_sudden_price = NA_real_
     )
 
   data <- data %>%

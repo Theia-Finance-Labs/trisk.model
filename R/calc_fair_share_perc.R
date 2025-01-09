@@ -8,30 +8,10 @@ add_technology_fair_share_ratio <- function(data) {
   return(data)
 }
 
-add_market_fair_share_percentage <- function(data) {
-  data <- data %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(.data$scenario, .data$sector, .data$scenario_geography, .data$scenario_year) %>%
-    dplyr::arrange(.data$scenario_year, .by_group = TRUE) %>%
-    dplyr::mutate(sector_total_by_year = sum(.data$scenario_pathway)) %>%
-    dplyr::group_by(.data$scenario, .data$sector, .data$scenario_geography, .data$technology) %>%
-    dplyr::mutate(
-      smsp = (.data$scenario_pathway - dplyr::first(.data$scenario_pathway)) /
-        dplyr::first(.data$sector_total_by_year)
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(-c(.data$sector_total_by_year))
-  return(data)
-}
-
 calculate_fair_share_perc <- function(data) {
   data <- data %>%
     dplyr::mutate(
-      fair_share_perc = dplyr::case_when(
-        .data$technology_type == "carbontech" ~ .data$tmsr,
-        .data$technology_type == "greentech" ~ .data$smsp,
-        TRUE ~ NA_real_ # Use NA_real_ for numeric columns or NA_character_ for character columns
-      )
+      fair_share_perc = .data$tmsr
     )
   
   # replace nan fair_share_perc by 0. Nans appear when dividing per 0 in the tmsr computation

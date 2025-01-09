@@ -135,14 +135,39 @@ set_trisk_trajectory <- function(data,
     year_of_shock = year_of_shock
   )
 
+
   data <- data %>%
     dplyr::ungroup() %>%
     dplyr::left_join(late_sudden_df, by = c("company_id", "asset_id", "sector", "technology", "year"))
+
+
+  # Forces all late_sudden to be 0, after the first year it reaches 0, if it is ever reached (after the last forecast year).
+data <- data %>%
+  dplyr::group_by(.data$company_id, .data$asset_id, .data$technology) %>%
+  dplyr::mutate(
+    # Identify the last forecast year based on the last non-NA value in `production_plan_company_technology`
+    last_forecast_year = max(.data$year[!is.na(.data$production_plan_company_technology)], na.rm = TRUE),
+    # Identify the first year where late_sudden is zero after the last forecast year, or NA if none is found
+    first_zero_year = ifelse(
+      any(.data$late_sudden == 0 & .data$year > last_forecast_year),
+      min(.data$year[.data$late_sudden == 0 & .data$year > last_forecast_year]),
+      NA_real_
+    ),
+    # Set late_sudden to zero for all years after the first zero year if it exists
+    late_sudden = ifelse(
+      !is.na(first_zero_year) & .data$year >= first_zero_year & .data$year > last_forecast_year,
+      0,
+      .data$late_sudden
+    )
+  ) %>%
+  dplyr::ungroup() %>%
+  dplyr::select(-last_forecast_year, -first_zero_year)  # Remove helper columns if not needed
 
   return(data)
 }
 
 calc_late_sudden_traj <- function(data, year_of_shock) {
+
   # Preprocess data to compute cumulative sums, overshoot direction, and fill missing values
   late_sudden_data <- data %>%
     dplyr::select_at(c(

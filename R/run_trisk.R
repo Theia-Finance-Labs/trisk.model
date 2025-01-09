@@ -101,6 +101,13 @@ run_trisk_model <- function(assets_data,
     run_id <- uuid::UUIDgenerate()
   }
 
+  cat("-- Retyping Dataframes. \n")
+  retyped_data <- retype_data(assets_data, scenarios_data, financial_data, carbon_data)
+  assets_data <- retyped_data$assets_data
+  scenarios_data <- retyped_data$scenarios_data
+  financial_data <- retyped_data$financial_data
+  carbon_data <- retyped_data$carbon_data
+
   cat("-- Processing Assets and Scenarios. \n")
 
   assets_data <- process_assets_data(assets_data = assets_data, financial_data = financial_data)
@@ -110,9 +117,15 @@ run_trisk_model <- function(assets_data,
 
   assets_scenarios <- merge_assets_and_scenarios_data(assets_data = assets_data, scenarios_data = scenarios_data)
 
-  trisk_model_input <- process_trisk_input(
-    assets_scenarios = assets_scenarios
+  
+
+  output <- process_trisk_input(
+    assets_scenarios = assets_scenarios,
+    target_scenario = target_scenario
   )
+
+  trisk_model_input <- output$trisk_model_input
+  proximity_to_target_df <- output$proximity_to_target_df
 
   start_year <- min(trisk_model_input$year)
   end_analysis <- max(trisk_model_input$year)
@@ -133,7 +146,9 @@ run_trisk_model <- function(assets_data,
     end_year = end_analysis,
     carbon_price_model = carbon_price_model
   )
-
+  
+trisk_model_output <- trisk_model_output %>% 
+  dplyr::inner_join(proximity_to_target_df)
   # calc net profits
   company_net_profits <- calculate_net_profits(
     trisk_model_output,
@@ -183,4 +198,76 @@ run_trisk_model <- function(assets_data,
       company_trajectories = company_trajectories_results
     )
   )
+}
+
+
+#' Retype Data Columns
+#'
+#' This function retypes the columns of assets_data, scenarios_data,
+#' financial_data, and carbon_data according to their intended column types.
+#'
+#' @param assets_data A dataframe containing assets data.
+#' @param scenarios_data A dataframe containing scenarios data.
+#' @param financial_data A dataframe containing financial data.
+#' @param carbon_data A dataframe containing carbon price data.
+#'
+#' @return A list with retyped dataframes: `assets_data`, `scenarios_data`,
+#'         `financial_data`, and `carbon_data`.
+#' @export
+retype_data <- function(assets_data, scenarios_data, financial_data, carbon_data) {
+  assets_data <- assets_data %>%
+    dplyr::mutate(
+      asset_id = as.character(.data$asset_id),
+      asset_name = as.character(.data$asset_name),
+      company_id = as.character(.data$company_id),
+      company_name = as.character(.data$company_name),
+      country_iso2 = as.character(.data$country_iso2),
+      production_year = as.numeric(.data$production_year),
+      sector = as.character(.data$sector),
+      technology = as.character(.data$technology),
+      capacity = as.numeric(.data$capacity),
+      capacity_factor = as.numeric(.data$capacity_factor),
+      emission_factor = as.numeric(.data$emission_factor)
+    )
+
+  scenarios_data <- scenarios_data %>%
+    dplyr::mutate(
+      scenario_geography = as.character(.data$scenario_geography),
+      scenario = as.character(.data$scenario),
+      scenario_type = as.character(.data$scenario_type),
+      sector = as.character(.data$sector),
+      technology = as.character(.data$technology),
+      scenario_year = as.numeric(.data$scenario_year),
+      scenario_price = as.numeric(.data$scenario_price),
+      scenario_capacity_factor = as.numeric(.data$scenario_capacity_factor),
+      scenario_pathway = as.numeric(.data$scenario_pathway),
+      country_iso2_list = as.character(.data$country_iso2_list)
+    )
+
+  financial_data <- financial_data %>%
+    dplyr::mutate(
+      company_id = as.character(.data$company_id),
+      pd = as.numeric(.data$pd),
+      net_profit_margin = as.numeric(.data$net_profit_margin),
+      debt_equity_ratio = as.numeric(.data$debt_equity_ratio),
+      volatility = as.numeric(.data$volatility)
+    )
+
+  carbon_data <- carbon_data %>%
+    dplyr::mutate(
+      year = as.numeric(.data$year),
+      model = as.character(.data$model),
+      scenario = as.character(.data$scenario),
+      scenario_geography = as.character(.data$scenario_geography),
+      variable = as.character(.data$variable),
+      unit = as.character(.data$unit),
+      carbon_tax = as.numeric(.data$carbon_tax)
+    )
+
+  return(list(
+    assets_data = assets_data,
+    scenarios_data = scenarios_data,
+    financial_data = financial_data,
+    carbon_data = carbon_data
+  ))
 }
