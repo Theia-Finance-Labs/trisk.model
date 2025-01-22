@@ -18,7 +18,7 @@ calculate_asset_value_at_risk <- function(data,
                                           crispy = FALSE) {
   data <- data %>%
     dplyr::filter(
-      .data$year >= shock_year,
+      .data$year >= start_year,
       !is.na(.data$discounted_net_profit_ls),
       !is.na(.data$discounted_net_profit_baseline)
     ) %>%
@@ -26,7 +26,7 @@ calculate_asset_value_at_risk <- function(data,
       .data$company_id, .data$asset_id, .data$company_name, .data$asset_name, .data$sector, .data$technology
     ) %>%
     dplyr::summarise(
-      total_disc_npv_ls = sum(.data$discounted_net_profit_ls), 
+      total_disc_npv_ls = sum(.data$discounted_net_profit_ls),
       total_disc_npv_baseline = sum(.data$discounted_net_profit_baseline),
       .groups = "drop_last"
     ) %>%
