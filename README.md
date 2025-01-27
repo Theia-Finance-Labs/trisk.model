@@ -8,18 +8,18 @@ This repository hosts the core TRISK model, allowing to conduct transition risk 
 
 ## Installation
 
-You can install this package directly from GitHub using the `remotes` package in R.
+You can install this package directly from GitHub using the `pak` package in R.
 
-1. Install the `remotes` package if you don't have it:
+1. Install the `pak` package if you don't have it:
 
     ```r
-    install.packages("remotes")
+    install.packages("pak")
     ```
 
 2. Install the transition risk stress testing suite from GitHub:
 
     ```r
-    remotes::install_github("Theia-Finance-Labs/trisk.model")
+    pak::pak("Theia-Finance-Labs/trisk.model")
     ```
 
 

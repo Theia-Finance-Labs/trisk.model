@@ -41,7 +41,7 @@ extend_assets_trajectories <- function(
           .data$net_profit_margin, .data$pd, .data$volatility, .data$country_iso2
         ),
       by = c("asset_id", "company_id", "sector", "technology", "year")
-    ) 
+    )
 
 
   return(trisk_model_output)
@@ -142,26 +142,26 @@ set_trisk_trajectory <- function(data,
 
 
   # Forces all late_sudden to be 0, after the first year it reaches 0, if it is ever reached (after the last forecast year).
-data <- data %>%
-  dplyr::group_by(.data$company_id, .data$asset_id, .data$technology) %>%
-  dplyr::mutate(
-    # Identify the last forecast year based on the last non-NA value in `production_plan_company_technology`
-    last_forecast_year = max(.data$year[!is.na(.data$production_plan_company_technology)], na.rm = TRUE),
-    # Identify the first year where late_sudden is zero after the last forecast year, or NA if none is found
-    first_zero_year = ifelse(
-      any(.data$late_sudden == 0 & .data$year > last_forecast_year),
-      min(.data$year[.data$late_sudden == 0 & .data$year > last_forecast_year]),
-      NA_real_
-    ),
-    # Set late_sudden to zero for all years after the first zero year if it exists
-    late_sudden = ifelse(
-      !is.na(first_zero_year) & .data$year >= first_zero_year & .data$year > last_forecast_year,
-      0,
-      .data$late_sudden
-    )
-  ) %>%
-  dplyr::ungroup() %>%
-  dplyr::select(-last_forecast_year, -first_zero_year)  # Remove helper columns if not needed
+  data <- data %>%
+    dplyr::group_by(.data$company_id, .data$asset_id, .data$technology) %>%
+    dplyr::mutate(
+      # Identify the last forecast year based on the last non-NA value in `production_plan_company_technology`
+      last_forecast_year = max(.data$year[!is.na(.data$production_plan_company_technology)], na.rm = TRUE),
+      # Identify the first year where late_sudden is zero after the last forecast year, or NA if none is found
+      first_zero_year = ifelse(
+        any(.data$late_sudden == 0 & .data$year > .data$last_forecast_year),
+        min(.data$year[.data$late_sudden == 0 & .data$year > .data$last_forecast_year]),
+        NA_real_
+      ),
+      # Set late_sudden to zero for all years after the first zero year if it exists
+      late_sudden = ifelse(
+        !is.na(.data$first_zero_year) & .data$year >= .data$first_zero_year & .data$year > .data$last_forecast_year,
+        0,
+        .data$late_sudden
+      )
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(-c(.data$last_forecast_year, .data$first_zero_year)) # Remove helper columns if not needed
 
   return(data)
 }
@@ -205,7 +205,7 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
   flagged_overshoot <- late_sudden_data %>%
     dplyr::inner_join(last_non_na_positions, by = c("asset_id", "company_id", "sector", "technology")) %>%
     dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
-    dplyr::filter(.data$year > min(.data$year), .data$year <= .data$last_non_na_year) %>% # TODO IS (year > min(year), and not (year >= min(year),  A BUG ??
+    dplyr::filter(.data$year > min(.data$year), .data$year <= .data$last_non_na_year) %>%
     dplyr::summarise(
       prod_to_follow = sum(.data$production_scenario_target, na.rm = TRUE),
       real_prod = sum(.data$production_plan_company_technology, na.rm = TRUE),

@@ -1,8 +1,8 @@
 process_trisk_input <- function(assets_scenarios,
                                 target_scenario) {
-  outputs  <- create_base_production_trajectories(data = assets_scenarios)
+  outputs <- create_base_production_trajectories(data = assets_scenarios)
   assets_scenarios_productions <- outputs$data
-  proximity_to_target_df = outputs$proximity_to_target 
+  proximity_to_target_df <- outputs$proximity_to_target
   assets_scenarios_production_lagged <- lag_scenario_productions(data = assets_scenarios_productions)
   assets_scenarios_production_pivoted <- pivot_to_baseline_target_columns(data = assets_scenarios_production_lagged)
 
@@ -29,7 +29,7 @@ process_trisk_input <- function(assets_scenarios,
       by = c("asset_id", "company_id", "sector", "technology", "year")
     )
 
-  return(list("trisk_model_input"=trisk_model_input, "proximity_to_target_df"=proximity_to_target_df))
+  return(list("trisk_model_input" = trisk_model_input, "proximity_to_target_df" = proximity_to_target_df))
 }
 
 
@@ -66,25 +66,20 @@ create_base_production_trajectories <- function(data) {
       # Initial value is identical between production and scenario target,
       # can thus be used for both
       initial_technology_production = dplyr::first(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
-      final_technology_production = dplyr::last(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)]),
-      initial_sector_production = dplyr::first(.data$plan_sec_prod[!is.na(.data$plan_sec_prod)]),
+      final_technology_production = dplyr::last(.data$production_plan_company_technology[!is.na(.data$production_plan_company_technology)])
     ) %>%
     # 1. Apply tmsr / smsp
     dplyr::mutate(
-      production_scenario = dplyr::if_else(
-        .data$technology_type == "carbontech",
-        .data$initial_technology_production * (1 + .data$fair_share_perc), # tmsr
-        .data$initial_technology_production + (.data$initial_sector_production * .data$fair_share_perc) # smsp
-      )
+      production_scenario = .data$initial_technology_production * (1 + .data$fair_share_perc)
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
       production_scenario = ifelse(.data$production_scenario < 0, 0, .data$production_scenario)
-    ) 
-    
-    proximity_to_target <- calculate_proximity_to_target(data)
-    
-    data  <-  data %>%
+    )
+
+  proximity_to_target <- calculate_proximity_to_target(data)
+
+  data <- data %>%
     # 2. Apply capacity factors
     dplyr::mutate(
       production_plan_company_technology = ifelse(.data$sector == "Power",
@@ -95,10 +90,9 @@ create_base_production_trajectories <- function(data) {
         .data$production_scenario * .data$scenario_capacity_factor * .env$hours_to_year,
         .data$production_scenario * .data$scenario_capacity_factor
       )
-    ) %>%
-    dplyr::select(-c(.data$plan_sec_prod))
+    )
 
-  return(list("data"=data, "proximity_to_target"=proximity_to_target))
+  return(list("data" = data, "proximity_to_target" = proximity_to_target))
 }
 
 
