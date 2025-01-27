@@ -266,7 +266,7 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
     ) %>%
       dplyr::mutate(
         sum_1_to_n_shocked_years = .data$n_shocked_years * (.data$n_shocked_years + 1) / 2,
-        x = (.data$production_scenario_target_total_sum - .data$late_sudden_pre_shock_tot - .data$n_shocked_years * .data$late_sudden_pre_shock_val) /
+        x = (.data$production_scenario_target_total_sum - .data$n_shocked_years * .data$late_sudden_pre_shock_val) / #also adjusted here see comment above
           (-.data$sum_1_to_n_shocked_years)
       ) %>%
       dplyr::select(.data$asset_id, .data$company_id, .data$sector, .data$technology, .data$x)
