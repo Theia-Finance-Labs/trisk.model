@@ -117,7 +117,7 @@ run_trisk_model <- function(assets_data,
 
   assets_scenarios <- merge_assets_and_scenarios_data(assets_data = assets_data, scenarios_data = scenarios_data)
 
-  
+
 
   output <- process_trisk_input(
     assets_scenarios = assets_scenarios,
@@ -146,9 +146,9 @@ run_trisk_model <- function(assets_data,
     end_year = end_analysis,
     carbon_price_model = carbon_price_model
   )
-  
-trisk_model_output <- trisk_model_output %>% 
-  dplyr::inner_join(proximity_to_target_df)
+
+  trisk_model_output <- trisk_model_output %>%
+    dplyr::inner_join(proximity_to_target_df)
   # calc net profits
   company_net_profits <- calculate_net_profits(
     trisk_model_output,
@@ -187,7 +187,7 @@ trisk_model_output <- trisk_model_output %>%
     )
 
 
-  npv_results <- tibble::as_tibble(prepare_npv_results(company_technology_npv = company_technology_npv, trisk_model_input=trisk_model_input, run_id = run_id))
+  npv_results <- tibble::as_tibble(prepare_npv_results(company_technology_npv = company_technology_npv, trisk_model_input = trisk_model_input, run_id = run_id))
   pd_results <- tibble::as_tibble(prepare_pd_results(company_pd_changes_overall = company_pd_changes_overall, run_id = run_id))
   company_trajectories_results <- tibble::as_tibble(prepare_company_trajectories(company_trajectories = company_annual_profits, run_id = run_id))
 

@@ -52,13 +52,12 @@ write_results <- function(npv_results, pd_results, company_trajectories, trisk_p
 }
 
 prepare_npv_results <- function(company_technology_npv, trisk_model_input, run_id) {
-  
   # Adds the country column to the output
-  asset_countries <- trisk_model_input %>% 
+  asset_countries <- trisk_model_input %>%
     dplyr::distinct(.data$asset_id, .data$country_iso2)
 
   npv_results <- company_technology_npv %>%
-    dplyr::inner_join(asset_countries, by=c("asset_id")) %>%
+    dplyr::inner_join(asset_countries, by = c("asset_id")) %>%
     dplyr::mutate(run_id = .env$run_id) %>%
     dplyr::rename(
       net_present_value_baseline = .data$total_disc_npv_baseline,
@@ -67,7 +66,7 @@ prepare_npv_results <- function(company_technology_npv, trisk_model_input, run_i
     dplyr::mutate(
       net_present_value_difference = .data$net_present_value_shock - .data$net_present_value_baseline,
       net_present_value_change = .data$net_present_value_difference / .data$net_present_value_baseline
-    )%>%
+    ) %>%
     dplyr::select(
       .data$run_id,
       .data$company_id,

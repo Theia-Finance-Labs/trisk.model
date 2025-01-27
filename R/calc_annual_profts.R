@@ -78,7 +78,7 @@ calculate_terminal_value <- function(data,
         (.env$discount_rate - .env$growth_rate),
       discounted_net_profit_ls = .data$net_profits_ls /
         (.env$discount_rate - .env$growth_rate)
-    )%>%
+    ) %>%
     # ADO3112: All columns that reflect a change over time are set to NA, as
     # they cannot be extrapolated from the start_year to end_year period. All
     # columns that are time invariant are kept.

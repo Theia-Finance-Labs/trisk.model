@@ -25,7 +25,6 @@ calculate_net_profits <- function(data,
                                   carbon_data,
                                   shock_year,
                                   market_passthrough) {
-
   baseline <- calculate_net_profits_baseline(data) %>%
     dplyr::select(
       .data$company_id,
@@ -82,7 +81,6 @@ calculate_net_profits <- function(data,
 #'
 #' @noRd
 calculate_proximity_to_target <- function(data) {
-  
   # Identify the position of the first non-NA value per group
   first_non_na_positions <- data %>%
     dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
@@ -97,7 +95,7 @@ calculate_proximity_to_target <- function(data) {
     ) %>%
     dplyr::filter(
       .data$year <= .data$last_non_na_year,
-      scenario_type == "target"
+      .data$scenario_type == "target"
     ) %>%
     dplyr::group_by(
       .data$asset_id, .data$company_id, .data$sector, .data$technology
@@ -125,7 +123,7 @@ calculate_proximity_to_target <- function(data) {
       )
     ) %>%
     dplyr::select(
-      -dplyr::all_of(c( "sum_required_change", "sum_realised_change", "ratio_realised_required"))
+      -dplyr::all_of(c("sum_required_change", "sum_realised_change", "ratio_realised_required"))
     )
 
 
