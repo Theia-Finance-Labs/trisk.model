@@ -97,6 +97,7 @@ structured as follows:</p>
 <span>  target_scenario <span class="op">=</span> <span class="va">target_scenario</span>,</span>
 <span>  scenario_geography <span class="op">=</span> <span class="va">scenario_geography</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; -- Retyping Dataframes. </span></span>
 <span><span class="co">#&gt; -- Processing Assets and Scenarios. </span></span>
 <span><span class="co">#&gt; -- Transforming to Trisk model input. </span></span>
 <span><span class="co">#&gt; -- Calculating baseline, target, and shock trajectories. </span></span>
@@ -104,11 +105,11 @@ structured as follows:</p>
 <span><span class="co">#&gt; Joining with `by = join_by(asset_id, company_id, sector, technology)`</span></span>
 <span><span class="co">#&gt; -- Calculating market risk. </span></span>
 <span><span class="co">#&gt; -- Calculating credit risk. </span></span>
-<span><span class="co">#&gt; [1] "Outputs saved in folder: ./trisk_outputs/20241202_074434__8a987c57-6a17-46d7-860f-1ef5691685f6"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "Outputs saved in folder: ./trisk_outputs/20250127_141147__5afc7d60-de4b-4dd7-af50-715ddcdb1aa2"</span></span></code></pre></div>
 <p>Each new run generates a folder with a unique name. The folders are
 named following this convention : DATE_TIME__RUNID. The full path of
 this run is :</p>
-<pre><code><span><span class="co">#&gt; [1] "/home/runner/work/trisk.model/trisk.model/vignettes/trisk_outputs/20241202_074434__8a987c57-6a17-46d7-860f-1ef5691685f6"</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; [1] "/home/runner/work/trisk.model/trisk.model/vignettes/trisk_outputs/20250127_141147__5afc7d60-de4b-4dd7-af50-715ddcdb1aa2"</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="output-folder-structure">Output folder structure<a class="anchor" aria-label="anchor" href="#output-folder-structure"></a>
@@ -118,7 +119,7 @@ folder, structured as:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">dir_tree</span><span class="op">(</span><span class="va">trisk_output_dir</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">./trisk_outputs</span></span></span>
-<span><span class="co">#&gt; └── <span style="color: #0000BB; font-weight: bold;">20241202_074434__8a987c57-6a17-46d7-860f-1ef5691685f6</span></span></span>
+<span><span class="co">#&gt; └── <span style="color: #0000BB; font-weight: bold;">20250127_141147__5afc7d60-de4b-4dd7-af50-715ddcdb1aa2</span></span></span>
 <span><span class="co">#&gt;     ├── company_trajectories.csv</span></span>
 <span><span class="co">#&gt;     ├── npv_results.csv</span></span>
 <span><span class="co">#&gt;     ├── params.csv</span></span>

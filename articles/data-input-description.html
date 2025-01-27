@@ -130,13 +130,9 @@ country.</li>
 </h4>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">assets_testdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 'data.frame':    42 obs. of  16 variables:</span></span>
+<span><span class="co">#&gt; 'data.frame':    42 obs. of  12 variables:</span></span>
 <span><span class="co">#&gt;  $ company_id     : int  101 101 101 101 101 101 102 102 102 102 ...</span></span>
 <span><span class="co">#&gt;  $ company_name   : chr  "Company 1" "Company 1" "Company 1" "Company 1" ...</span></span>
-<span><span class="co">#&gt;  $ plan_sec_prod  : num  5000 5423 6200 7400 7800 ...</span></span>
-<span><span class="co">#&gt;  $ country_name   : logi  NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ plant_age_years: logi  NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ workforce_size : logi  NA NA NA NA NA NA ...</span></span>
 <span><span class="co">#&gt;  $ asset_id       : int  101 101 101 101 101 101 102 102 102 102 ...</span></span>
 <span><span class="co">#&gt;  $ country_iso2   : chr  "DE" "DE" "DE" "DE" ...</span></span>
 <span><span class="co">#&gt;  $ asset_name     : chr  "Company 1" "Company 1" "Company 1" "Company 1" ...</span></span>
@@ -144,8 +140,8 @@ country.</li>
 <span><span class="co">#&gt;  $ emission_factor: num  0.062 0.062 0.062 0.062 0.062 ...</span></span>
 <span><span class="co">#&gt;  $ technology     : chr  "Gas" "Gas" "Gas" "Gas" ...</span></span>
 <span><span class="co">#&gt;  $ sector         : chr  "Oil&amp;Gas" "Oil&amp;Gas" "Oil&amp;Gas" "Oil&amp;Gas" ...</span></span>
-<span><span class="co">#&gt;  $ capacity       : num  5000 5423 6200 7400 7800 ...</span></span>
-<span><span class="co">#&gt;  $ capacity_factor: int  1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ capacity       : num  8600 8600 8600 8600 8600 ...</span></span>
+<span><span class="co">#&gt;  $ capacity_factor: num  0.581 0.631 0.721 0.86 0.907 ...</span></span>
 <span><span class="co">#&gt;  $ production_unit: chr  "GJ" "GJ" "GJ" "GJ" ...</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -164,18 +160,6 @@ company_id
 </th>
 <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
 company_name
-</th>
-<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
-plan_sec_prod
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-country_name
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-plant_age_years
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-workforce_size
 </th>
 <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
 asset_id
@@ -217,18 +201,6 @@ production_unit
 Company 1
 </td>
 <td style="text-align:right;width: 150px; ">
-5000
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:right;width: 150px; ">
 101
 </td>
 <td style="text-align:left;width: 150px; ">
@@ -250,10 +222,10 @@ Gas
 Oil&amp;Gas
 </td>
 <td style="text-align:right;width: 150px; ">
-5000
+8600
 </td>
 <td style="text-align:right;width: 150px; ">
-1
+0.5813953
 </td>
 <td style="text-align:left;width: 150px; ">
 GJ
@@ -265,18 +237,6 @@ GJ
 </td>
 <td style="text-align:left;width: 150px; ">
 Company 1
-</td>
-<td style="text-align:right;width: 150px; ">
-5423
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
 </td>
 <td style="text-align:right;width: 150px; ">
 101
@@ -300,10 +260,10 @@ Gas
 Oil&amp;Gas
 </td>
 <td style="text-align:right;width: 150px; ">
-5423
+8600
 </td>
 <td style="text-align:right;width: 150px; ">
-1
+0.6305814
 </td>
 <td style="text-align:left;width: 150px; ">
 GJ
@@ -315,18 +275,6 @@ GJ
 </td>
 <td style="text-align:left;width: 150px; ">
 Company 1
-</td>
-<td style="text-align:right;width: 150px; ">
-6200
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
 </td>
 <td style="text-align:right;width: 150px; ">
 101
@@ -350,10 +298,10 @@ Gas
 Oil&amp;Gas
 </td>
 <td style="text-align:right;width: 150px; ">
-6200
+8600
 </td>
 <td style="text-align:right;width: 150px; ">
-1
+0.7209302
 </td>
 <td style="text-align:left;width: 150px; ">
 GJ
@@ -365,18 +313,6 @@ GJ
 </td>
 <td style="text-align:left;width: 150px; ">
 Company 1
-</td>
-<td style="text-align:right;width: 150px; ">
-7400
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
 </td>
 <td style="text-align:right;width: 150px; ">
 101
@@ -400,10 +336,10 @@ Gas
 Oil&amp;Gas
 </td>
 <td style="text-align:right;width: 150px; ">
-7400
+8600
 </td>
 <td style="text-align:right;width: 150px; ">
-1
+0.8604651
 </td>
 <td style="text-align:left;width: 150px; ">
 GJ
@@ -415,18 +351,6 @@ GJ
 </td>
 <td style="text-align:left;width: 150px; ">
 Company 1
-</td>
-<td style="text-align:right;width: 150px; ">
-7800
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
 </td>
 <td style="text-align:right;width: 150px; ">
 101
@@ -450,10 +374,10 @@ Gas
 Oil&amp;Gas
 </td>
 <td style="text-align:right;width: 150px; ">
-7800
+8600
 </td>
 <td style="text-align:right;width: 150px; ">
-1
+0.9069767
 </td>
 <td style="text-align:left;width: 150px; ">
 GJ
@@ -465,18 +389,6 @@ GJ
 </td>
 <td style="text-align:left;width: 150px; ">
 Company 1
-</td>
-<td style="text-align:right;width: 150px; ">
-8600
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
-</td>
-<td style="text-align:left;width: 150px; ">
-NA
 </td>
 <td style="text-align:right;width: 150px; ">
 101
@@ -503,7 +415,7 @@ Oil&amp;Gas
 8600
 </td>
 <td style="text-align:right;width: 150px; ">
-1
+1.0000000
 </td>
 <td style="text-align:left;width: 150px; ">
 GJ
@@ -925,9 +837,6 @@ shock).</li>
 <code>price_unit</code>: Unit for the price.</li>
 <li>
 <code>pathway_unit</code>: Unit of the pathway.</li>
-<li>
-<code>scenario_capacity_factor</code>: Capacity factor for the
-scenario.</li>
 <li>
 <code>technology_type</code>: Type of technology involved.</li>
 <li>
