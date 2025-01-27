@@ -150,12 +150,12 @@ set_trisk_trajectory <- function(data,
       # Identify the first year where late_sudden is zero after the last forecast year, or NA if none is found
       first_zero_year = ifelse(
         any(.data$late_sudden == 0 & .data$year > .data$last_forecast_year),
-        min(.data$year[.data$late_sudden == 0 & .data$year > last_forecast_year]),
+        min(.data$year[.data$late_sudden == 0 & .data$year > .data$last_forecast_year]),
         NA_real_
       ),
       # Set late_sudden to zero for all years after the first zero year if it exists
       late_sudden = ifelse(
-        !is.na(.data$first_zero_year) & .data$year >= .data$first_zero_year & .data$year > last_forecast_year,
+        !is.na(.data$first_zero_year) & .data$year >= .data$first_zero_year & .data$year > .data$last_forecast_year,
         0,
         .data$late_sudden
       )
