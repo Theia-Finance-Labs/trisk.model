@@ -245,10 +245,18 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
         .groups = "drop"
       )
 
+    #Change in total to compensate
+    #This was previously a function of the total production budget and the already used budget, which
+    #created the compensation mechanism.
+    #Without compensation, we can just use the total target budget after the shock year at the max.
+    #allowance for a company to produce after the shock year. Linear reduction stays the same.
     production_scenario_target_tot_to_compensate <- ls_data_to_compensate %>%
       dplyr::group_by(.data$asset_id, .data$company_id, .data$sector, .data$technology) %>%
       dplyr::summarize(
-        production_scenario_target_total_sum = sum(.data$production_scenario_target),
+        production_scenario_target_total_sum = sum(
+          ifelse(.data$year >= .env$year_of_shock, .data$production_scenario_target, 0),
+          na.rm = TRUE
+        ),
         n_shocked_years = dplyr::last(.data$year) - .env$year_of_shock + 1,
         .groups = "drop"
       )
