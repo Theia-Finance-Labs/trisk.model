@@ -271,19 +271,42 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
       ) %>%
       dplyr::select(.data$asset_id, .data$company_id, .data$sector, .data$technology, .data$x)
 
-    ls_overshoot_compensated <-
-      dplyr::bind_rows(
-        ls_pre_clean_to_compensate %>%
-          dplyr::filter(.data$year < .env$year_of_shock),
-        ls_pre_clean_to_compensate %>%
-          dplyr::filter(.data$year >= .env$year_of_shock) %>%
-          dplyr::left_join(ls_pre_shock_to_compensate, by = c("asset_id", "company_id", "sector", "technology")) %>%
-          dplyr::left_join(x_integral_to_compensate, by = c("asset_id", "company_id", "sector", "technology")) %>%
-          dplyr::mutate(
-            year_diff = .data$year - .env$year_of_shock + 1,
-            late_sudden = .data$late_sudden_pre_shock_val - pmax(.data$year_diff, 0) * .data$x
-          )
-      ) %>%
+
+    #Added Function:
+    #Function to calculate crossing year
+    #Function calculates the intersection between target and late and sudden
+    #It basically calculates when the difference between late and sudden switches from negative to positive, or from positive to negative (Intersection)
+    find_crossing_year <- function(years, late_sudden, production_scenario_target) {
+
+      # Find first year where late_sudden crosses production_scenario_target
+      for (i in 1:(length(years) - 1)) {
+        if ((late_sudden[i] - production_scenario_target[i]) * (late_sudden[i + 1] - production_scenario_target[i + 1]) <= 0) {
+          return(years[i + 1])  # Return the first year where crossing happens
+        }
+      }
+
+      return(NA)  # Return NA if no crossing is found
+    }
+
+    # Apply this logic to the dataset
+    ls_overshoot_compensated <- dplyr::bind_rows(
+      ls_pre_clean_to_compensate %>%
+        dplyr::filter(.data$year < .env$year_of_shock),
+      ls_pre_clean_to_compensate %>%
+        dplyr::filter(.data$year >= .env$year_of_shock) %>%
+        dplyr::left_join(ls_pre_shock_to_compensate, by = c("asset_id", "company_id", "sector", "technology")) %>%
+        dplyr::left_join(x_integral_to_compensate, by = c("asset_id", "company_id", "sector", "technology")) %>%
+        dplyr::mutate(
+          year_diff = .data$year - .env$year_of_shock + 1,
+          late_sudden = .data$late_sudden_pre_shock_val - pmax(.data$year_diff, 0) * .data$x
+        ) %>%
+        dplyr::group_by(asset_id, company_id, sector, technology) %>%
+        dplyr::mutate(. #intersection trajectory adjustment applied here
+          crossing_year = find_crossing_year(year, late_sudden, production_scenario_target),
+          late_sudden = ifelse(year >= crossing_year, production_scenario_target, late_sudden)
+        ) %>%
+        dplyr::ungroup()
+    ) %>%
       dplyr::select(.data$asset_id, .data$company_id, .data$sector, .data$technology, .data$year, .data$late_sudden)
   } else {
     ls_overshoot_compensated <- dplyr::tibble(
