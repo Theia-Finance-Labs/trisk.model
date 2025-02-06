@@ -301,7 +301,7 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
           late_sudden = .data$late_sudden_pre_shock_val - pmax(.data$year_diff, 0) * .data$x
         ) %>%
         dplyr::group_by(asset_id, company_id, sector, technology) %>%
-        dplyr::mutate(. #intersection trajectory adjustment applied here
+        dplyr::mutate( #intersection trajectory adjustment applied here
           crossing_year = find_crossing_year(year, late_sudden, production_scenario_target),
           late_sudden = ifelse(year >= crossing_year, production_scenario_target, late_sudden)
         ) %>%
