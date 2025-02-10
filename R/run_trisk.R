@@ -182,6 +182,7 @@ run_trisk_model <- function(assets_data,
   company_pd_changes_overall <- company_annual_profits %>%
     calculate_pd_change_overall(
       shock_year = shock_year,
+      start_year = start_year,
       end_of_analysis = end_analysis,
       risk_free_interest_rate = risk_free_rate
     )
