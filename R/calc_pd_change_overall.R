@@ -15,10 +15,11 @@
 #'   the risk free rate of interest
 calculate_pd_change_overall <- function(data,
                                         shock_year = NULL,
+                                        start_year = NULL,
                                         end_of_analysis = NULL,
                                         risk_free_interest_rate = NULL) {
   data <- data %>%
-    dplyr::filter(.data$year >= .env$shock_year) %>%
+    dplyr::filter(.data$year >= .env$start_year) %>%
     dplyr::group_by(
       .data$company_id, .data$company_name, .data$sector, .data$debt_equity_ratio, .data$volatility
     ) %>%
