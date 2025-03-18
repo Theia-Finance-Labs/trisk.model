@@ -13,6 +13,7 @@ level.}
 calculate_pd_change_overall(
   data,
   shock_year = NULL,
+  start_year = NULL,
   end_of_analysis = NULL,
   risk_free_interest_rate = NULL
 )
@@ -22,6 +23,8 @@ calculate_pd_change_overall(
 
 \item{shock_year}{A numeric vector of length one that indicates in which year
 the policy shock strikes in a given scenario}
+
+\item{start_year}{The start year.}
 
 \item{end_of_analysis}{A numeric vector of length one that indicates until
 which year the analysis runs}

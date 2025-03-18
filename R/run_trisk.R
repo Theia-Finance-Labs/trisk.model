@@ -114,7 +114,7 @@ run_trisk_model <- function(assets_data,
   scenarios_data <- process_scenarios_data(scenarios_data = scenarios_data, baseline_scenario = baseline_scenario, target_scenario = target_scenario, scenario_geography = scenario_geography)
 
   cat("-- Transforming to Trisk model input. \n")
-
+  
   assets_scenarios <- merge_assets_and_scenarios_data(assets_data = assets_data, scenarios_data = scenarios_data)
 
 

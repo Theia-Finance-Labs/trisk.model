@@ -9,6 +9,7 @@
 #' @param data A dataframe containing the (discounted) annual profits
 #' @param shock_year A numeric vector of length one that indicates in which year
 #'   the policy shock strikes in a given scenario
+#' @param start_year The start year.
 #' @param end_of_analysis A numeric vector of length one that indicates until
 #'   which year the analysis runs
 #' @param risk_free_interest_rate A numeric vector of length one that indicates
@@ -18,6 +19,7 @@ calculate_pd_change_overall <- function(data,
                                         start_year = NULL,
                                         end_of_analysis = NULL,
                                         risk_free_interest_rate = NULL) {
+                                          
   data <- data %>%
     dplyr::filter(.data$year >= .env$start_year) %>%
     dplyr::group_by(
