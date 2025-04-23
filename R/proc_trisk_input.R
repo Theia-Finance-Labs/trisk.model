@@ -21,6 +21,8 @@ process_trisk_input <- function(assets_scenarios,
       .data$pd,
       .data$scenario_geography,
       .data$year,
+      .data$plant_age_years,
+      .data$incr_plant_age,
       .data$emission_factor,
       .data$volatility
     ) %>%
@@ -28,7 +30,6 @@ process_trisk_input <- function(assets_scenarios,
       assets_scenarios_production_pivoted,
       by = c("asset_id", "company_id", "sector", "technology", "year")
     )
-
   return(list("trisk_model_input" = trisk_model_input, "proximity_to_target_df" = proximity_to_target_df))
 }
 

@@ -46,8 +46,13 @@ dividend_discount_model <- function(data, discount_rate) {
     dplyr::group_by(
       .data$asset_id, .data$company_id, .data$sector, .data$technology,
     ) %>%
+    #dplyr::filter(
+    # .data$production_year <= start_year + (maxage-age)
+    #) %>%
     dplyr::mutate(
-      t_calc = seq(0, (dplyr::n() - 1)),
+      t_calc = seq(0, (dplyr::n() - 1)), # ONLY UP TO YER AT ASSET MAX AGE
+      #t_calc = seq(0, ((0,maxage-age) - 1)),
+
       discounted_net_profit_baseline = .data$net_profits_baseline /
         (1 + .env$discount_rate)^.data$t_calc,
       discounted_net_profit_ls = .data$net_profits_ls /
@@ -71,7 +76,8 @@ calculate_terminal_value <- function(data,
   terminal_value <- data %>%
     dplyr::filter(.data$year == .env$end_year) %>%
     dplyr::mutate(
-      year = .env$end_year + 1,
+      year = .env$end_year + 1, # END YEAR HAS TO BE YEAR AT ASSET MAX AGE = 40
+      # year = min(.data$plant_age_year + 1,40) # plant_age_year needs to change with simulation year
       net_profits_baseline = .data$net_profits_baseline * (1 + .env$growth_rate),
       net_profits_ls = .data$net_profits_ls * (1 + .env$growth_rate),
       discounted_net_profit_baseline = .data$net_profits_baseline /
