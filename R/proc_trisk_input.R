@@ -22,7 +22,6 @@ process_trisk_input <- function(assets_scenarios,
       .data$scenario_geography,
       .data$year,
       .data$plant_age_years,
-      .data$incr_plant_age,
       .data$emission_factor,
       .data$volatility
     ) %>%
