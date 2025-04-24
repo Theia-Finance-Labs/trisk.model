@@ -5,14 +5,7 @@ apply_age_cutoff <- function(trisk_model_output, shock_year) {
     technology = c("CoalCap", "GasCap", "RenewablesCap","NuclearCap","HydroCap","BatteryCap"),  # Replace with actual tech names
     maxage = c(40, 30, 25,60,80,10)  # Replace with appropriate cutoff values
   )
-  
-  trisk_model_output <- trisk_model_output %>%
-    dplyr::filter(!is.na(.data$plant_age_years)) %>%
-    dplyr::mutate(
-      plant_age_years  = as.numeric(.data$plant_age_years),
-      incr_plant_age = .data$plant_age_years + .data$year - 2024 + 1)
-
-    # Fill the initial age column
+  # Fill the initial age column
   trisk_model_output <- trisk_model_output %>%
     # Fill the initial age column
     tidyr::fill(plant_age_years, .direction = "down") %>%
