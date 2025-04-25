@@ -1,4 +1,4 @@
-apply_age_cutoff <- function(trisk_model_output, shock_year) {
+apply_age_cutoff <- function(trisk_model_output, shock_year, start_year=2024) {
 
   # Define the cutoff age for each technology
   cutoff_ages <- tibble::tibble(
@@ -14,7 +14,7 @@ apply_age_cutoff <- function(trisk_model_output, shock_year) {
     # Replace missing values with zero (to be improved with median age)
     tidyr::replace_na(list(plant_age_years = 0)) %>%                            #TODO: add median age
     # Make the age column count
-    dplyr::mutate(incr_plant_age = plant_age_years + year - 2024 + 1) %>%
+    dplyr::mutate(incr_plant_age = plant_age_years + year - start_year + 1) %>%
     # Join with cutoff age mapping
     dplyr::left_join(cutoff_ages, by = "technology") %>%
     # Compute how many full renewal cycles have passed
@@ -28,6 +28,14 @@ apply_age_cutoff <- function(trisk_model_output, shock_year) {
       production_asset_baseline = dplyr::case_when(
         incr_plant_age >= next_renewal_age & year>=shock_year ~ 0,
         TRUE ~ production_asset_baseline
+      ),
+      late_sudden = dplyr::case_when(
+        incr_plant_age >= next_renewal_age & year>=shock_year ~ 0,
+        TRUE ~ late_sudden
+      ),
+      production_scenario_target = dplyr::case_when(
+        incr_plant_age >= next_renewal_age & year>=shock_year ~ 0,
+        TRUE ~ production_scenario_target
       )
     )
   return(trisk_model_output)
@@ -35,6 +43,9 @@ apply_age_cutoff <- function(trisk_model_output, shock_year) {
 
 
 apply_staggered_shock <- function(trisk_model_output) {
-    
+
+  trisk_model_output %>% 
+    select(year, plant_age_years, incr_plant_age, next_renewal_age, production_asset_baseline) %>% 
+    browser()
     return(trisk_model_output)
 }
