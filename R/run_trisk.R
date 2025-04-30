@@ -136,11 +136,13 @@ run_trisk_model <- function(assets_data,
     start_year = start_year,
     shock_year = shock_year
   )
-
+  
+  cat("-- Calculating age impact. \n")
   trisk_model_output   <- apply_age_cutoff(
     trisk_model_output=trisk_model_output, 
     shock_year=shock_year
     )
+
   trisk_model_output <- apply_staggered_shock(
     trisk_model_output=trisk_model_output
     )
