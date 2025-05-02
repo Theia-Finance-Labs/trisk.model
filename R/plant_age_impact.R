@@ -5,7 +5,7 @@ apply_age_cutoff <- function(trisk_model_output, shock_year, start_year=2024) {
     technology = c("CoalCap", "GasCap", "RenewablesCap","NuclearCap","HydroCap","BatteryCap"),  # Replace with actual tech names
     maxage = c(40, 30, 25,60,80,10)  # Replace with appropriate cutoff values
   )
-  
+
   # Fill the initial age column
   trisk_model_output <- trisk_model_output %>%
     # Fill the initial age column
@@ -81,14 +81,14 @@ apply_staggered_shock <- function(trisk_model_output) {
   # Define constants
   a <- 0.9
   k <- 0.8
-  
+
   # Create age bins (16-year intervals)
   age_bins <- seq(0, 100, by = 16)
   n_bins <- length(age_bins) - 1  # We have n_bins intervals
-  
+
   # Create coefficient matrix
   coeff_matrix <- matrix(NA, nrow = n_bins, ncol = n_bins)
-  
+
   # Fill the matrix with coefficients
   for (i in 1:n_bins) {
     for (j in 1:n_bins) {
@@ -98,16 +98,16 @@ apply_staggered_shock <- function(trisk_model_output) {
       coeff_matrix[i, j] <- a * (k ^ distance)
     }
   }
-  
+
   # Function to get coefficient from matrix
   get_coefficient <- function(age_bin, diff_bin) {
-    if (is.na(age_bin) || is.na(diff_bin) || age_bin < 1 || diff_bin < 1 || 
+    if (is.na(age_bin) || is.na(diff_bin) || age_bin < 1 || diff_bin < 1 ||
         age_bin > n_bins || diff_bin > n_bins) {
       return(NA_real_)
     }
     return(coeff_matrix[age_bin, diff_bin])
   }
-  
+
   # Calculate minimum age difference for each asset within company+technology groups
   result <- trisk_model_output %>%
     dplyr::distinct(company_name, asset_id, technology, plant_age_years) %>%
@@ -154,15 +154,25 @@ apply_staggered_shock <- function(trisk_model_output) {
       )
     ) %>%
     dplyr::ungroup()
-  
+
   trisk_model_output <- trisk_model_output %>%
     dplyr::left_join(
-      result %>% dplyr::select(company_name, asset_id, technology, staggered_coefficient), 
+      result %>% dplyr::select(company_name, asset_id, technology, staggered_coefficient),
       by = c("company_name", "asset_id", "technology")) %>%
     dplyr::mutate(
-      production_asset_baseline = production_asset_baseline * staggered_coefficient,
-      late_sudden = late_sudden * staggered_coefficient
+      production_asset_baseline_staggered = production_asset_baseline * staggered_coefficient,
+      late_sudden_staggered = late_sudden * staggered_coefficient
+    ) %>%
+    group_by(company_name,technology) %>%
+      mutate(
+        baseline_renormalisation_coeff = sum(production_asset_baseline)/sum(production_asset_baseline_staggered),
+        late_sudden_renormalisation_coeff = sum(late_sudden)/sum(late_sudden_staggered)
+        ) %>%
+    ungroup() %>%
+    mutate(
+      production_asset_baseline = production_asset_baseline_staggered * baseline_renormalisation_coeff,
+      late_sudden = late_sudden_staggered * late_sudden_renormalisation_coeff
     )
-  
+
   return(trisk_model_output)
 }
