@@ -77,13 +77,13 @@ apply_age_cutoff <- function(trisk_model_output, shock_year, start_year=2024) {
 #' }
 #'
 #' @export
-apply_staggered_shock <- function(trisk_model_output) {
+apply_staggered_shock_v1 <- function(trisk_model_output) {
   # Define constants
   a <- 0.9
   k <- 0.8
 
   # Create age bins (16-year intervals)
-  age_bins <- seq(0, 100, by = 16)
+  age_bins <- seq(0, 100, by = 20)
   n_bins <- length(age_bins) - 1  # We have n_bins intervals
 
   # Create coefficient matrix
@@ -173,6 +173,125 @@ apply_staggered_shock <- function(trisk_model_output) {
       production_asset_baseline = production_asset_baseline_staggered * baseline_renormalisation_coeff,
       late_sudden = late_sudden_staggered * late_sudden_renormalisation_coeff
     )
-
   return(trisk_model_output)
 }
+
+apply_staggered_shock <- function(trisk_model_output, a_base = 0.5, k_const = 0.2) { # Renamed k to k_const to avoid conflict
+
+  # Step 2: Median calculations
+  distinct_assets <- trisk_model_output %>%
+    dplyr::select(company_name, technology, country_iso2, asset_id, plant_age_years) %>%
+    dplyr::distinct()
+
+  medians_ct <- distinct_assets %>%
+    dplyr::filter(!is.na(plant_age_years)) %>%
+    dplyr::group_by(company_name, technology) %>%
+    dplyr::summarise(median_ct = median(plant_age_years), .groups = "drop")
+
+  medians_tc <- distinct_assets %>%
+    dplyr::filter(!is.na(plant_age_years)) %>%
+    dplyr::group_by(technology, country_iso2) %>%
+    dplyr::summarise(median_tc = median(plant_age_years), .groups = "drop")
+
+  medians_t <- distinct_assets %>%
+    dplyr::filter(!is.na(plant_age_years)) %>%
+    dplyr::group_by(technology) %>%
+    dplyr::summarise(median_t = median(plant_age_years), .groups = "drop")
+
+  # Step 3: Impute missing values
+  trisk_model_output <- trisk_model_output %>%
+    dplyr::left_join(medians_ct, by = c("company_name", "technology")) %>%
+    dplyr::left_join(medians_tc, by = c("technology", "country_iso2")) %>%
+    dplyr::left_join(medians_t, by = "technology") %>%
+    dplyr::mutate(
+      plant_age_years = dplyr::coalesce(plant_age_years, median_ct, median_tc, median_t)
+    ) %>%
+    dplyr::select(-median_ct, -median_tc, -median_t)
+
+  # Lookup table for Nq (reference threshold of technical age)
+  nq_lookup <- tibble::tibble(
+    technology = c("GasCap", "CoalCap", "RenewablesCap", "Coal"),
+    Nq = c(25, 40, 20, 20) # Example values
+  )
+
+  # --- Filter out assets with zero production BEFORE any calculations ---
+  # This ensures they are not included in shock redistribution.
+  active_data <- trisk_model_output %>%
+    dplyr::filter(late_sudden > 0)
+
+  scaled_data <- active_data %>%
+    dplyr::left_join(nq_lookup, by = "technology") %>%
+    # Group data by technology, company_name, and year to apply calculations within each group
+    # If a group becomes empty after the production > 0 filter, it won't be processed here.
+    dplyr::group_by(technology, company_name, year) %>%
+    dplyr::mutate(
+      total_comp_tech_prod = sum(late_sudden, na.rm = TRUE), # Sum of production for the current group (active assets)
+      n_assets = n(), # Number of active assets in the current group
+
+      # Calculate age difference relative to the youngest active asset in the group
+      age_diff = plant_age_years - min(plant_age_years, na.rm = TRUE), # This is 'x' for each active asset
+
+      # --- Corrected a_vector calculation for active assets ---
+      age_rank_asc = rank(plant_age_years, ties.method = "first"), # Rank 1 for youngest active asset
+
+      raw_a_values = ifelse(n_assets > 1, a_base ^ (age_rank_asc - 1), 1),
+
+      sum_raw_a = sum(raw_a_values, na.rm = TRUE),
+      a_vector = ifelse(sum_raw_a == 0 | n_assets == 0, ifelse(n_assets > 0, 1/n_assets, 0), raw_a_values / sum_raw_a), # Handle n_assets = 0
+
+      # --- Corrected Shock Weighting Term for active assets ---
+      age_rank_desc = rank(-plant_age_years, ties.method = "first"), # Rank 1 for oldest active asset
+      shock_weight_factor = 1 / (2 ^ age_rank_desc),
+
+      # --- Sigmoid Calculation for active assets ---
+      sigmoid_arg = -k_const * (age_diff - a_vector * Nq),
+      sigmoid_value = 1 / (1 + exp(sigmoid_arg)),
+
+      # --- Calculate g (retention factor) for each active asset ---
+      g = 1 - (shock_weight_factor * sigmoid_value),
+      g = ifelse(g < 0, 0, g),
+
+      sum_g = sum(g, na.rm = TRUE),
+      scaled_g = ifelse(sum_g == 0 | n_assets == 0, ifelse(n_assets > 0, 1/n_assets, 0), g / sum_g), # Handle n_assets = 0
+
+      scaled_production = scaled_g * total_comp_tech_prod,
+
+      SUM_SCALED_CHECK = sum(scaled_production, na.rm = TRUE)
+    ) %>%
+    dplyr::ungroup() # Remove grouping
+
+  # --- Join back with original data to include zero-production assets ---
+  # Zero-production assets will have NA for the calculated columns,
+  # and their original production (0) should be preserved or set as scaled_production.
+
+  # Identify columns created by the mutate operation
+  original_cols <- names(trisk_model_output)
+  calculated_cols <- setdiff(names(scaled_data), original_cols)
+
+  # Perform a left join to bring back all original assets
+  # Assets that were filtered out (production=0) will have NA for new columns
+  final_data <- dplyr::left_join(trisk_model_output, scaled_data, by = intersect(names(trisk_model_output), names(scaled_data)))
+
+    # For assets that had original production = 0, their scaled_production should also be 0.
+  # And their 'g', 'scaled_g' etc. are not applicable (can leave as NA or set to specific values e.g. 0 or 1)
+  final_data <- final_data %>%
+    dplyr::mutate(
+      # Ensure scaled_production is 0 if original production was 0
+      scaled_production = ifelse(late_sudden == 0, 0, scaled_production),
+      # For assets with original production == 0, other calculated fields might be NA.
+      # Depending on requirements, these NAs can be replaced. For example:
+      g = ifelse(late_sudden == 0, NA, g), # Or 1, if it means 100% retention of 0
+      scaled_g = ifelse(late_sudden == 0, NA, scaled_g), # Or 0
+      # Keep SUM_SCALED_CHECK relevant to the group it was calculated for.
+      # It might be better to calculate SUM_SCALED_CHECK on final_data per group if needed.
+
+      #replace late sudden by staggered value
+      late_sudden = scaled_production
+    ) %>%
+    select(original_cols)
+
+  return(final_data)
+}
+
+
+
