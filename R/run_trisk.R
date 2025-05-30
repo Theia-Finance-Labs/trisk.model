@@ -96,6 +96,8 @@ run_trisk_model <- function(assets_data,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
                             market_passthrough = 0,
+                            use_age_cutoff = TRUE,
+                            use_staggered_shock = TRUE,
                             run_id = NULL) {
   if (is.null(run_id)) {
     run_id <- uuid::UUIDgenerate()
@@ -138,14 +140,18 @@ run_trisk_model <- function(assets_data,
   )
   
   cat("-- Calculating age impact. \n")
+  if (use_age_cutoff) {
   trisk_model_output   <- apply_age_cutoff(
     trisk_model_output=trisk_model_output, 
     shock_year=shock_year
     )
+  }
 
-  trisk_model_output <- apply_staggered_shock(
-    trisk_model_output=trisk_model_output
-    )
+  if (use_staggered_shock) {
+    trisk_model_output <- apply_staggered_shock(
+      trisk_model_output=trisk_model_output
+      )
+  }
 
   cat("-- Calculating net profits. \n")
 
