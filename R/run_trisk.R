@@ -96,6 +96,8 @@ run_trisk_model <- function(assets_data,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
                             market_passthrough = 0,
+                            use_age_cutoff = TRUE,
+                            use_staggered_shock = TRUE,
                             run_id = NULL) {
   if (is.null(run_id)) {
     run_id <- uuid::UUIDgenerate()
@@ -131,12 +133,25 @@ run_trisk_model <- function(assets_data,
   end_analysis <- max(trisk_model_input$year)
 
   cat("-- Calculating baseline, target, and shock trajectories. \n")
-
   trisk_model_output <- extend_assets_trajectories(
     trisk_model_input = trisk_model_input,
     start_year = start_year,
     shock_year = shock_year
   )
+  
+  cat("-- Calculating age impact. \n")
+  if (use_age_cutoff) {
+  trisk_model_output   <- apply_age_cutoff(
+    trisk_model_output=trisk_model_output, 
+    shock_year=shock_year
+    )
+  }
+
+  if (use_staggered_shock) {
+    trisk_model_output <- apply_staggered_shock(
+      trisk_model_output=trisk_model_output
+      )
+  }
 
   cat("-- Calculating net profits. \n")
 
@@ -149,6 +164,7 @@ run_trisk_model <- function(assets_data,
 
   trisk_model_output <- trisk_model_output %>%
     dplyr::inner_join(proximity_to_target_df)
+
   # calc net profits
   company_net_profits <- calculate_net_profits(
     trisk_model_output,
@@ -157,7 +173,7 @@ run_trisk_model <- function(assets_data,
     market_passthrough = market_passthrough
   )
 
-  # calc discounted net profits
+
   company_annual_profits <- calculate_annual_profits(
     data = company_net_profits,
     baseline_scenario = baseline_scenario,
@@ -169,6 +185,7 @@ run_trisk_model <- function(assets_data,
 
   cat("-- Calculating market risk. \n")
 
+  # calc discounted net profits
   company_technology_npv <- company_annual_profits %>%
     calculate_asset_value_at_risk(
       shock_year = shock_year,
