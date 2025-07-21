@@ -18,6 +18,7 @@ calculate_pd_change_overall <- function(data,
                                         start_year = NULL,
                                         end_of_analysis = NULL,
                                         risk_free_interest_rate = NULL) {
+
   data <- data %>%
     dplyr::filter(.data$year >= .env$start_year) %>%
     dplyr::group_by(
@@ -56,27 +57,27 @@ calculate_pd_change_overall <- function(data,
     ) %>%
     dplyr::filter(!is.na(.data$term))
 
-  data <- keep_merton_compatible_rows(data, stage = "overall")
+  # data <- keep_merton_compatible_rows(data, stage = "overall")
 
   results <- data %>%
-    dplyr::mutate(Survival_baseline = calc_survival_probability_merton(
-      L = .data$debt,
-      V0 = .data$equity_0_baseline + .data$debt,
-      sigma = .data$volatility,
-      r = .data$risk_free_rate,
-      t = .data$term
-    )) %>%
-    dplyr::mutate(Survival_late_sudden = calc_survival_probability_merton(
-      L = .data$debt,
-      V0 = .data$equity_0_late_sudden + .data$debt,
-      sigma = .data$volatility,
-      r = .data$risk_free_rate,
-      t = .data$term
-    )) %>%
+    # dplyr::mutate(Survival_baseline = calc_survival_probability_merton(
+    #   L = .data$debt,
+    #   V0 = .data$equity_0_baseline + .data$debt,
+    #   sigma = .data$volatility,
+    #   r = .data$risk_free_rate,
+    #   t = .data$term
+    # )) %>%
+    # dplyr::mutate(Survival_late_sudden = calc_survival_probability_merton(
+    #   L = .data$debt,
+    #   V0 = .data$equity_0_late_sudden + .data$debt,
+    #   sigma = .data$volatility,
+    #   r = .data$risk_free_rate,
+    #   t = .data$term
+    # )) %>%
     dplyr::mutate(
-      PD_baseline = 1 - .data$Survival_baseline,
-      PD_late_sudden = 1 - .data$Survival_late_sudden,
-      PD_change = .data$PD_late_sudden - .data$PD_baseline
+      PD_baseline = 1,
+      PD_late_sudden = 1,
+      PD_change = 0
     )
 
   return(results)
