@@ -33,7 +33,7 @@ You can install this package directly from GitHub using the `pak` package in R.
 1. **assets** - Contains data on company assets, including production, technology, and geographical details.
 2. **financial_features** - Contains financial metrics needed for the stress test.
 3. **ngfs_carbon_price** - Provides carbon pricing data for the climate scenarios.
-4. **scenarios** - Holds the details of the climate scenarios including the baseline and shock scenarios.
+4. **scenarios** - Holds the details of the climate scenarios including the baseline and shock scenarios. [You can download the scenarios data from here](https://storage.googleapis.com/crispy-public-data/trisk_inputs/scenarios.csv).
 
 For details on columns structure, refer to the [Vignette on data inputs](https://theia-finance-labs.github.io/trisk.model/articles/data-input-description.html).
 

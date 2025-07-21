@@ -13,6 +13,8 @@ tests/testthat/_snaps/run_lrisk*
 workspace/
 .vscode
 inst/doc
+trisk_inputs/
+trisk_outputs/
 
 # History files
 .Rhistory
