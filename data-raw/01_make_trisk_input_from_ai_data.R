@@ -16,8 +16,8 @@ dir.create(OUTPUT_DIR, showWarnings = FALSE)
 #'
 read_asset_resolution <- function(path_ar_data_raw, sheet_name) {
   if (sheet_name %in% c("Company Activities", "Company Emissions")) {
-    
-  
+
+
   ar_data <- readxl::read_xlsx(path_ar_data_raw,
                                sheet = sheet_name) %>%
     # dplyr::select(-dplyr::starts_with("Direct Ownership")) %>%
@@ -32,7 +32,7 @@ read_asset_resolution <- function(path_ar_data_raw, sheet_name) {
       activity_unit = .data$`Activity Unit`
     )
 
-    
+
   } else if (sheet_name == "Company Information") {
     ar_data <- readxl::read_xlsx(path_ar_data_raw,
                                  sheet = sheet_name) %>%
@@ -57,7 +57,7 @@ read_asset_resolution <- function(path_ar_data_raw, sheet_name) {
 #'
 #' @export
 prepare_asset_impact_data <- function(ar_data_path) {
-  
+
   # Asset Impact specific data preparation
   company_activities <-
     read_asset_resolution(ar_data_path,
@@ -66,7 +66,7 @@ prepare_asset_impact_data <- function(ar_data_path) {
     read_asset_resolution(ar_data_path,
                           sheet_name = "Company Emissions")
 
-  
+
   return(
     list(
       company_activities = company_activities,
@@ -105,7 +105,7 @@ pivot_direct_ownership_columns <- function(ar_data) {
       names_to = "year",
       values_to = "direct_ownership"
     ) %>%
-    dplyr::mutate(year = stringr::str_extract(.data$year, stringr::regex("\\d+"))) 
+    dplyr::mutate(year = stringr::str_extract(.data$year, stringr::regex("\\d+")))
 
   return(ar_data)
 }
@@ -118,7 +118,7 @@ pivot_direct_ownership_columns <- function(ar_data) {
 combine_ownership_data <- function(equity_data, direct_data) {
   # Join the two dataframes
   combined_data <- equity_data %>%
-    dplyr::left_join(direct_data, by = c("company_id", "company_name", "ald_sector", "technology", 
+    dplyr::left_join(direct_data, by = c("company_id", "company_name", "ald_sector", "technology",
                                         "technology_type", "region", "ald_location", "activity_unit", "year"))
   return(combined_data)
 }
@@ -133,8 +133,8 @@ DB_company_activities <- outputs_list[["company_activities"]]
 DB_company_emissions  <- outputs_list[["company_emissions"]]
 
 # Process both equity and direct ownership
-equity_activities <- pivot_equity_ownership_columns(DB_company_activities) 
-direct_activities <- pivot_direct_ownership_columns(DB_company_activities) 
+equity_activities <- pivot_equity_ownership_columns(DB_company_activities)
+direct_activities <- pivot_direct_ownership_columns(DB_company_activities)
 company_activities <- combine_ownership_data(equity_activities, direct_activities)
 
 # REMOVE technology types that are DUPLICATED rows
@@ -155,12 +155,12 @@ company_emissions <- company_emissions %>%
 merged_data <- company_activities %>%
   dplyr::inner_join(
     company_emissions,
-    by = c("company_id", "company_name", "ald_sector", "technology", 
+    by = c("company_id", "company_name", "ald_sector", "technology",
            "technology_type", "region", "ald_location", "year")
   ) %>%
   # Create the necessary production and emission columns
   dplyr::transmute(
-    company_id, company_name, ald_sector, technology, technology_type, 
+    company_id, company_name, ald_sector, technology, technology_type,
     region, ald_location, year,
     production_unit, emission_unit,
     # Rename to match what was requested
@@ -217,7 +217,7 @@ rename_ald_sector <- function(ar_data) {
         .data$ald_sector %in% c("Upstream O&G") ~ "Oil&Gas",
         TRUE ~ .data$ald_sector
       )
-    )   
+    )
   return(ar_data)
 }
 
@@ -324,7 +324,7 @@ assets_data <- emission_factors %>%
     production_year,
     production_unit,
     emission_factor
-  ) %>% 
+  ) %>%
   filter(production_year >= 2023, production_year <= 2029)
 # Write to csv
 readr::write_csv(assets_data, fs::path(OUTPUT_DIR, "assets_data.csv"))
