@@ -18,7 +18,7 @@ calculate_asset_value_at_risk <- function(data,
                                           crispy = FALSE) {
   data <- data %>%
     dplyr::filter(
-      .data$year >= start_year,
+      .data$year >= shock_year,
       !is.na(.data$discounted_net_profit_ls),
       !is.na(.data$discounted_net_profit_baseline)
     ) %>%
