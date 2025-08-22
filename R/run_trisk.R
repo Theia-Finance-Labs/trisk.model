@@ -96,8 +96,8 @@ run_trisk_model <- function(assets_data,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
                             market_passthrough = 0,
-                            use_age_cutoff = TRUE,
-                            use_staggered_shock = TRUE,
+                            use_age_cutoff = FALSE,
+                            use_staggered_shock = FALSE,
                             run_id = NULL) {
   if (is.null(run_id)) {
     run_id <- uuid::UUIDgenerate()
@@ -118,7 +118,6 @@ run_trisk_model <- function(assets_data,
   cat("-- Transforming to Trisk model input. \n")
 
   assets_scenarios <- merge_assets_and_scenarios_data(assets_data = assets_data, scenarios_data = scenarios_data)
-
 
 
   output <- process_trisk_input(
@@ -203,7 +202,6 @@ run_trisk_model <- function(assets_data,
       end_of_analysis = end_analysis,
       risk_free_interest_rate = risk_free_rate
     )
-
 
   npv_results <- tibble::as_tibble(prepare_npv_results(company_technology_npv = company_technology_npv, trisk_model_input = trisk_model_input, run_id = run_id))
   pd_results <- tibble::as_tibble(prepare_pd_results(company_pd_changes_overall = company_pd_changes_overall, run_id = run_id))

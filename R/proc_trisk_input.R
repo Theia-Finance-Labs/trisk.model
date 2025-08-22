@@ -79,18 +79,18 @@ create_base_production_trajectories <- function(data) {
 
   proximity_to_target <- calculate_proximity_to_target(data)
 
-  data <- data %>%
-    # 2. Apply capacity factors
-    dplyr::mutate(
-      production_plan_company_technology = ifelse(.data$sector == "Power",
-        .data$production_plan_company_technology * .data$scenario_capacity_factor * .env$hours_to_year,
-        .data$production_plan_company_technology * .data$scenario_capacity_factor
-      ),
-      production_scenario = ifelse(.data$sector == "Power",
-        .data$production_scenario * .data$scenario_capacity_factor * .env$hours_to_year,
-        .data$production_scenario * .data$scenario_capacity_factor
-      )
-    )
+  # data <- data %>%
+  #   # 2. Apply capacity factors
+  #   dplyr::mutate(
+  #     production_plan_company_technology = ifelse(.data$sector == "Power",
+  #       .data$production_plan_company_technology * .data$scenario_capacity_factor * .env$hours_to_year,
+  #       .data$production_plan_company_technology * .data$scenario_capacity_factor
+  #     ),
+  #     production_scenario = ifelse(.data$sector == "Power",
+  #       .data$production_scenario * .data$scenario_capacity_factor * .env$hours_to_year,
+  #       .data$production_scenario * .data$scenario_capacity_factor
+  #     )
+    # )
 
   return(list("data" = data, "proximity_to_target" = proximity_to_target))
 }

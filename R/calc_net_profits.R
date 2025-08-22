@@ -61,6 +61,7 @@ calculate_net_profits <- function(data,
       "technology"
     )
   )
+  # data <- calculate_net_profits_general(data)
   return(data)
 }
 
@@ -112,12 +113,15 @@ calculate_proximity_to_target <- function(data) {
       sum_realised_change = sum(.data$realised_change, na.rm = TRUE),
       .groups = "drop"
     ) %>%
-    dplyr::ungroup() %>%
+    dplyr::ungroup() 
+
+    production_changes <- production_changes%>%
     dplyr::mutate(
       ratio_realised_required = .data$sum_realised_change / .data$sum_required_change,
       proximity_to_target = dplyr::case_when(
         .data$ratio_realised_required < 0 ~ 0,
         .data$ratio_realised_required > 1 ~ 1,
+        is.na(.data$ratio_realised_required) ~ 1,
         TRUE ~ .data$ratio_realised_required
       )
     ) %>%
@@ -147,6 +151,7 @@ calculate_proximity_to_target <- function(data) {
 
 calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, shock_year,
                                                                           carbon_data, market_passthrough) {
+  
   carbon_data$carbon_tax <- ifelse(
     carbon_data$scenario == "increasing_carbon_tax_50" & carbon_data$year < shock_year, 0,
     ifelse(
@@ -179,7 +184,7 @@ calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, 
       production_compensation = 0,
       carbon_tax = ifelse(.data$year < shock_year, 0, .data$carbon_tax),
       net_profits_ls = .data$late_sudden * (.data$late_sudden_price -
-        (1 - market_passthrough) * .data$carbon_tax * .data$emission_factor) * .data$net_profit_margin - -
+        (1 - market_passthrough) * .data$carbon_tax * .data$emission_factor) * .data$net_profit_margin - 
         .data$production_compensation * .data$late_sudden_price * .data$net_profit_margin * (1 - .data$proximity_to_target)
     ) %>%
     dplyr::select(-c("proximity_to_target", "production_compensation"))
@@ -209,6 +214,15 @@ calculate_net_profits_baseline <- function(data) {
   return(data)
 }
 
+calculate_net_profits_general <- function(data) {
+  data <- data %>%
+    dplyr::mutate(
+      net_profits_baseline = .data$production_asset_baseline * .data$scenario_price_baseline * .data$net_profit_margin,
+      net_profits_ls = .data$late_sudden * .data$late_sudden_price * .data$net_profit_margin
+      )
+
+  return(data)
+}
 
 
 
