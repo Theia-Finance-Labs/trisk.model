@@ -328,3 +328,77 @@ calc_late_sudden_traj <- function(data, year_of_shock) {
 
   return(late_sudden_df)
 }
+
+
+#' Apply zero-trajectory logic to production trajectories
+#'
+#' This function ensures that for any production trajectory (baseline, target, or shock),
+#' once it reaches 0 in any year, it stays at 0 for all subsequent years.
+#'
+#' @param data A dataframe containing production trajectory columns:
+#'   - production_asset_baseline: baseline production trajectory
+#'   - late_sudden: shock/target production trajectory
+#'   - production_scenario_baseline: raw baseline scenario trajectory
+#'   - production_scenario_target: raw target scenario trajectory
+#'
+#' @return A dataframe with the same structure but with zero-trajectory logic applied
+#' @export
+apply_zero_trajectory_logic <- function(data) {
+  data <- data %>%
+    dplyr::group_by(.data$company_id, .data$asset_id, .data$sector, .data$technology) %>%
+    dplyr::arrange(.data$year, .by_group = TRUE) %>%
+    dplyr::mutate(
+      # For baseline trajectory: find first year it reaches 0 and set all subsequent years to 0
+      first_zero_baseline = ifelse(
+        any(.data$production_asset_baseline == 0),
+        min(.data$year[.data$production_asset_baseline == 0]),
+        NA_real_
+      ),
+      production_asset_baseline = ifelse(
+        !is.na(.data$first_zero_baseline) & .data$year >= .data$first_zero_baseline,
+        0,
+        .data$production_asset_baseline
+      ),
+      
+      # For late_sudden trajectory: find first year it reaches 0 and set all subsequent years to 0
+      first_zero_late_sudden = ifelse(
+        any(.data$late_sudden == 0),
+        min(.data$year[.data$late_sudden == 0]),
+        NA_real_
+      ),
+      late_sudden = ifelse(
+        !is.na(.data$first_zero_late_sudden) & .data$year >= .data$first_zero_late_sudden,
+        0,
+        .data$late_sudden
+      ),
+      
+      # For production_scenario_baseline trajectory: find first year it reaches 0 and set all subsequent years to 0
+      first_zero_scenario_baseline = ifelse(
+        any(.data$production_scenario_baseline == 0),
+        min(.data$year[.data$production_scenario_baseline == 0]),
+        NA_real_
+      ),
+      production_scenario_baseline = ifelse(
+        !is.na(.data$first_zero_scenario_baseline) & .data$year >= .data$first_zero_scenario_baseline,
+        0,
+        .data$production_scenario_baseline
+      ),
+      
+      # For production_scenario_target trajectory: find first year it reaches 0 and set all subsequent years to 0
+      first_zero_scenario_target = ifelse(
+        any(.data$production_scenario_target == 0),
+        min(.data$year[.data$production_scenario_target == 0]),
+        NA_real_
+      ),
+      production_scenario_target = ifelse(
+        !is.na(.data$first_zero_scenario_target) & .data$year >= .data$first_zero_scenario_target,
+        0,
+        .data$production_scenario_target
+      )
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(-c("first_zero_baseline", "first_zero_late_sudden", 
+                     "first_zero_scenario_baseline", "first_zero_scenario_target")) # Remove helper columns
+  
+  return(data)
+}

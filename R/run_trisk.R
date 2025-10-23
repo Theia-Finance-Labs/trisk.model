@@ -138,6 +138,10 @@ run_trisk_model <- function(assets_data,
     shock_year = shock_year
   )
 
+  cat("-- Applying zero-trajectory logic to production trajectories. \n")
+  trisk_model_output <- apply_zero_trajectory_logic(trisk_model_output)
+  
+
   cat("-- Calculating net profits. \n")
 
   processed_carbon_data <- process_carbon_data(
