@@ -10,7 +10,7 @@ merge_assets_and_scenarios_data <- function(assets_data, scenarios_data) {
   countries_filter <- scenarios_data %>%
     dplyr::distinct(.data$country_iso2_list) %>%
     dplyr::pull()
-  if (!is.na(countries_filter)) {
+  if (!is.na(countries_filter) && countries_filter != "NA" && trimws(countries_filter) != "") {
     countries_filter <- strsplit(countries_filter, ",")[[1]]
     assets_data_filtered <- assets_data_filtered %>%
       dplyr::filter(.data$country_iso2 %in% countries_filter)
@@ -49,7 +49,7 @@ filter_assets_on_scenario_perimeter <- function(assets_data, scenarios_data) {
   countries_filter <- scenarios_data %>%
     dplyr::distinct(.data$country_iso2_list) %>%
     dplyr::pull()
-  if (!is.na(countries_filter)) {
+  if (!is.na(countries_filter) && countries_filter != "NA" && trimws(countries_filter) != "") {
     countries_filter <- strsplit(countries_filter, ",")[[1]]
     assets_data_filtered <- assets_data_filtered %>%
       dplyr::filter(.data$country_iso2 %in% countries_filter)
@@ -94,7 +94,6 @@ extend_to_full_analysis_timeframe <- function(data, start_analysis, end_analysis
         "asset_name",
         "company_name",
         "country_iso2",
-        "plant_age_years",
         "emission_factor",
         "pd",
         "net_profit_margin",
@@ -108,7 +107,6 @@ extend_to_full_analysis_timeframe <- function(data, start_analysis, end_analysis
         "asset_name",
         "company_name",
         "country_iso2",
-        "plant_age_years",
         "emission_factor",
         "pd",
         "net_profit_margin",
