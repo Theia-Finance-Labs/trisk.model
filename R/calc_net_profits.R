@@ -61,7 +61,6 @@ calculate_net_profits <- function(data,
       "technology"
     )
   )
-
   return(data)
 }
 

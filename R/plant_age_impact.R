@@ -1,0 +1,297 @@
+apply_age_cutoff <- function(trisk_model_output, shock_year, start_year=2024) {
+
+  # Define the cutoff age for each technology
+  cutoff_ages <- tibble::tibble(
+    technology = c("CoalCap", "GasCap", "RenewablesCap","NuclearCap","HydroCap","BatteryCap"),  # Replace with actual tech names
+    maxage = c(40, 30, 25,60,80,10)  # Replace with appropriate cutoff values
+  )
+
+  # Fill the initial age column
+  trisk_model_output <- trisk_model_output %>%
+    # Fill the initial age column
+    tidyr::fill(plant_age_years, .direction = "down") %>%
+    # Convert to numeric in case there are strings
+    dplyr::mutate(plant_age_years = as.numeric(plant_age_years)) %>%
+    # Make the age column count
+    dplyr::mutate(incr_plant_age = plant_age_years + year - start_year + 1) %>%
+    # Join with cutoff age mapping
+    dplyr::left_join(cutoff_ages, by = "technology") %>%
+    # Compute how many full renewal cycles have passed
+    dplyr::mutate(
+      n_cycles = floor(plant_age_years / maxage),  # Number of full renewals before start
+      last_renewal_age = n_cycles * maxage,  # Last renewal age
+      next_renewal_year = (last_renewal_age + maxage)-plant_age_years+2024,
+      next_renewal_age = dplyr::case_when(next_renewal_year<=shock_year~last_renewal_age + 2*maxage,
+                                          T~last_renewal_age + maxage),  # Next renewal threshold
+      # Set production_asset_baseline to 0 when conditions are met
+      production_asset_baseline = dplyr::case_when(
+        incr_plant_age >= next_renewal_age & year>=shock_year ~ 0,
+        TRUE ~ production_asset_baseline
+      ),
+      late_sudden = dplyr::case_when(
+        incr_plant_age >= next_renewal_age & year>=shock_year ~ 0,
+        TRUE ~ late_sudden
+      )
+    )
+  return(trisk_model_output)
+}
+
+#' Apply Staggered Shock to TRISK Model Output
+#'
+#' This function applies a staggered shock to the TRISK model output based on the age of assets and their age differences.
+#' The shock is designed to be more severe for younger assets and those with smaller age differences between them.
+#'
+#' @param trisk_model_output A dataframe containing the TRISK model output with columns:
+#'   - company_name: Name of the company
+#'   - asset_id: Unique identifier for the asset
+#'   - technology: Type of technology
+#'   - plant_age_years: Age of the plant in years
+#'   - production_asset_baseline: Baseline production value
+#'   - late_sudden: Late sudden shock value
+#'
+#' @return A modified version of the input dataframe with:
+#'   - staggered_coefficient: The coefficient applied to each asset based on its age and age difference
+#'   - production_asset_baseline: Updated baseline production after applying the staggered coefficient
+#'   - late_sudden: Updated late sudden shock after applying the staggered coefficient
+#'
+#' @details
+#' The function works as follows:
+#' 1. Groups assets by company and technology
+#' 2. For each asset, calculates the minimum age difference with other assets in the same group
+#' 3. Assigns assets to age bins (16-year intervals from 0 to 100 years)
+#' 4. Assigns age differences to similar bins
+#' 5. Applies a coefficient matrix where:
+#'    - Rows represent asset age bins (youngest to oldest)
+#'    - Columns represent age difference bins (smallest to largest)
+#'    - Coefficients follow the formula a * k^distance, where:
+#'      - a = 0.9 (base coefficient)
+#'      - k = 0.8 (decay factor)
+#'      - distance is the Manhattan distance from the top-left corner
+#' 6. For assets with no comparable assets (Inf age difference), applies a coefficient of 1
+#' 7. Applies the coefficients to both production_asset_baseline and late_sudden values
+#'
+#' @examples
+#' \dontrun{
+#' # Apply staggered shock to model output
+#' result <- apply_staggered_shock(trisk_model_output)
+#' }
+#'
+#' @export
+apply_staggered_shock_v1 <- function(trisk_model_output) {
+  # Define constants
+  a <- 0.9
+  k <- 0.8
+
+  # Create age bins (16-year intervals)
+  age_bins <- seq(0, 100, by = 20)
+  n_bins <- length(age_bins) - 1  # We have n_bins intervals
+
+  # Create coefficient matrix
+  coeff_matrix <- matrix(NA, nrow = n_bins, ncol = n_bins)
+
+  # Fill the matrix with coefficients
+  for (i in 1:n_bins) {
+    for (j in 1:n_bins) {
+      # Calculate the Manhattan distance from the top-left corner
+      distance <- (i - 1) + (j - 1)
+      # Apply the formula a * k^distance
+      coeff_matrix[i, j] <- a * (k ^ distance)
+    }
+  }
+
+  # Function to get coefficient from matrix
+  get_coefficient <- function(age_bin, diff_bin) {
+    if (is.na(age_bin) || is.na(diff_bin) || age_bin < 1 || diff_bin < 1 ||
+        age_bin > n_bins || diff_bin > n_bins) {
+      return(NA_real_)
+    }
+    return(coeff_matrix[age_bin, diff_bin])
+  }
+
+  # Calculate minimum age difference for each asset within company+technology groups
+  result <- trisk_model_output %>%
+    dplyr::distinct(company_name, asset_id, technology, plant_age_years) %>%
+    dplyr::group_by(company_name, technology) %>%
+    dplyr::mutate(
+      # For each asset, calculate absolute age differences with all other assets in the group
+      min_age_diff = purrr::map_dbl(
+        plant_age_years,
+        ~ {
+          other_ages <- plant_age_years[plant_age_years != .x]
+          if (length(other_ages) == 0) {
+            Inf
+          } else {
+            min(abs(.x - other_ages), na.rm = TRUE)
+          }
+        }
+      ),
+      # Handle edge cases for plant_age_years
+      plant_age_adjusted = dplyr::case_when(
+        plant_age_years > 100 ~ 100,
+        TRUE ~ plant_age_years
+      ),
+      # Handle edge cases for min_age_diff
+      min_age_diff_adjusted = dplyr::case_when(
+        is.infinite(min_age_diff) ~ NA_real_,
+        min_age_diff > 100 ~ 100,
+        TRUE ~ min_age_diff
+      ),
+      # Assign age bins (youngest to oldest)
+      age_bin = cut(plant_age_adjusted, breaks = age_bins, labels = FALSE, include.lowest = TRUE),
+      # Assign diff bins (youngest to oldest)
+      diff_bin = dplyr::case_when(
+        is.infinite(min_age_diff) ~ NA_real_,
+        TRUE ~ cut(min_age_diff_adjusted, breaks = age_bins, labels = FALSE, include.lowest = TRUE)
+      )
+    ) %>%
+    dplyr::ungroup() %>%
+    # Directly calculate staggered coefficient
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      staggered_coefficient = dplyr::case_when(
+        is.infinite(min_age_diff) ~ 1,
+        TRUE ~ get_coefficient(age_bin, diff_bin)
+      )
+    ) %>%
+    dplyr::ungroup()
+
+  trisk_model_output <- trisk_model_output %>%
+    dplyr::left_join(
+      result %>% dplyr::select(company_name, asset_id, technology, staggered_coefficient),
+      by = c("company_name", "asset_id", "technology")) %>%
+    dplyr::mutate(
+      production_asset_baseline_staggered = production_asset_baseline * staggered_coefficient,
+      late_sudden_staggered = late_sudden * staggered_coefficient
+    ) %>%
+    group_by(company_name,technology) %>%
+      mutate(
+        baseline_renormalisation_coeff = sum(production_asset_baseline)/sum(production_asset_baseline_staggered),
+        late_sudden_renormalisation_coeff = sum(late_sudden)/sum(late_sudden_staggered)
+        ) %>%
+    ungroup() %>%
+    mutate(
+      production_asset_baseline = production_asset_baseline_staggered * baseline_renormalisation_coeff,
+      late_sudden = late_sudden_staggered * late_sudden_renormalisation_coeff
+    )
+  return(trisk_model_output)
+}
+
+apply_staggered_shock <- function(trisk_model_output, a_base = 0.5, k_const = 0.2) { # Renamed k to k_const to avoid conflict
+
+  # Step 2: Median calculations
+  distinct_assets <- trisk_model_output %>%
+    dplyr::select(company_name, technology, country_iso2, asset_id, plant_age_years) %>%
+    dplyr::distinct()
+
+  medians_ct <- distinct_assets %>%
+    dplyr::filter(!is.na(plant_age_years)) %>%
+    dplyr::group_by(company_name, technology) %>%
+    dplyr::summarise(median_ct = median(plant_age_years), .groups = "drop")
+
+  medians_tc <- distinct_assets %>%
+    dplyr::filter(!is.na(plant_age_years)) %>%
+    dplyr::group_by(technology, country_iso2) %>%
+    dplyr::summarise(median_tc = median(plant_age_years), .groups = "drop")
+
+  medians_t <- distinct_assets %>%
+    dplyr::filter(!is.na(plant_age_years)) %>%
+    dplyr::group_by(technology) %>%
+    dplyr::summarise(median_t = median(plant_age_years), .groups = "drop")
+
+  # Step 3: Impute missing values
+  trisk_model_output <- trisk_model_output %>%
+    dplyr::left_join(medians_ct, by = c("company_name", "technology")) %>%
+    dplyr::left_join(medians_tc, by = c("technology", "country_iso2")) %>%
+    dplyr::left_join(medians_t, by = "technology") %>%
+    dplyr::mutate(
+      plant_age_years = dplyr::coalesce(plant_age_years, median_ct, median_tc, median_t)
+    ) %>%
+    dplyr::select(-median_ct, -median_tc, -median_t)
+
+  # Lookup table for Nq (reference threshold of technical age)
+  nq_lookup <- tibble::tibble(
+    technology = c("GasCap", "CoalCap", "RenewablesCap", "Coal"),
+    Nq = c(25, 40, 20, 20) # Example values
+  )
+
+  # --- Filter out assets with zero production BEFORE any calculations ---
+  # This ensures they are not included in shock redistribution.
+  active_data <- trisk_model_output %>%
+    dplyr::filter(late_sudden > 0)
+
+  scaled_data <- active_data %>%
+    dplyr::left_join(nq_lookup, by = "technology") %>%
+    # Group data by technology, company_name, and year to apply calculations within each group
+    # If a group becomes empty after the production > 0 filter, it won't be processed here.
+    dplyr::group_by(technology, company_name, year) %>%
+    dplyr::mutate(
+      total_comp_tech_prod = sum(late_sudden, na.rm = TRUE), # Sum of production for the current group (active assets)
+      n_assets = n(), # Number of active assets in the current group
+
+      # Calculate age difference relative to the youngest active asset in the group
+      age_diff = plant_age_years - min(plant_age_years, na.rm = TRUE), # This is 'x' for each active asset
+
+      # --- Corrected a_vector calculation for active assets ---
+      age_rank_asc = rank(plant_age_years, ties.method = "first"), # Rank 1 for youngest active asset
+
+      raw_a_values = ifelse(n_assets > 1, a_base ^ (age_rank_asc - 1), 1),
+
+      sum_raw_a = sum(raw_a_values, na.rm = TRUE),
+      a_vector = ifelse(sum_raw_a == 0 | n_assets == 0, ifelse(n_assets > 0, 1/n_assets, 0), raw_a_values / sum_raw_a), # Handle n_assets = 0
+
+      # --- Corrected Shock Weighting Term for active assets ---
+      age_rank_desc = rank(-plant_age_years, ties.method = "first"), # Rank 1 for oldest active asset
+      shock_weight_factor = 1 / (2 ^ age_rank_desc),
+
+      # --- Sigmoid Calculation for active assets ---
+      sigmoid_arg = -k_const * (age_diff - a_vector * Nq),
+      sigmoid_value = 1 / (1 + exp(sigmoid_arg)),
+
+      # --- Calculate g (retention factor) for each active asset ---
+      g = 1 - (shock_weight_factor * sigmoid_value),
+      g = ifelse(g < 0, 0, g),
+
+      sum_g = sum(g, na.rm = TRUE),
+      scaled_g = ifelse(sum_g == 0 | n_assets == 0, ifelse(n_assets > 0, 1/n_assets, 0), g / sum_g), # Handle n_assets = 0
+
+      scaled_production = scaled_g * total_comp_tech_prod,
+
+      SUM_SCALED_CHECK = sum(scaled_production, na.rm = TRUE)
+    ) %>%
+    dplyr::ungroup() # Remove grouping
+
+  # --- Join back with original data to include zero-production assets ---
+  # Zero-production assets will have NA for the calculated columns,
+  # and their original production (0) should be preserved or set as scaled_production.
+
+  # Identify columns created by the mutate operation
+  original_cols <- names(trisk_model_output)
+  calculated_cols <- setdiff(names(scaled_data), original_cols)
+
+  # Perform a left join to bring back all original assets
+  # Assets that were filtered out (production=0) will have NA for new columns
+  final_data <- dplyr::left_join(trisk_model_output, scaled_data, by = intersect(names(trisk_model_output), names(scaled_data)))
+
+    # For assets that had original production = 0, their scaled_production should also be 0.
+  # And their 'g', 'scaled_g' etc. are not applicable (can leave as NA or set to specific values e.g. 0 or 1)
+  final_data <- final_data %>%
+    dplyr::mutate(
+      # Ensure scaled_production is 0 if original production was 0
+      scaled_production = ifelse(late_sudden == 0, 0, scaled_production),
+      # For assets with original production == 0, other calculated fields might be NA.
+      # Depending on requirements, these NAs can be replaced. For example:
+      g = ifelse(late_sudden == 0, NA, g), # Or 1, if it means 100% retention of 0
+      scaled_g = ifelse(late_sudden == 0, NA, scaled_g), # Or 0
+      # Keep SUM_SCALED_CHECK relevant to the group it was calculated for.
+      # It might be better to calculate SUM_SCALED_CHECK on final_data per group if needed.
+
+      #replace late sudden by staggered value
+      late_sudden = scaled_production
+    ) %>%
+    select(original_cols)
+
+  return(final_data)
+}
+
+
+
