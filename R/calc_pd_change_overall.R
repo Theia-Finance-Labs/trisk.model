@@ -50,11 +50,14 @@ calculate_pd_change_overall <- function(data,
   nesting_names <- c(colnames(data %>% dplyr::select(-.data$term)))
 
   data <- data %>%
-    # ADO 1943 - this remains set to 1:5 irrespective of the main input argument,
-    # as we describe the overall trend of PDs, not a change in the portfolio
+    # ADO 1943 - fixed term grid independent of portfolio terms; describes the
+    # overall trend of PDs, not a change in the portfolio. Extended 1:5 -> 1:10
+    # so bank loan portfolios with terms 6-10 years get non-NA PDs after the
+    # join in trisk.analysis (previously `term > 5` portfolio rows silently
+    # dropped to NA).
     tidyr::complete(
       tidyr::nesting(!!!rlang::syms(nesting_names)),
-      term = 1:5
+      term = 1:10
     ) %>%
     dplyr::filter(!is.na(.data$term))
 
