@@ -9,6 +9,9 @@
 #' @param shock_scenario Character. A string that indicates which
 #'   of the scenarios included in the analysis should be used to set the
 #'   late & sudden technology trajectories.
+#' @param start_year Numeric, holding start year of analysis. Used to pull the
+#'   terminal value back to present value as per the 2DII "Limited Visibility"
+#'   methodology (Figure 1).
 #' @param end_year Numeric, holding end year of analysis.
 #' @param discount_rate Numeric, the discount rate
 #' @param growth_rate Numeric, that holds the terminal growth rate of profits
@@ -18,12 +21,14 @@
 calculate_annual_profits <- function(data,
                                      baseline_scenario,
                                      shock_scenario,
+                                     start_year,
                                      end_year,
                                      discount_rate,
                                      growth_rate) {
   data <- data %>%
     dividend_discount_model(discount_rate = discount_rate) %>%
     calculate_terminal_value(
+      start_year = start_year,
       end_year = end_year,
       growth_rate = growth_rate,
       discount_rate = discount_rate
@@ -62,12 +67,20 @@ dividend_discount_model <- function(data, discount_rate) {
 
 
 
+# Terminal value follows the stable-growth formula from the 2DII paper
+# "Limited Visibility" (https://2degrees-investing.org/resource/limited-visibility-the-current-state-of-corporate-disclosure-on-long-term-risks/).
+#   Appendix 3, Figure 1:  TV_at_end_year = CF[end_year] * (1 + g) / (r - g)
+#   Main body, Figure 1:   Discounted TV  = TV_at_end_year / (1 + r)^(end_year - start_year)
+# The pull-back factor `(1 + r)^(end_year - start_year)` is required so the
+# terminal-value row can be summed with the other already-discounted flows
+# (Appendix 3: "explicit value" and "extrapolated value" are summed with "all
+# values discounted").
 calculate_terminal_value <- function(data,
+                                     start_year,
                                      end_year,
                                      growth_rate,
                                      discount_rate) {
-  # the calculation follows the formula described in the 2DII paper "Limited
-  # Visibility", available under https://2degrees-investing.org/resource/limited-visibility-the-current-state-of-corporate-disclosure-on-long-term-risks/
+  horizon <- end_year - start_year
   terminal_value <- data %>%
     dplyr::filter(.data$year == .env$end_year) %>%
     dplyr::mutate(
@@ -75,9 +88,11 @@ calculate_terminal_value <- function(data,
       net_profits_baseline = .data$net_profits_baseline * (1 + .env$growth_rate),
       net_profits_ls = .data$net_profits_ls * (1 + .env$growth_rate),
       discounted_net_profit_baseline = .data$net_profits_baseline /
-        (.env$discount_rate - .env$growth_rate),
+        (.env$discount_rate - .env$growth_rate) /
+        (1 + .env$discount_rate)^.env$horizon,
       discounted_net_profit_ls = .data$net_profits_ls /
-        (.env$discount_rate - .env$growth_rate)
+        (.env$discount_rate - .env$growth_rate) /
+        (1 + .env$discount_rate)^.env$horizon
     ) %>%
     # ADO3112: All columns that reflect a change over time are set to NA, as
     # they cannot be extrapolated from the start_year to end_year period. All
