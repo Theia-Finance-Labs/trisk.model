@@ -166,6 +166,7 @@ run_trisk_model <- function(assets_data,
     data = company_net_profits,
     baseline_scenario = baseline_scenario,
     shock_scenario = target_scenario,
+    start_year = start_year,
     end_year = end_analysis,
     discount_rate = discount_rate,
     growth_rate = growth_rate
