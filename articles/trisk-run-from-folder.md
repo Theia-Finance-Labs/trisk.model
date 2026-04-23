@@ -44,14 +44,14 @@ saved_path <- run_trisk(
 #> Joining with `by = join_by(asset_id, company_id, sector, technology)`
 #> -- Calculating market risk. 
 #> -- Calculating credit risk. 
-#> [1] "Outputs saved in folder: ./trisk_outputs/20260303_090147__f7de883c-1f60-4fcd-a6b8-182efea88a25"
+#> [1] "Outputs saved in folder: ./trisk_outputs/20260423_221025__874b4c69-e909-4b3a-84a7-473d82f2687d"
 ```
 
 Each new run generates a folder with a unique name. The folders are
 named following this convention : DATE_TIME\_\_RUNID. The full path of
 this run is :
 
-    #> [1] "/home/runner/work/trisk.model/trisk.model/vignettes/trisk_outputs/20260303_090147__f7de883c-1f60-4fcd-a6b8-182efea88a25"
+    #> [1] "/home/runner/work/trisk.model/trisk.model/vignettes/trisk_outputs/20260423_221025__874b4c69-e909-4b3a-84a7-473d82f2687d"
 
 ## Output folder structure
 
@@ -61,7 +61,7 @@ structured as:
 ``` r
 dir_tree(trisk_output_dir)
 #> ./trisk_outputs
-#> └── 20260303_090147__f7de883c-1f60-4fcd-a6b8-182efea88a25
+#> └── 20260423_221025__874b4c69-e909-4b3a-84a7-473d82f2687d
 #>     ├── company_trajectories.csv
 #>     ├── npv_results.csv
 #>     ├── params.csv
