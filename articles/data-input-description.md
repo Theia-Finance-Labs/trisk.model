@@ -1,6 +1,7 @@
 # data-input-description
 
 ``` r
+
 library(trisk.model)
 library(magrittr)
 ```
@@ -8,6 +9,7 @@ library(magrittr)
 Load the internal datasets
 
 ``` r
+
 assets_testdata <- read.csv(system.file("testdata", "assets_testdata.csv", package = "trisk.model"))
 scenarios_testdata <- read.csv(system.file("testdata", "scenarios_testdata.csv", package = "trisk.model"))
 financial_features_testdata <- read.csv(system.file("testdata", "financial_features_testdata.csv", package = "trisk.model"))
@@ -47,6 +49,7 @@ The `assets_testdata` dataset includes the following columns:
 #### Data Structure
 
 ``` r
+
 str(assets_testdata)
 #> 'data.frame':    42 obs. of  12 variables:
 #>  $ company_id     : int  101 101 101 101 101 101 102 102 102 102 ...
@@ -66,20 +69,21 @@ str(assets_testdata)
 #### Sample Data
 
 ``` r
+
 knitr::kable(head(assets_testdata)) %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
   kableExtra::scroll_box(width = "100%", height = "400px") %>%
   kableExtra::column_spec(1:ncol(assets_testdata), width = "150px")
 ```
 
-| company_id | company_name | asset_id | country_iso2 | asset_name | production_year | emission_factor | technology | sector  | capacity | capacity_factor | production_unit |
-|-----------:|:-------------|---------:|:-------------|:-----------|----------------:|----------------:|:-----------|:--------|---------:|----------------:|:----------------|
-|        101 | Company 1    |      101 | DE           | Company 1  |            2022 |       0.0620259 | Gas        | Oil&Gas |     8600 |       0.5813953 | GJ              |
-|        101 | Company 1    |      101 | DE           | Company 1  |            2023 |       0.0620259 | Gas        | Oil&Gas |     8600 |       0.6305814 | GJ              |
-|        101 | Company 1    |      101 | DE           | Company 1  |            2024 |       0.0620259 | Gas        | Oil&Gas |     8600 |       0.7209302 | GJ              |
-|        101 | Company 1    |      101 | DE           | Company 1  |            2025 |       0.0620259 | Gas        | Oil&Gas |     8600 |       0.8604651 | GJ              |
-|        101 | Company 1    |      101 | DE           | Company 1  |            2026 |       0.0620259 | Gas        | Oil&Gas |     8600 |       0.9069767 | GJ              |
-|        101 | Company 1    |      101 | DE           | Company 1  |            2027 |       0.0620259 | Gas        | Oil&Gas |     8600 |       1.0000000 | GJ              |
+| company_id | company_name | asset_id | country_iso2 | asset_name | production_year | emission_factor | technology | sector | capacity | capacity_factor | production_unit |
+|---:|:---|---:|:---|:---|---:|---:|:---|:---|---:|---:|:---|
+| 101 | Company 1 | 101 | DE | Company 1 | 2022 | 0.0620259 | Gas | Oil&Gas | 8600 | 0.5813953 | GJ |
+| 101 | Company 1 | 101 | DE | Company 1 | 2023 | 0.0620259 | Gas | Oil&Gas | 8600 | 0.6305814 | GJ |
+| 101 | Company 1 | 101 | DE | Company 1 | 2024 | 0.0620259 | Gas | Oil&Gas | 8600 | 0.7209302 | GJ |
+| 101 | Company 1 | 101 | DE | Company 1 | 2025 | 0.0620259 | Gas | Oil&Gas | 8600 | 0.8604651 | GJ |
+| 101 | Company 1 | 101 | DE | Company 1 | 2026 | 0.0620259 | Gas | Oil&Gas | 8600 | 0.9069767 | GJ |
+| 101 | Company 1 | 101 | DE | Company 1 | 2027 | 0.0620259 | Gas | Oil&Gas | 8600 | 1.0000000 | GJ |
 
 ------------------------------------------------------------------------
 
@@ -102,6 +106,7 @@ columns:
 #### Data Structure
 
 ``` r
+
 str(financial_features_testdata)
 #> 'data.frame':    5 obs. of  5 variables:
 #>  $ company_id       : int  101 103 105 104 102
@@ -114,6 +119,7 @@ str(financial_features_testdata)
 #### Sample Data
 
 ``` r
+
 knitr::kable(head(financial_features_testdata)) %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
   kableExtra::scroll_box(width = "100%", height = "400px")
@@ -149,6 +155,7 @@ The `ngfs_carbon_price_testdata` dataset includes the following columns:
 #### Data Structure
 
 ``` r
+
 str(ngfs_carbon_price_testdata)
 #> 'data.frame':    1376 obs. of  7 variables:
 #>  $ year              : int  2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 ...
@@ -163,19 +170,20 @@ str(ngfs_carbon_price_testdata)
 #### Sample Data
 
 ``` r
+
 knitr::kable(head(ngfs_carbon_price_testdata)) %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
   kableExtra::scroll_box(width = "100%", height = "400px")
 ```
 
-| year | model          | scenario | scenario_geography | variable          | unit           | carbon_tax |
-|-----:|:---------------|:---------|:-------------------|:------------------|:---------------|-----------:|
-| 2015 | GCAM 5.3+ NGFS | B2DS     | Global             | Price&#124;Carbon | US\$2010/t CO2 |          0 |
-| 2016 | GCAM 5.3+ NGFS | B2DS     | Global             | Price&#124;Carbon | US\$2010/t CO2 |          0 |
-| 2017 | GCAM 5.3+ NGFS | B2DS     | Global             | Price&#124;Carbon | US\$2010/t CO2 |          0 |
-| 2018 | GCAM 5.3+ NGFS | B2DS     | Global             | Price&#124;Carbon | US\$2010/t CO2 |          0 |
-| 2019 | GCAM 5.3+ NGFS | B2DS     | Global             | Price&#124;Carbon | US\$2010/t CO2 |          0 |
-| 2020 | GCAM 5.3+ NGFS | B2DS     | Global             | Price&#124;Carbon | US\$2010/t CO2 |          0 |
+| year | model | scenario | scenario_geography | variable | unit | carbon_tax |
+|---:|:---|:---|:---|:---|:---|---:|
+| 2015 | GCAM 5.3+ NGFS | B2DS | Global | Price&#124;Carbon | US\$2010/t CO2 | 0 |
+| 2016 | GCAM 5.3+ NGFS | B2DS | Global | Price&#124;Carbon | US\$2010/t CO2 | 0 |
+| 2017 | GCAM 5.3+ NGFS | B2DS | Global | Price&#124;Carbon | US\$2010/t CO2 | 0 |
+| 2018 | GCAM 5.3+ NGFS | B2DS | Global | Price&#124;Carbon | US\$2010/t CO2 | 0 |
+| 2019 | GCAM 5.3+ NGFS | B2DS | Global | Price&#124;Carbon | US\$2010/t CO2 | 0 |
+| 2020 | GCAM 5.3+ NGFS | B2DS | Global | Price&#124;Carbon | US\$2010/t CO2 | 0 |
 
 ------------------------------------------------------------------------
 
@@ -205,6 +213,7 @@ The `scenarios_testdata` dataset includes the following columns:
 #### Data Structure
 
 ``` r
+
 str(scenarios_testdata)
 #> 'data.frame':    1422 obs. of  14 variables:
 #>  $ scenario                : chr  "NGFS2023GCAM_CP" "NGFS2023GCAM_CP" "NGFS2023GCAM_CP" "NGFS2023GCAM_CP" ...
@@ -226,63 +235,64 @@ str(scenarios_testdata)
 #### Sample Data
 
 ``` r
+
 knitr::kable(head(scenarios_testdata, 50)) %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
   kableExtra::scroll_box(width = "200%", height = "400px")
 ```
 
-| scenario        | scenario_type | scenario_geography | sector | technology | scenario_year | price_unit | scenario_price | pathway_unit | scenario_pathway | technology_type | scenario_capacity_factor | country_iso2_list | scenario_provider |
-|:----------------|:--------------|:-------------------|:-------|:-----------|--------------:|:-----------|---------------:|:-------------|-----------------:|:----------------|-------------------------:|:------------------|:------------------|
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2022 | \$/tonnes  |       57.03917 | EJ/yr        |         159.4468 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2023 | \$/tonnes  |       57.35451 | EJ/yr        |         160.4324 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2024 | \$/tonnes  |       57.66985 | EJ/yr        |         161.4180 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2025 | \$/tonnes  |       57.98520 | EJ/yr        |         162.4035 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2026 | \$/tonnes  |       58.41776 | EJ/yr        |         162.4545 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2027 | \$/tonnes  |       58.85032 | EJ/yr        |         162.5055 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2028 | \$/tonnes  |       59.28289 | EJ/yr        |         162.5565 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2029 | \$/tonnes  |       59.71545 | EJ/yr        |         162.6075 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2030 | \$/tonnes  |       60.14802 | EJ/yr        |         162.6585 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2031 | \$/tonnes  |       60.53991 | EJ/yr        |         163.5647 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2032 | \$/tonnes  |       60.93181 | EJ/yr        |         164.4709 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2033 | \$/tonnes  |       61.32370 | EJ/yr        |         165.3771 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2034 | \$/tonnes  |       61.71560 | EJ/yr        |         166.2833 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2035 | \$/tonnes  |       62.10749 | EJ/yr        |         167.1895 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2036 | \$/tonnes  |       62.28684 | EJ/yr        |         167.6793 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2037 | \$/tonnes  |       62.46619 | EJ/yr        |         168.1691 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2038 | \$/tonnes  |       62.64553 | EJ/yr        |         168.6589 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2039 | \$/tonnes  |       62.82488 | EJ/yr        |         169.1487 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2040 | \$/tonnes  |       63.00422 | EJ/yr        |         169.6385 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2041 | \$/tonnes  |       63.11835 | EJ/yr        |         169.6492 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2042 | \$/tonnes  |       63.23248 | EJ/yr        |         169.6599 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2043 | \$/tonnes  |       63.34661 | EJ/yr        |         169.6706 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2044 | \$/tonnes  |       63.46074 | EJ/yr        |         169.6813 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2045 | \$/tonnes  |       63.57487 | EJ/yr        |         169.6920 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2046 | \$/tonnes  |       63.60577 | EJ/yr        |         169.3689 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2047 | \$/tonnes  |       63.63667 | EJ/yr        |         169.0457 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2048 | \$/tonnes  |       63.66757 | EJ/yr        |         168.7226 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2049 | \$/tonnes  |       63.69847 | EJ/yr        |         168.3994 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2050 | \$/tonnes  |       63.72937 | EJ/yr        |         168.0763 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2051 | \$/tonnes  |       63.73330 | EJ/yr        |         167.9941 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2052 | \$/tonnes  |       63.73723 | EJ/yr        |         167.9119 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2053 | \$/tonnes  |       63.74115 | EJ/yr        |         167.8298 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2054 | \$/tonnes  |       63.74508 | EJ/yr        |         167.7476 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2055 | \$/tonnes  |       63.74900 | EJ/yr        |         167.6655 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2056 | \$/tonnes  |       63.66008 | EJ/yr        |         167.3440 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2057 | \$/tonnes  |       63.57115 | EJ/yr        |         167.0226 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2058 | \$/tonnes  |       63.48223 | EJ/yr        |         166.7011 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2059 | \$/tonnes  |       63.39331 | EJ/yr        |         166.3796 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2060 | \$/tonnes  |       63.30438 | EJ/yr        |         166.0582 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2061 | \$/tonnes  |       63.18854 | EJ/yr        |         165.4385 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2062 | \$/tonnes  |       63.07270 | EJ/yr        |         164.8189 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2063 | \$/tonnes  |       62.95686 | EJ/yr        |         164.1992 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2064 | \$/tonnes  |       62.84101 | EJ/yr        |         163.5796 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2065 | \$/tonnes  |       62.72517 | EJ/yr        |         162.9599 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2066 | \$/tonnes  |       62.58408 | EJ/yr        |         161.8002 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2067 | \$/tonnes  |       62.44300 | EJ/yr        |         160.6404 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2068 | \$/tonnes  |       62.30191 | EJ/yr        |         159.4807 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2069 | \$/tonnes  |       62.16082 | EJ/yr        |         158.3210 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2070 | \$/tonnes  |       62.01973 | EJ/yr        |         157.1612 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
-| NGFS2023GCAM_CP | baseline      | Global             | Coal   | Coal       |          2071 | \$/tonnes  |       61.87448 | EJ/yr        |         156.1628 | carbontech      |                        1 | NA                | NGFS2023GCAM      |
+| scenario | scenario_type | scenario_geography | sector | technology | scenario_year | price_unit | scenario_price | pathway_unit | scenario_pathway | technology_type | scenario_capacity_factor | country_iso2_list | scenario_provider |
+|:---|:---|:---|:---|:---|---:|:---|---:|:---|---:|:---|---:|:---|:---|
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2022 | \$/tonnes | 57.03917 | EJ/yr | 159.4468 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2023 | \$/tonnes | 57.35451 | EJ/yr | 160.4324 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2024 | \$/tonnes | 57.66985 | EJ/yr | 161.4180 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2025 | \$/tonnes | 57.98520 | EJ/yr | 162.4035 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2026 | \$/tonnes | 58.41776 | EJ/yr | 162.4545 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2027 | \$/tonnes | 58.85032 | EJ/yr | 162.5055 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2028 | \$/tonnes | 59.28289 | EJ/yr | 162.5565 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2029 | \$/tonnes | 59.71545 | EJ/yr | 162.6075 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2030 | \$/tonnes | 60.14802 | EJ/yr | 162.6585 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2031 | \$/tonnes | 60.53991 | EJ/yr | 163.5647 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2032 | \$/tonnes | 60.93181 | EJ/yr | 164.4709 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2033 | \$/tonnes | 61.32370 | EJ/yr | 165.3771 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2034 | \$/tonnes | 61.71560 | EJ/yr | 166.2833 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2035 | \$/tonnes | 62.10749 | EJ/yr | 167.1895 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2036 | \$/tonnes | 62.28684 | EJ/yr | 167.6793 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2037 | \$/tonnes | 62.46619 | EJ/yr | 168.1691 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2038 | \$/tonnes | 62.64553 | EJ/yr | 168.6589 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2039 | \$/tonnes | 62.82488 | EJ/yr | 169.1487 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2040 | \$/tonnes | 63.00422 | EJ/yr | 169.6385 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2041 | \$/tonnes | 63.11835 | EJ/yr | 169.6492 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2042 | \$/tonnes | 63.23248 | EJ/yr | 169.6599 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2043 | \$/tonnes | 63.34661 | EJ/yr | 169.6706 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2044 | \$/tonnes | 63.46074 | EJ/yr | 169.6813 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2045 | \$/tonnes | 63.57487 | EJ/yr | 169.6920 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2046 | \$/tonnes | 63.60577 | EJ/yr | 169.3689 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2047 | \$/tonnes | 63.63667 | EJ/yr | 169.0457 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2048 | \$/tonnes | 63.66757 | EJ/yr | 168.7226 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2049 | \$/tonnes | 63.69847 | EJ/yr | 168.3994 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2050 | \$/tonnes | 63.72937 | EJ/yr | 168.0763 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2051 | \$/tonnes | 63.73330 | EJ/yr | 167.9941 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2052 | \$/tonnes | 63.73723 | EJ/yr | 167.9119 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2053 | \$/tonnes | 63.74115 | EJ/yr | 167.8298 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2054 | \$/tonnes | 63.74508 | EJ/yr | 167.7476 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2055 | \$/tonnes | 63.74900 | EJ/yr | 167.6655 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2056 | \$/tonnes | 63.66008 | EJ/yr | 167.3440 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2057 | \$/tonnes | 63.57115 | EJ/yr | 167.0226 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2058 | \$/tonnes | 63.48223 | EJ/yr | 166.7011 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2059 | \$/tonnes | 63.39331 | EJ/yr | 166.3796 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2060 | \$/tonnes | 63.30438 | EJ/yr | 166.0582 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2061 | \$/tonnes | 63.18854 | EJ/yr | 165.4385 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2062 | \$/tonnes | 63.07270 | EJ/yr | 164.8189 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2063 | \$/tonnes | 62.95686 | EJ/yr | 164.1992 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2064 | \$/tonnes | 62.84101 | EJ/yr | 163.5796 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2065 | \$/tonnes | 62.72517 | EJ/yr | 162.9599 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2066 | \$/tonnes | 62.58408 | EJ/yr | 161.8002 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2067 | \$/tonnes | 62.44300 | EJ/yr | 160.6404 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2068 | \$/tonnes | 62.30191 | EJ/yr | 159.4807 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2069 | \$/tonnes | 62.16082 | EJ/yr | 158.3210 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2070 | \$/tonnes | 62.01973 | EJ/yr | 157.1612 | carbontech | 1 | NA | NGFS2023GCAM |
+| NGFS2023GCAM_CP | baseline | Global | Coal | Coal | 2071 | \$/tonnes | 61.87448 | EJ/yr | 156.1628 | carbontech | 1 | NA | NGFS2023GCAM |
 
 ------------------------------------------------------------------------
 

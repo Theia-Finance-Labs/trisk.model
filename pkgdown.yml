@@ -1,8 +1,8 @@
-pandoc: 3.1.11
+pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   data-input-description: data-input-description.html
   data-output-description: data-output-description.html
   trisk-run-from-folder: trisk-run-from-folder.html
-last_built: 2026-04-24T12:22Z
+last_built: 2026-05-28T22:16Z

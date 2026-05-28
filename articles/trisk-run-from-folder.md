@@ -8,6 +8,7 @@ The files inside the `trisk_inputs` folder are now structured as
 follows:
 
 ``` r
+
 dir_tree(trisk_input_dir)
 #> ./trisk_inputs
 #> ├── assets.csv
@@ -19,6 +20,7 @@ dir_tree(trisk_input_dir)
 ## Generate outputs using the Trisk model
 
 ``` r
+
 # Define the scenarios to use
 baseline_scenario <- "NGFS2023GCAM_CP"
 target_scenario <- "NGFS2023GCAM_NZ2050"
@@ -28,6 +30,7 @@ scenario_geography <- "Global"
 Run the model with the downloaded data :
 
 ``` r
+
 saved_path <- run_trisk(
   input_path = trisk_input_dir,
   output_path = trisk_output_dir,
@@ -44,14 +47,14 @@ saved_path <- run_trisk(
 #> Joining with `by = join_by(asset_id, company_id, sector, technology)`
 #> -- Calculating market risk. 
 #> -- Calculating credit risk. 
-#> [1] "Outputs saved in folder: ./trisk_outputs/20260424_122314__6c2a5ebd-7ab4-4c44-923b-7650aef91ac0"
+#> [1] "Outputs saved in folder: ./trisk_outputs/20260528_221640__d66e78c9-96d1-4202-a571-5c499c160c56"
 ```
 
 Each new run generates a folder with a unique name. The folders are
 named following this convention : DATE_TIME\_\_RUNID. The full path of
 this run is :
 
-    #> [1] "/home/runner/work/trisk.model/trisk.model/vignettes/trisk_outputs/20260424_122314__6c2a5ebd-7ab4-4c44-923b-7650aef91ac0"
+    #> [1] "/home/runner/work/trisk.model/trisk.model/vignettes/trisk_outputs/20260528_221640__d66e78c9-96d1-4202-a571-5c499c160c56"
 
 ## Output folder structure
 
@@ -59,9 +62,10 @@ The generated outputs are saved in the `trisk_outputs` folder,
 structured as:
 
 ``` r
+
 dir_tree(trisk_output_dir)
 #> ./trisk_outputs
-#> └── 20260424_122314__6c2a5ebd-7ab4-4c44-923b-7650aef91ac0
+#> └── 20260528_221640__d66e78c9-96d1-4202-a571-5c499c160c56
 #>     ├── company_trajectories.csv
 #>     ├── npv_results.csv
 #>     ├── params.csv
