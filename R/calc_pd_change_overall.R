@@ -50,14 +50,15 @@ calculate_pd_change_overall <- function(data,
   nesting_names <- c(colnames(data %>% dplyr::select(-.data$term)))
 
   data <- data %>%
-    # ADO 1943 - fixed term grid independent of portfolio terms; describes the
-    # overall trend of PDs, not a change in the portfolio. Extended 1:5 -> 1:10
-    # so bank loan portfolios with terms 6-10 years get non-NA PDs after the
-    # join in trisk.analysis (previously `term > 5` portfolio rows silently
-    # dropped to NA).
+    # ADO 1943 - term grid sized to the analysis horizon. Per-company PD
+    # trajectory by term; portfolio rows downstream join on (company_id, term).
+    # Cap at end_of_analysis - start_year + 1 because PD beyond the projection
+    # window has no economic basis here (terminal value handles beyond-horizon
+    # profits). Previously hardcoded 1:5 then 1:10 - any portfolio row with a
+    # term past that ceiling silently produced NA in the join in trisk.analysis.
     tidyr::complete(
       tidyr::nesting(!!!rlang::syms(nesting_names)),
-      term = 1:10
+      term = seq_len(end_of_analysis - start_year + 1)
     ) %>%
     dplyr::filter(!is.na(.data$term))
 
