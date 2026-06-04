@@ -15,8 +15,8 @@ run_trisk_model(
   target_scenario = "",
   scenario_geography = "Global",
   carbon_price_model = "no_carbon_tax",
-  risk_free_rate = 0.02,
-  discount_rate = 0.07,
+  risk_free_rate = 0.045,
+  discount_rate = 0.09,
   growth_rate = 0.03,
   div_netprofit_prop_coef = 1,
   shock_year = 2030,
@@ -63,12 +63,12 @@ run_trisk_model(
 
 - risk_free_rate:
 
-  Numeric value for the risk-free interest rate. Default is 0.02.
+  Numeric value for the risk-free interest rate. Default is 0.045.
 
 - discount_rate:
 
   Numeric value for the discount rate of dividends per year in the DCF.
-  Default is 0.07.
+  Default is 0.09.
 
 - growth_rate:
 
