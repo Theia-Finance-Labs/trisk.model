@@ -28,7 +28,8 @@ trisk_results <- run_trisk_model(
     growth_rate = 0.03,
     div_netprofit_prop_coef = 1,
     shock_year = 2030,
-    market_passthrough = 0
+    market_passthrough_power = 0.6,
+    market_passthrough_primary = 0.9
 )
 
 

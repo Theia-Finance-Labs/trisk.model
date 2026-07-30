@@ -18,13 +18,14 @@
 #'   indication of the direction of the technology.
 #' @param shock_year A numeric vector of length one that indicates in which year
 #'   the policy shock strikes in a given scenario.
-#' @param market_passthrough A firm's ability to pass a carbon tax onto the consumer.
-#' companies can be boosted under a shock scenario.
+#' @param market_passthrough_power Share of the carbon tax the firm passes to consumers in the Power sector.
+#' @param market_passthrough_primary Share of the carbon tax passed to consumers in primary/upstream sectors (all non-Power sectors, e.g. Oil&Gas, Coal).
 #' @param carbon_data NGFS carbon prices.
 calculate_net_profits <- function(data,
                                   carbon_data,
                                   shock_year,
-                                  market_passthrough) {
+                                  market_passthrough_power,
+                                  market_passthrough_primary) {
   baseline <- calculate_net_profits_baseline(data) %>%
     dplyr::select(
       .data$company_id,
@@ -45,7 +46,8 @@ calculate_net_profits <- function(data,
     data = data %>% dplyr::filter(.data$technology_type == "carbontech"),
     carbon_data = carbon_data,
     shock_year = shock_year,
-    market_passthrough = market_passthrough
+    market_passthrough_power = market_passthrough_power,
+    market_passthrough_primary = market_passthrough_primary
   )
 
   data <- dplyr::bind_rows(shock_increasing_technologies, shock_declining_technologies)
@@ -142,12 +144,15 @@ calculate_proximity_to_target <- function(data) {
 #' @param shock_year A numeric vector of length one that indicates in which year
 #'   the policy shock strikes in a given scenario.
 #' @param carbon_data  NGFS carbon prices.
-#' @param market_passthrough A firm's ability to pass a carbon tax onto the consumer.
+#' @param market_passthrough_power Share of the carbon tax the firm passes to consumers in the Power sector.
+#' @param market_passthrough_primary Share of the carbon tax passed to consumers in primary/upstream sectors (all non-Power sectors, e.g. Oil&Gas, Coal).
 #'
 #' @return Data frame with annual netprofits for all cases without carbon tax.
 
 calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, shock_year,
-                                                                          carbon_data, market_passthrough) {
+                                                                          carbon_data,
+                                                                          market_passthrough_power,
+                                                                          market_passthrough_primary) {
   carbon_data$carbon_tax <- ifelse(
     carbon_data$scenario == "increasing_carbon_tax_50" & carbon_data$year < shock_year, 0,
     ifelse(
@@ -160,18 +165,21 @@ calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, 
   )
 
   data <- data %>%
-    dplyr::left_join(carbon_data, by = c("year"))
+    dplyr::left_join(carbon_data, by = c("year")) %>%
+    dplyr::mutate(
+      market_passthrough = dplyr::if_else(.data$sector == "Power", market_passthrough_power, market_passthrough_primary)
+    )
 
   data_over_shoot_increasing <- data %>%
     dplyr::filter(.data$overshoot_direction == "Increasing") %>%
     dplyr::mutate(
       production_compensation = .data$late_sudden - .data$production_asset_baseline,
       carbon_tax = ifelse(.data$year < shock_year, 0, .data$carbon_tax),
-      net_profits_ls = .data$late_sudden * (.data$late_sudden_price -
-        (1 - market_passthrough) * .data$carbon_tax * .data$emission_factor) * .data$net_profit_margin -
+      net_profits_ls = .data$late_sudden * .data$late_sudden_price * .data$net_profit_margin -
+        .data$late_sudden * (1 - .data$market_passthrough) * .data$carbon_tax * .data$emission_factor -
         .data$production_compensation * .data$late_sudden_price * .data$net_profit_margin * (1 - .data$proximity_to_target)
     ) %>%
-    dplyr::select(-c("proximity_to_target", "production_compensation"))
+    dplyr::select(-c("proximity_to_target", "production_compensation", "market_passthrough"))
 
 
   data_over_shoot_decreasing <- data %>%
@@ -179,11 +187,11 @@ calculate_net_profits_shock_declining_technologies_carbon_tax <- function(data, 
     dplyr::mutate(
       production_compensation = 0,
       carbon_tax = ifelse(.data$year < shock_year, 0, .data$carbon_tax),
-      net_profits_ls = .data$late_sudden * (.data$late_sudden_price -
-        (1 - market_passthrough) * .data$carbon_tax * .data$emission_factor) * .data$net_profit_margin - -
+      net_profits_ls = .data$late_sudden * .data$late_sudden_price * .data$net_profit_margin -
+        .data$late_sudden * (1 - .data$market_passthrough) * .data$carbon_tax * .data$emission_factor -
         .data$production_compensation * .data$late_sudden_price * .data$net_profit_margin * (1 - .data$proximity_to_target)
     ) %>%
-    dplyr::select(-c("proximity_to_target", "production_compensation"))
+    dplyr::select(-c("proximity_to_target", "production_compensation", "market_passthrough"))
 
 
   data <- dplyr::bind_rows(data_over_shoot_increasing, data_over_shoot_decreasing)
