@@ -1,6 +1,6 @@
 Package: trisk.model
 Title: Trisk Core Methodology
-Version: 2.6.1
+Version: 2.7.0
 Authors@R: c(
     person(given = "Jacob",
            family = "Kastl",
@@ -26,7 +26,7 @@ Description: The package provides functions and workflows for conducting
 License: LGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Depends:
     R (>= 3.5)
 Imports: 

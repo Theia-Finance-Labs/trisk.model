@@ -73,7 +73,8 @@ run_trisk <- function(
 #' @param growth_rate Numeric value for the terminal growth rate of profits beyond the final year in the DCF. Default is 0.03.
 #' @param div_netprofit_prop_coef Numeric coefficient determining how strongly future dividends propagate to company value. Default is 1.
 #' @param shock_year Numeric value specifying the year when the shock is applied. Default is 2030.
-#' @param market_passthrough Numeric value representing the firm's ability to pass carbon tax onto the consumer. Default is 0.
+#' @param market_passthrough_power Numeric value in \[0, 1\]: share of the carbon tax passed to consumers in the Power sector. Default is 0.6.
+#' @param market_passthrough_primary Numeric value in \[0, 1\]: share of the carbon tax passed to consumers in primary/upstream sectors (all non-Power sectors, e.g. Oil&Gas, Coal). Default is 0.9.
 #' @param run_id (Optional) Character value representing the ID of current Trisk's iteration
 #'
 #' @return A list containing:
@@ -95,7 +96,8 @@ run_trisk_model <- function(assets_data,
                             growth_rate = 0.03,
                             div_netprofit_prop_coef = 1,
                             shock_year = 2030,
-                            market_passthrough = 0,
+                            market_passthrough_power = 0.6,
+                            market_passthrough_primary = 0.9,
                             run_id = NULL) {
   if (is.null(run_id)) {
     run_id <- uuid::UUIDgenerate()
@@ -158,7 +160,8 @@ run_trisk_model <- function(assets_data,
     trisk_model_output,
     carbon_data = processed_carbon_data,
     shock_year = shock_year,
-    market_passthrough = market_passthrough
+    market_passthrough_power = market_passthrough_power,
+    market_passthrough_primary = market_passthrough_primary
   )
 
   # calc discounted net profits
