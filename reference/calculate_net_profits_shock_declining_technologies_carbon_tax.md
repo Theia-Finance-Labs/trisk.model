@@ -10,7 +10,8 @@ calculate_net_profits_shock_declining_technologies_carbon_tax(
   data,
   shock_year,
   carbon_data,
-  market_passthrough
+  market_passthrough_power,
+  market_passthrough_primary
 )
 ```
 
@@ -32,9 +33,15 @@ calculate_net_profits_shock_declining_technologies_carbon_tax(
 
   NGFS carbon prices.
 
-- market_passthrough:
+- market_passthrough_power:
 
-  A firm's ability to pass a carbon tax onto the consumer.
+  Share of the carbon tax the firm passes to consumers in the Power
+  sector.
+
+- market_passthrough_primary:
+
+  Share of the carbon tax passed to consumers in primary/upstream
+  sectors (all non-Power sectors, e.g. Oil&Gas, Coal).
 
 ## Value
 

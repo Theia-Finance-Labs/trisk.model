@@ -18,7 +18,13 @@ proportionally translate into increased profits.
 ## Usage
 
 ``` r
-calculate_net_profits(data, carbon_data, shock_year, market_passthrough)
+calculate_net_profits(
+  data,
+  carbon_data,
+  shock_year,
+  market_passthrough_power,
+  market_passthrough_primary
+)
 ```
 
 ## Arguments
@@ -39,7 +45,12 @@ calculate_net_profits(data, carbon_data, shock_year, market_passthrough)
   A numeric vector of length one that indicates in which year the policy
   shock strikes in a given scenario.
 
-- market_passthrough:
+- market_passthrough_power:
 
-  A firm's ability to pass a carbon tax onto the consumer. companies can
-  be boosted under a shock scenario.
+  Share of the carbon tax the firm passes to consumers in the Power
+  sector.
+
+- market_passthrough_primary:
+
+  Share of the carbon tax passed to consumers in primary/upstream
+  sectors (all non-Power sectors, e.g. Oil&Gas, Coal).

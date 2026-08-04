@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">trisk.model</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,8 @@
 <span>  growth_rate <span class="op">=</span> <span class="fl">0.03</span>,</span>
 <span>  div_netprofit_prop_coef <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  shock_year <span class="op">=</span> <span class="fl">2030</span>,</span>
-<span>  market_passthrough <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  market_passthrough_power <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  market_passthrough_primary <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  run_id <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -119,8 +120,12 @@
 <dd><p>Numeric value specifying the year when the shock is applied. Default is 2030.</p></dd>
 
 
-<dt id="arg-market-passthrough">market_passthrough<a class="anchor" aria-label="anchor" href="#arg-market-passthrough"></a></dt>
-<dd><p>Numeric value representing the firm's ability to pass carbon tax onto the consumer. Default is 0.</p></dd>
+<dt id="arg-market-passthrough-power">market_passthrough_power<a class="anchor" aria-label="anchor" href="#arg-market-passthrough-power"></a></dt>
+<dd><p>Numeric value in [0, 1]: share of the carbon tax passed to consumers in the Power sector. Default is 0.6.</p></dd>
+
+
+<dt id="arg-market-passthrough-primary">market_passthrough_primary<a class="anchor" aria-label="anchor" href="#arg-market-passthrough-primary"></a></dt>
+<dd><p>Numeric value in [0, 1]: share of the carbon tax passed to consumers in primary/upstream sectors (all non-Power sectors, e.g. Oil&amp;Gas, Coal). Default is 0.9.</p></dd>
 
 
 <dt id="arg-run-id">run_id<a class="anchor" aria-label="anchor" href="#arg-run-id"></a></dt>
@@ -150,7 +155,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

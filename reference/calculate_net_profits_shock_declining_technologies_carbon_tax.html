@@ -9,7 +9,7 @@ baseline and late and sudden scenarios - with a carbon tax being added."></head>
 
     <a class="navbar-brand me-2" href="../index.html">trisk.model</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,8 @@ baseline and late and sudden scenarios - with a carbon tax being added.</p>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">shock_year</span>,</span>
 <span>  <span class="va">carbon_data</span>,</span>
-<span>  <span class="va">market_passthrough</span></span>
+<span>  <span class="va">market_passthrough_power</span>,</span>
+<span>  <span class="va">market_passthrough_primary</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -75,8 +76,12 @@ the policy shock strikes in a given scenario.</p></dd>
 <dd><p>NGFS carbon prices.</p></dd>
 
 
-<dt id="arg-market-passthrough">market_passthrough<a class="anchor" aria-label="anchor" href="#arg-market-passthrough"></a></dt>
-<dd><p>A firm's ability to pass a carbon tax onto the consumer.</p></dd>
+<dt id="arg-market-passthrough-power">market_passthrough_power<a class="anchor" aria-label="anchor" href="#arg-market-passthrough-power"></a></dt>
+<dd><p>Share of the carbon tax the firm passes to consumers in the Power sector.</p></dd>
+
+
+<dt id="arg-market-passthrough-primary">market_passthrough_primary<a class="anchor" aria-label="anchor" href="#arg-market-passthrough-primary"></a></dt>
+<dd><p>Share of the carbon tax passed to consumers in primary/upstream sectors (all non-Power sectors, e.g. Oil&amp;Gas, Coal).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -93,7 +98,7 @@ the policy shock strikes in a given scenario.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

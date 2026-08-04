@@ -20,7 +20,8 @@ run_trisk_model(
   growth_rate = 0.03,
   div_netprofit_prop_coef = 1,
   shock_year = 2030,
-  market_passthrough = 0,
+  market_passthrough_power = 0.6,
+  market_passthrough_primary = 0.9,
   run_id = NULL
 )
 ```
@@ -85,10 +86,16 @@ run_trisk_model(
   Numeric value specifying the year when the shock is applied. Default
   is 2030.
 
-- market_passthrough:
+- market_passthrough_power:
 
-  Numeric value representing the firm's ability to pass carbon tax onto
-  the consumer. Default is 0.
+  Numeric value in \[0, 1\]: share of the carbon tax passed to consumers
+  in the Power sector. Default is 0.6.
+
+- market_passthrough_primary:
+
+  Numeric value in \[0, 1\]: share of the carbon tax passed to consumers
+  in primary/upstream sectors (all non-Power sectors, e.g. Oil&Gas,
+  Coal). Default is 0.9.
 
 - run_id:
 
